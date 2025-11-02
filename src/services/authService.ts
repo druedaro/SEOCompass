@@ -1,0 +1,176 @@
+import { supabase } from '@/config/supabase';
+import type { LoginFormData, RegisterFormData } from '@/schemas/authSchema';
+import type { UserRole } from '@/types/domain';
+
+// ============================================
+// AUTH SERVICE
+// ============================================
+
+export const authService = {
+  /**
+   * Sign up with email and password
+   */
+  async signUp(data: RegisterFormData) {
+    try {
+      // 1. Create auth user
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          data: {
+            role: data.role,
+          },
+        },
+      });
+
+      if (authError) throw authError;
+      if (!authData.user) throw new Error('User creation failed');
+
+      // 2. Profile is created automatically by trigger handle_new_user()
+      // But we update the role from metadata
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ role: data.role as UserRole })
+        .eq('user_id', authData.user.id);
+
+      if (profileError) throw profileError;
+
+      return { user: authData.user, session: authData.session };
+    } catch (error) {
+      console.error('Sign up error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Sign in with email and password
+   */
+  async signIn(data: LoginFormData) {
+    try {
+      const { data: authData, error } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
+
+      if (error) throw error;
+
+      return { user: authData.user, session: authData.session };
+    } catch (error) {
+      console.error('Sign in error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Sign in with Google OAuth
+   */
+  async signInWithGoogle() {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (error) throw error;
+
+      return data;
+    } catch (error) {
+      console.error('Google sign in error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Sign out current user
+   */
+  async signOut() {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+    } catch (error) {
+      console.error('Sign out error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get current session
+   */
+  async getSession() {
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) throw error;
+      return data.session;
+    } catch (error) {
+      console.error('Get session error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get current user
+   */
+  async getCurrentUser() {
+    try {
+      const { data, error } = await supabase.auth.getUser();
+      if (error) throw error;
+      return data.user;
+    } catch (error) {
+      console.error('Get current user error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get user profile with role
+   */
+  async getUserProfile(userId: string) {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Get user profile error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Reset password
+   */
+  async resetPassword(email: string) {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/reset-password`,
+      });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Reset password error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Update password
+   */
+  async updatePassword(newPassword: string) {
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Update password error:', error);
+      throw error;
+    }
+  },
+};
