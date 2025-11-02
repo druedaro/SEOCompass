@@ -3,6 +3,7 @@ import { AuthProvider } from '@/auth/AuthProvider';
 import { ProtectedRoute } from '@/routes/ProtectedRoute';
 import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
+import WelcomePage from '@/pages/WelcomePage';
 import { AUTH_PATHS } from '@/routes/paths';
 
 function App() {
@@ -10,8 +11,8 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          {/* Redirect root to login */}
-          <Route path="/" element={<Navigate to={AUTH_PATHS.LOGIN} replace />} />
+          {/* Welcome page */}
+          <Route path="/" element={<WelcomePage />} />
           
           {/* Auth routes */}
           <Route path={AUTH_PATHS.LOGIN} element={<LoginPage />} />
@@ -34,8 +35,8 @@ function App() {
             }
           />
           
-          {/* Catch all - redirect to login */}
-          <Route path="*" element={<Navigate to={AUTH_PATHS.LOGIN} replace />} />
+          {/* Catch all - redirect to welcome */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
