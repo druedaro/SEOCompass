@@ -1,34 +1,6 @@
-import { Github, Twitter, Linkedin, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { AUTH_PATHS } from '@/routes/paths';
-
-const footerLinks = {
-  product: [
-    { name: 'Features', href: '#features' },
-    { name: 'How it works', href: '#how-it-works' },
-    { name: 'Pricing', href: '#pricing' },
-    { name: 'Changelog', href: '#changelog' },
-  ],
-  resources: [
-    { name: 'Documentation', href: '#docs' },
-    { name: 'API Reference', href: '#api' },
-    { name: 'Blog', href: '#blog' },
-    { name: 'Support', href: '#support' },
-  ],
-  company: [
-    { name: 'About', href: '#about' },
-    { name: 'Careers', href: '#careers' },
-    { name: 'Privacy', href: '#privacy' },
-    { name: 'Terms', href: '#terms' },
-  ],
-};
-
-const socialLinks = [
-  { name: 'GitHub', icon: Github, href: 'https://github.com' },
-  { name: 'Twitter', icon: Twitter, href: 'https://twitter.com' },
-  { name: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com' },
-  { name: 'Email', icon: Mail, href: 'mailto:contact@seocompass.com' },
-];
+import { footerLinksData, socialLinksData } from '@/data/AppData';
 
 export function Footer() {
   return (
@@ -47,7 +19,7 @@ export function Footer() {
               The complete SEO platform for Technical SEO specialists, Content experts, and Developers.
             </p>
             <div className="flex gap-4">
-              {socialLinks.map((social) => {
+              {socialLinksData.map((social) => {
                 const Icon = social.icon;
                 return (
                   <a
@@ -69,7 +41,7 @@ export function Footer() {
           <div>
             <h3 className="mb-4 text-sm font-semibold">Product</h3>
             <ul className="space-y-3">
-              {footerLinks.product.map((link) => (
+              {footerLinksData.product.map((link) => (
                 <li key={link.name}>
                   <a
                     href={link.href}
@@ -86,7 +58,7 @@ export function Footer() {
           <div>
             <h3 className="mb-4 text-sm font-semibold">Resources</h3>
             <ul className="space-y-3">
-              {footerLinks.resources.map((link) => (
+              {footerLinksData.resources.map((link) => (
                 <li key={link.name}>
                   <a
                     href={link.href}
@@ -103,7 +75,7 @@ export function Footer() {
           <div>
             <h3 className="mb-4 text-sm font-semibold">Company</h3>
             <ul className="space-y-3">
-              {footerLinks.company.map((link) => (
+              {footerLinksData.company.map((link) => (
                 <li key={link.name}>
                   <a
                     href={link.href}

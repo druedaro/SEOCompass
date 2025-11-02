@@ -1,48 +1,5 @@
-import { BarChart3, FileSearch, Wrench, CheckSquare, TrendingUp, Globe } from 'lucide-react';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
-
-const features = [
-  {
-    icon: BarChart3,
-    title: 'Keyword Tracker',
-    description:
-      'Monitor your keyword rankings in real-time. Track search volume, difficulty, and visibility evolution with beautiful charts.',
-    className: 'md:col-span-2',
-  },
-  {
-    icon: FileSearch,
-    title: 'Content Analyzer',
-    description:
-      'Scrape URLs or sitemaps to detect 404s, redirects, duplicate content, missing meta tags, and more.',
-    className: 'md:col-span-1',
-  },
-  {
-    icon: Wrench,
-    title: 'Technical SEO Audit',
-    description:
-      'Run comprehensive technical audits powered by Google PageSpeed Insights. Get actionable recommendations.',
-    className: 'md:col-span-1',
-  },
-  {
-    icon: CheckSquare,
-    title: 'Action Center',
-    description:
-      'Manage SEO tasks with Kanban boards and list views. Link tasks to audits and track progress with your team.',
-    className: 'md:col-span-2',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Real-time Analytics',
-    description: 'Get instant insights with live data updates and performance metrics.',
-    className: 'md:col-span-1',
-  },
-  {
-    icon: Globe,
-    title: 'Multi-language Support',
-    description: 'Analyze hreflang tags and optimize for international SEO.',
-    className: 'md:col-span-1',
-  },
-];
+import { featuresData } from '@/data/AppData';
 
 export function FeaturesSection() {
   return (
@@ -59,7 +16,7 @@ export function FeaturesSection() {
 
         {/* Bento Grid */}
         <div className="mx-auto grid max-w-5xl grid-cols-1 gap-4 md:grid-cols-3">
-          {features.map((feature) => {
+          {featuresData.map((feature) => {
             const Icon = feature.icon;
             return (
               <Card

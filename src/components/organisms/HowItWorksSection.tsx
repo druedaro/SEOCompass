@@ -1,37 +1,4 @@
-import { FolderPlus, Plus, Search, AlertTriangle, TrendingUp } from 'lucide-react';
-
-const steps = [
-  {
-    icon: FolderPlus,
-    title: 'Create Your Project',
-    description: 'Set up a new SEO project in seconds. Add your website URL and configure basic settings.',
-    number: '01',
-  },
-  {
-    icon: Plus,
-    title: 'Add Keywords',
-    description: 'Import keywords manually or from CSV. Track their rankings, search volume, and difficulty.',
-    number: '02',
-  },
-  {
-    icon: Search,
-    title: 'Analyze Content',
-    description: 'Scrape URLs or sitemaps to detect SEO issues like 404s, missing meta tags, and duplicate content.',
-    number: '03',
-  },
-  {
-    icon: AlertTriangle,
-    title: 'Fix Issues',
-    description: 'Get actionable recommendations. Create tasks in the Action Center and assign them to your team.',
-    number: '04',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Track Progress',
-    description: 'Monitor keyword rankings, audit scores, and task completion with real-time dashboards.',
-    number: '05',
-  },
-];
+import { stepsData } from '@/data/AppData';
 
 export function HowItWorksSection() {
   return (
@@ -53,7 +20,7 @@ export function HowItWorksSection() {
             <div className="absolute left-8 top-0 h-full w-0.5 bg-border hidden md:block" />
 
             <div className="space-y-12">
-              {steps.map((step) => {
+              {stepsData.map((step) => {
                 const Icon = step.icon;
                 return (
                   <div key={step.number} className="relative flex gap-6 md:gap-8">

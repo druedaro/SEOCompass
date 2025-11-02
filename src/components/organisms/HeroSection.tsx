@@ -1,81 +1,57 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, BarChart3, FileSearch, Wrench, CheckSquare } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
+import { heroData } from '@/data/AppData';
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-background to-secondary/20 py-20 sm:py-32">
+    <section className="relative overflow-hidden py-20 sm:py-32">
+      {/* Gradient background */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/5 via-background to-secondary/5" />
+      
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-4xl text-center">
           {/* Badge */}
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full border bg-background/50 px-4 py-1.5 text-sm backdrop-blur">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-primary"></span>
-            </span>
-            <span className="font-medium">SEO Analytics Platform</span>
+          <div className="mb-8 inline-flex items-center rounded-full border px-4 py-1.5 text-sm font-medium backdrop-blur-sm animate-in fade-in slide-in-from-bottom-3 duration-500">
+            {heroData.badge.text}
           </div>
 
           {/* Heading */}
-          <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-6xl">
-            Optimize Your Website's
-            <span className="bg-gradient-to-r from-primary to-primary/50 bg-clip-text text-transparent">
-              {' '}
-              SEO Performance
+          <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl animate-in fade-in slide-in-from-bottom-4 duration-700">
+            The Complete SEO Platform for{' '}
+            <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              Modern Teams
             </span>
           </h1>
 
           {/* Description */}
-          <p className="mb-8 text-lg text-muted-foreground sm:text-xl">
-            Track keywords, analyze content, audit technical SEO, and manage tasks all in one
-            powerful platform. Built for teams that care about results.
+          <p className="mb-10 text-lg text-muted-foreground sm:text-xl max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-5 duration-1000">
+            {heroData.description}
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button asChild size="lg" className="w-full sm:w-auto">
-              <Link to="/auth/register">
-                Get Started Free
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16 animate-in fade-in slide-in-from-bottom-6 duration-1000">
+            <Button asChild size="lg" className="text-base">
+              <Link to={heroData.cta.primary.href}>{heroData.cta.primary.text}</Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
-              <Link to="/auth/login">Sign In</Link>
+            <Button asChild size="lg" variant="outline" className="text-base">
+              <a href={heroData.cta.secondary.href}>{heroData.cta.secondary.text}</a>
             </Button>
           </div>
 
-          {/* Feature Icons */}
-          <div className="mt-16 grid grid-cols-2 gap-8 sm:grid-cols-4">
-            <div className="flex flex-col items-center gap-2">
-              <div className="rounded-lg bg-primary/10 p-3">
-                <BarChart3 className="h-6 w-6 text-primary" />
-              </div>
-              <span className="text-sm font-medium">Keyword Tracking</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="rounded-lg bg-primary/10 p-3">
-                <FileSearch className="h-6 w-6 text-primary" />
-              </div>
-              <span className="text-sm font-medium">Content Analysis</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="rounded-lg bg-primary/10 p-3">
-                <Wrench className="h-6 w-6 text-primary" />
-              </div>
-              <span className="text-sm font-medium">Technical Audit</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="rounded-lg bg-primary/10 p-3">
-                <CheckSquare className="h-6 w-6 text-primary" />
-              </div>
-              <span className="text-sm font-medium">Action Center</span>
-            </div>
+          {/* Feature icons */}
+          <div className="flex flex-wrap justify-center gap-8 text-sm text-muted-foreground animate-in fade-in slide-in-from-bottom-7 duration-1000">
+            {heroData.features.map((feature) => {
+              const Icon = feature.icon;
+              return (
+                <div key={feature.label} className="flex items-center gap-2">
+                  <Icon className="h-5 w-5 text-primary" />
+                  <span>{feature.label}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
-
-      {/* Background decoration */}
-      <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#8882_1px,transparent_1px),linear-gradient(to_bottom,#8882_1px,transparent_1px)] bg-[size:14px_24px]"></div>
     </section>
   );
 }
