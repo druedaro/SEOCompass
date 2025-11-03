@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { AUTH_PATHS } from '@/routes/paths';
-import { useAuth } from '@/auth/AuthProvider';
+import { useAuth } from '@/hooks/useAuth';
 
 export function Footer() {
   const { user, signOut } = useAuth();

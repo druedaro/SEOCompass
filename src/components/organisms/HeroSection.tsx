@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/atoms/Button';
-import { useAuth } from '@/auth/AuthProvider';
+import { useAuth } from '@/hooks/useAuth';
 import { heroData } from '@/data/AppData';
 
 export function HeroSection() {

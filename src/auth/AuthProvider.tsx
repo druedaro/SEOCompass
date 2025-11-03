@@ -1,27 +1,10 @@
-import { createContext, useContext, useEffect, useState, useRef, useCallback, ReactNode } from 'react';
+import { useEffect, useState, useRef, useCallback, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/config/supabase';
 import { authService } from '@/services/authService';
-import type { Profile } from '@/types/domain';
-
-// ============================================
-// AUTH CONTEXT
-// ============================================
-
-interface AuthContextType {
-  user: User | null;
-  session: Session | null;
-  profile: Profile | null;
-  loading: boolean;
-  signOut: () => Promise<void>;
-  refreshProfile: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// ============================================
-// AUTH PROVIDER
-// ============================================
+import type { Profile, UserRole } from '@/types/domain';
+import { AuthContext } from './AuthContext';
+import { RoleSelectionModal } from '@/components/organisms/RoleSelectionModal';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -32,6 +15,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showRoleModal, setShowRoleModal] = useState(false);
   const isFetchingProfileRef = useRef(false);
 
   // Fetch user profile
@@ -44,6 +28,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       isFetchingProfileRef.current = true;
       const profileData = await authService.getUserProfile(userId);
       setProfile(profileData);
+      
+      // Check if profile exists but has no role (OAuth user)
+      if (profileData && !profileData.role) {
+        setShowRoleModal(true);
+      }
     } catch (error) {
       console.error('Error fetching profile:', error);
       setProfile(null);
@@ -121,6 +110,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setProfile(null);
   };
 
+  // Handle role selection for OAuth users
+  const handleRoleSelection = async (role: UserRole) => {
+    if (!user) return;
+    
+    try {
+      await authService.updateUserRole(user.id, role);
+      // Refresh profile to get updated role
+      await fetchProfile(user.id);
+      setShowRoleModal(false);
+    } catch (error) {
+      console.error('Error updating role:', error);
+      throw error;
+    }
+  };
+
   const value = {
     user,
     session,
@@ -130,19 +134,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     refreshProfile,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-// ============================================
-// USE AUTH HOOK
-// ============================================
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  
-  return context;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+      {showRoleModal && <RoleSelectionModal onSelectRole={handleRoleSelection} />}
+    </AuthContext.Provider>
+  );
 }

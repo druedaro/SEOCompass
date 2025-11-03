@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { loginSchema, type LoginFormData } from '@/schemas/authSchema';
 import { authService } from '@/services/authService';
-import { useAuth } from '@/auth/AuthProvider';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import {

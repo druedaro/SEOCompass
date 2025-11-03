@@ -8,7 +8,7 @@ export type UserRole = 'tech_seo' | 'content_seo' | 'developer';
 export interface Profile {
   id: string;
   user_id: string;
-  role: UserRole;
+  role: UserRole | null; // Allow null for OAuth users before role selection
   created_at: string;
   updated_at: string;
 }
