@@ -3,27 +3,29 @@ import { useNavigate } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProjectCard } from '@/components/molecules/ProjectCard';
+import { ProjectModal } from '@/components/organisms/ProjectModal';
 import { useProject } from '@/hooks/useProject';
 import { useWorkspace } from '@/context/WorkspaceContext';
+import type { Project } from '@/types/domain';
 
 export function ProjectsDashboardPage() {
   const navigate = useNavigate();
   const { currentTeam } = useWorkspace();
   const { projects, isLoading, deleteProject } = useProject();
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<any>(null);
+  const [selectedProject, setSelectedProject] = useState<Project | undefined>(undefined);
   const [showEditModal, setShowEditModal] = useState(false);
 
-  const handleSelectProject = (project: any) => {
-    navigate(`/projects/${project.id}`);
+  const handleSelectProject = (project: Project) => {
+    navigate(`/dashboard/projects/${project.id}`);
   };
 
-  const handleEditProject = (project: any) => {
+  const handleEditProject = (project: Project) => {
     setSelectedProject(project);
     setShowEditModal(true);
   };
 
-  const handleDeleteProject = async (project: any) => {
+  const handleDeleteProject = async (project: Project) => {
     if (window.confirm(`Are you sure you want to delete "${project.name}"?`)) {
       try {
         await deleteProject(project.id);
@@ -94,7 +96,23 @@ export function ProjectsDashboardPage() {
         </div>
       )}
 
-      {/* Modals would go here - will be created in next commits */}
+      {/* Create Project Modal */}
+      <ProjectModal
+        open={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        mode="create"
+      />
+
+      {/* Edit Project Modal */}
+      <ProjectModal
+        open={showEditModal}
+        onClose={() => {
+          setShowEditModal(false);
+          setSelectedProject(undefined);
+        }}
+        project={selectedProject}
+        mode="edit"
+      />
     </div>
   );
 }
