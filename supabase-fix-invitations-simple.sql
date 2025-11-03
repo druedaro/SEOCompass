@@ -1,6 +1,6 @@
--- Complete Fix for Invitations System
+-- Simple Fix for Invitations System
 -- Run this script in Supabase SQL Editor
--- This fixes RLS policies and email synchronization
+-- This version removes ALL policies first, then recreates them
 
 -- ============================================
 -- STEP 1: Add email column to profiles
@@ -35,10 +35,8 @@ RETURNS TRIGGER AS $$
 DECLARE
   user_email TEXT;
 BEGIN
-  -- Get the user's email
   user_email := NEW.email;
   
-  -- Insert or update profile with email
   INSERT INTO public.profiles (user_id, email, full_name, avatar_url, created_at, updated_at)
   VALUES (
     NEW.id,
@@ -57,7 +55,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Create trigger on auth.users
+-- Create trigger
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT OR UPDATE ON auth.users
   FOR EACH ROW
@@ -72,10 +70,10 @@ WHERE profiles.user_id = auth.users.id
 AND (profiles.email IS NULL OR profiles.email = '');
 
 -- ============================================
--- STEP 3: Fix Invitations RLS Policies
+-- STEP 3: Remove ALL invitation policies
 -- ============================================
 
--- Remove ALL existing policies dynamically (works regardless of policy names)
+-- This drops ALL policies on invitations table regardless of name
 DO $$
 DECLARE
   pol RECORD;
@@ -90,94 +88,81 @@ BEGIN
   END LOOP;
 END $$;
 
--- Enable RLS
+-- Enable RLS (if not already enabled)
 ALTER TABLE invitations ENABLE ROW LEVEL SECURITY;
 
--- Policy 1: Users can view invitations for teams they are members of
-CREATE POLICY "Users can view team invitations"
+-- ============================================
+-- STEP 4: Create NEW invitation policies
+-- ============================================
+
+-- Policy 1: View team invitations
+CREATE POLICY "view_team_invitations"
 ON invitations
 FOR SELECT
 USING (
   team_id IN (
-    SELECT team_id 
-    FROM team_members 
-    WHERE user_id = auth.uid()
+    SELECT team_id FROM team_members WHERE user_id = auth.uid()
   )
   OR
   team_id IN (
-    SELECT id
-    FROM teams
-    WHERE user_id = auth.uid()
+    SELECT id FROM teams WHERE user_id = auth.uid()
   )
 );
 
--- Policy 2: Users can view invitations sent to their email
-CREATE POLICY "Users can view their email invitations"
+-- Policy 2: View email invitations
+CREATE POLICY "view_email_invitations"
 ON invitations
 FOR SELECT
 USING (
   email IN (
-    SELECT email
-    FROM profiles
-    WHERE user_id = auth.uid()
+    SELECT email FROM profiles WHERE user_id = auth.uid()
   )
 );
 
--- Policy 3: Team members can create invitations for their teams
-CREATE POLICY "Team members can create invitations"
+-- Policy 3: Create invitations
+CREATE POLICY "create_team_invitations"
 ON invitations
 FOR INSERT
 WITH CHECK (
   team_id IN (
-    SELECT team_id 
-    FROM team_members 
-    WHERE user_id = auth.uid()
+    SELECT team_id FROM team_members WHERE user_id = auth.uid()
   )
   OR
   team_id IN (
-    SELECT id
-    FROM teams
-    WHERE user_id = auth.uid()
+    SELECT id FROM teams WHERE user_id = auth.uid()
   )
 );
 
--- Policy 4: Users can update invitations (accept/decline)
-CREATE POLICY "Users can update their invitations"
+-- Policy 4: Update invitations
+CREATE POLICY "update_invitations"
 ON invitations
 FOR UPDATE
 USING (
   email IN (
-    SELECT email
-    FROM profiles
-    WHERE user_id = auth.uid()
+    SELECT email FROM profiles WHERE user_id = auth.uid()
   )
   OR
   invited_by = auth.uid()
 );
 
--- Policy 5: Team admins and invitation creator can delete invitations
-CREATE POLICY "Authorized users can delete invitations"
+-- Policy 5: Delete invitations
+CREATE POLICY "delete_invitations"
 ON invitations
 FOR DELETE
 USING (
   invited_by = auth.uid()
   OR
   team_id IN (
-    SELECT team_id 
-    FROM team_members 
-    WHERE user_id = auth.uid() 
-    AND role = 'admin'
+    SELECT team_id FROM team_members WHERE user_id = auth.uid() AND role = 'admin'
   )
   OR
   team_id IN (
-    SELECT id
-    FROM teams
-    WHERE user_id = auth.uid()
+    SELECT id FROM teams WHERE user_id = auth.uid()
   )
 );
 
 -- ============================================
--- STEP 4: Create indexes for performance
+-- STEP 5: Create indexes
 -- ============================================
 
 CREATE INDEX IF NOT EXISTS idx_invitations_email ON invitations(email);
@@ -188,34 +173,31 @@ CREATE INDEX IF NOT EXISTS idx_profiles_email ON profiles(email);
 CREATE INDEX IF NOT EXISTS idx_profiles_user_id ON profiles(user_id);
 
 -- ============================================
--- STEP 5: Grant permissions
+-- STEP 6: Grant permissions
 -- ============================================
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON invitations TO authenticated;
 GRANT SELECT, UPDATE ON profiles TO authenticated;
 
 -- ============================================
--- STEP 6: Verify setup
+-- STEP 7: Verify
 -- ============================================
 
--- Check if profiles have emails
+-- Check profiles
 SELECT 
   COUNT(*) as total_profiles,
   COUNT(email) as profiles_with_email,
   COUNT(*) - COUNT(email) as profiles_missing_email
 FROM profiles;
 
--- List all invitation policies
+-- List policies
 SELECT 
-  schemaname, 
   tablename, 
   policyname, 
-  permissive, 
-  roles, 
   cmd
 FROM pg_policies
 WHERE tablename = 'invitations'
 ORDER BY policyname;
 
--- Done!
-SELECT 'Invitations system fixed successfully! ✅' as status;
+-- Success message
+SELECT '✅ Invitations system fixed successfully!' as status;
