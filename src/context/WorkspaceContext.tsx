@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { teamService } from '@/services/teamService';
 import type { Team, TeamMember, Invitation } from '@/types/domain';
+import { useAuth } from '@/hooks/useAuth';
 
 interface WorkspaceContextType {
   // Current team
@@ -32,19 +33,28 @@ interface WorkspaceContextType {
 const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefined);
 
 export function WorkspaceProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
   const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
   const [teams, setTeams] = useState<Team[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   
-  const [isLoadingTeams, setIsLoadingTeams] = useState(true);
+  const [isLoadingTeams, setIsLoadingTeams] = useState(false);
   const [isLoadingMembers, setIsLoadingMembers] = useState(false);
   const [isLoadingInvitations, setIsLoadingInvitations] = useState(false);
 
-  // Load teams on mount
+  // Load teams when user is authenticated
   useEffect(() => {
-    refreshTeams();
-  }, []);
+    if (user) {
+      refreshTeams();
+    } else {
+      // Clear data when user logs out
+      setTeams([]);
+      setCurrentTeam(null);
+      setTeamMembers([]);
+      setInvitations([]);
+    }
+  }, [user]);
 
   // Load team members when current team changes
   useEffect(() => {
@@ -58,6 +68,8 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   }, [currentTeam]);
 
   const refreshTeams = async () => {
+    if (!user) return; // Don't try to load teams if user is not authenticated
+    
     setIsLoadingTeams(true);
     try {
       const data = await teamService.getUserTeams();
@@ -74,6 +86,9 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       }
     } catch (error) {
       console.error('Error loading teams:', error);
+      // Silently fail - user might not have teams yet or tables might not be set up
+      setTeams([]);
+      setCurrentTeam(null);
     } finally {
       setIsLoadingTeams(false);
     }
