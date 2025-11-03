@@ -87,7 +87,7 @@ export const projectService = {
    */
   subscribeToProjects(
     teamId: string,
-    callback: (payload: any) => void
+    callback: (payload: { eventType: string; new: any; old: any }) => void
   ) {
     return supabase
       .channel(`projects:team_id=eq.${teamId}`)

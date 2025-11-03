@@ -24,6 +24,27 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Load projects function
+  const loadProjects = async (teamId: string) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const data = await projectService.getProjectsByTeam(teamId);
+      setProjects(data);
+      
+      // If we have a current project, refresh it
+      if (currentProject) {
+        const updatedProject = data.find(p => p.id === currentProject.id);
+        setCurrentProject(updatedProject || null);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load projects');
+      console.error('Error loading projects:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Load projects when team changes
   useEffect(() => {
     if (currentTeam) {
@@ -32,6 +53,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
       setProjects([]);
       setCurrentProject(null);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTeam]);
 
   // Subscribe to real-time updates
@@ -63,26 +85,6 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
       subscription.unsubscribe();
     };
   }, [currentTeam, currentProject]);
-
-  const loadProjects = async (teamId: string) => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      const data = await projectService.getProjectsByTeam(teamId);
-      setProjects(data);
-      
-      // If we have a current project, refresh it
-      if (currentProject) {
-        const updatedProject = data.find(p => p.id === currentProject.id);
-        setCurrentProject(updatedProject || null);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load projects');
-      console.error('Error loading projects:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const createProject = async (name: string, description?: string): Promise<Project> => {
     if (!currentTeam) throw new Error('No team selected');
