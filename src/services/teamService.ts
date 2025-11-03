@@ -24,41 +24,15 @@ export interface InviteMemberData {
 export const teamService = {
   /**
    * Get all teams for the current user
-   * NOTE: Temporarily disabled due to RLS policy issues in Supabase
-   * TODO: Fix RLS policies for team_members table
    */
   async getUserTeams(): Promise<Team[]> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    // TEMPORARY: Return empty array to avoid RLS recursion errors
-    // Uncomment the code below once RLS policies are fixed
-    return [];
-
-    /*
-    // Simplified query without JOIN to avoid RLS recursion issues
-    // First get team IDs where user is a member
-    const { data: memberships, error: memberError } = await supabase
-      .from('team_members')
-      .select('team_id')
-      .eq('user_id', user.id);
-
-    if (memberError) {
-      console.warn('Error fetching team memberships:', memberError);
-      return [];
-    }
-
-    if (!memberships || memberships.length === 0) {
-      return [];
-    }
-
-    const teamIds = memberships.map(m => m.team_id);
-
-    // Then get the teams
+    // Get teams where user is owner or member
     const { data, error } = await supabase
       .from('teams')
       .select('*')
-      .in('id', teamIds)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -67,7 +41,6 @@ export const teamService = {
     }
 
     return data as Team[];
-    */
   },
 
   /**
@@ -95,7 +68,7 @@ export const teamService = {
       .from('teams')
       .insert({
         ...teamData,
-        owner_id: user.id,
+        user_id: user.id,
       })
       .select()
       .single();

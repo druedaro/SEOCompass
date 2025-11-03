@@ -10,11 +10,27 @@ import type { Project } from '@/types/domain';
 
 export function ProjectsDashboardPage() {
   const navigate = useNavigate();
-  const { currentTeam } = useWorkspace();
+  const { currentTeam, teams, createTeam } = useWorkspace();
   const { projects, isLoading, deleteProject } = useProject();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | undefined>(undefined);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [isCreatingTeam, setIsCreatingTeam] = useState(false);
+
+  const handleCreateFirstTeam = async () => {
+    setIsCreatingTeam(true);
+    try {
+      await createTeam({
+        name: 'My Team',
+        description: 'Default team',
+      });
+    } catch (error) {
+      console.error('Failed to create team:', error);
+      alert('Failed to create team. Please try again.');
+    } finally {
+      setIsCreatingTeam(false);
+    }
+  };
 
   const handleSelectProject = (project: Project) => {
     navigate(`/dashboard/projects/${project.id}`);
@@ -38,11 +54,18 @@ export function ProjectsDashboardPage() {
   if (!currentTeam) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold">No Team Selected</h2>
-          <p className="text-muted-foreground mt-2">
-            Please select or create a team to view projects.
+        <div className="text-center max-w-md">
+          <h2 className="text-2xl font-bold mb-2">No Team Available</h2>
+          <p className="text-muted-foreground mb-6">
+            You need to create a team before you can manage projects.
           </p>
+          <Button 
+            onClick={handleCreateFirstTeam}
+            disabled={isCreatingTeam}
+            size="lg"
+          >
+            {isCreatingTeam ? 'Creating Team...' : 'Create Your First Team'}
+          </Button>
         </div>
       </div>
     );
