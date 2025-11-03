@@ -108,12 +108,7 @@ ALTER TABLE teams ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Users can view their teams" ON teams;
 CREATE POLICY "Users can view their teams"
   ON teams FOR SELECT
-  USING (
-    user_id = auth.uid() OR
-    id IN (
-      SELECT team_id FROM team_members WHERE user_id = auth.uid()
-    )
-  );
+  USING (user_id = auth.uid());
 
 DROP POLICY IF EXISTS "Users can create teams" ON teams;
 CREATE POLICY "Users can create teams"
@@ -148,13 +143,7 @@ ALTER TABLE team_members ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Users can view team members of their teams" ON team_members;
 CREATE POLICY "Users can view team members of their teams"
   ON team_members FOR SELECT
-  USING (
-    team_id IN (
-      SELECT id FROM teams WHERE user_id = auth.uid()
-      UNION
-      SELECT team_id FROM team_members WHERE user_id = auth.uid()
-    )
-  );
+  USING (user_id = auth.uid());
 
 DROP POLICY IF EXISTS "Team owners can manage team members" ON team_members;
 CREATE POLICY "Team owners can manage team members"
@@ -216,7 +205,7 @@ CREATE POLICY "Users can view projects from their teams"
   ON projects FOR SELECT
   USING (
     team_id IN (
-      SELECT team_id FROM team_members WHERE user_id = auth.uid()
+      SELECT id FROM teams WHERE user_id = auth.uid()
     )
   );
 
@@ -225,7 +214,7 @@ CREATE POLICY "Team members can create projects"
   ON projects FOR INSERT
   WITH CHECK (
     team_id IN (
-      SELECT team_id FROM team_members WHERE user_id = auth.uid()
+      SELECT id FROM teams WHERE user_id = auth.uid()
     )
   );
 
@@ -234,7 +223,7 @@ CREATE POLICY "Team members can update projects"
   ON projects FOR UPDATE
   USING (
     team_id IN (
-      SELECT team_id FROM team_members WHERE user_id = auth.uid()
+      SELECT id FROM teams WHERE user_id = auth.uid()
     )
   );
 
@@ -243,7 +232,7 @@ CREATE POLICY "Team members can delete projects"
   ON projects FOR DELETE
   USING (
     team_id IN (
-      SELECT team_id FROM team_members WHERE user_id = auth.uid()
+      SELECT id FROM teams WHERE user_id = auth.uid()
     )
   );
 
@@ -268,8 +257,7 @@ CREATE POLICY "Users can manage keywords in their projects"
   USING (
     project_id IN (
       SELECT p.id FROM projects p
-      INNER JOIN team_members tm ON p.team_id = tm.team_id
-      WHERE tm.user_id = auth.uid()
+      WHERE p.team_id IN (SELECT id FROM teams WHERE user_id = auth.uid())
     )
   );
 
@@ -294,8 +282,7 @@ CREATE POLICY "Users can manage rankings in their projects"
     keyword_id IN (
       SELECT k.id FROM keywords k
       INNER JOIN projects p ON k.project_id = p.id
-      INNER JOIN team_members tm ON p.team_id = tm.team_id
-      WHERE tm.user_id = auth.uid()
+      WHERE p.team_id IN (SELECT id FROM teams WHERE user_id = auth.uid())
     )
   );
 
@@ -325,8 +312,7 @@ CREATE POLICY "Users can manage audits in their projects"
   USING (
     project_id IN (
       SELECT p.id FROM projects p
-      INNER JOIN team_members tm ON p.team_id = tm.team_id
-      WHERE tm.user_id = auth.uid()
+      WHERE p.team_id IN (SELECT id FROM teams WHERE user_id = auth.uid())
     )
   );
 
@@ -353,8 +339,7 @@ CREATE POLICY "Users can manage issues in their audits"
     audit_id IN (
       SELECT ca.id FROM content_audits ca
       INNER JOIN projects p ON ca.project_id = p.id
-      INNER JOIN team_members tm ON p.team_id = tm.team_id
-      WHERE tm.user_id = auth.uid()
+      WHERE p.team_id IN (SELECT id FROM teams WHERE user_id = auth.uid())
     )
   );
 
@@ -384,8 +369,7 @@ CREATE POLICY "Users can manage technical audits in their projects"
   USING (
     project_id IN (
       SELECT p.id FROM projects p
-      INNER JOIN team_members tm ON p.team_id = tm.team_id
-      WHERE tm.user_id = auth.uid()
+      WHERE p.team_id IN (SELECT id FROM teams WHERE user_id = auth.uid())
     )
   );
 
@@ -416,8 +400,7 @@ CREATE POLICY "Users can manage tasks in their projects"
   USING (
     project_id IN (
       SELECT p.id FROM projects p
-      INNER JOIN team_members tm ON p.team_id = tm.team_id
-      WHERE tm.user_id = auth.uid()
+      WHERE p.team_id IN (SELECT id FROM teams WHERE user_id = auth.uid())
     )
   );
 
