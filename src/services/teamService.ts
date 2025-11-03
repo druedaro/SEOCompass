@@ -29,16 +29,36 @@ export const teamService = {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
+    // Simplified query without JOIN to avoid RLS recursion issues
+    // First get team IDs where user is a member
+    const { data: memberships, error: memberError } = await supabase
+      .from('team_members')
+      .select('team_id')
+      .eq('user_id', user.id);
+
+    if (memberError) {
+      console.warn('Error fetching team memberships:', memberError);
+      return [];
+    }
+
+    if (!memberships || memberships.length === 0) {
+      return [];
+    }
+
+    const teamIds = memberships.map(m => m.team_id);
+
+    // Then get the teams
     const { data, error } = await supabase
       .from('teams')
-      .select(`
-        *,
-        team_members!inner(role)
-      `)
-      .eq('team_members.user_id', user.id)
+      .select('*')
+      .in('id', teamIds)
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      console.warn('Error fetching teams:', error);
+      return [];
+    }
+
     return data as Team[];
   },
 
