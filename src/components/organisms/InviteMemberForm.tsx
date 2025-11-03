@@ -9,7 +9,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/atoms/Dialog';
+} from '@/components/organisms/Dialog';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { Label } from '@/components/atoms/Label';
@@ -19,7 +19,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/atoms/Select';
+} from '@/components/molecules/Select';
 import { teamService } from '@/services/teamService';
 import { useWorkspace } from '@/context/WorkspaceContext';
 
