@@ -1,0 +1,88 @@
+import { LogOut, Settings, User } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/atoms/Button';
+import { Avatar, AvatarFallback } from '@/components/atoms/Avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/molecules/DropdownMenu';
+import { TeamSelector } from '@/components/organisms/TeamSelector';
+import { useAuth } from '@/hooks/useAuth';
+
+export function Navbar() {
+  const { user, profile, signOut } = useAuth();
+
+  const getInitials = (name?: string) => {
+    if (!name) return user?.email?.[0].toUpperCase() || '?';
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  return (
+    <nav className="border-b bg-white/80 backdrop-blur-md shadow-sm">
+      <div className="container mx-auto px-4">
+        <div className="flex h-16 items-center justify-between">
+          <div className="flex items-center gap-6">
+            <Link to="/dashboard" className="flex items-center gap-2 group">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-fuchsia-600 to-violet-600 shadow-md group-hover:shadow-lg transition-shadow">
+                <span className="text-lg font-bold text-white">SC</span>
+              </div>
+              <span className="text-xl font-bold bg-gradient-to-r from-fuchsia-600 to-violet-600 bg-clip-text text-transparent">SEO Compass</span>
+            </Link>
+
+            <TeamSelector onCreateTeam={() => window.location.href = '/teams/create'} />
+          </div>
+
+          <div className="flex items-center gap-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                  <Avatar>
+                    <AvatarFallback>{getInitials(profile?.full_name)}</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <div className="flex items-center justify-start gap-2 p-2">
+                  <div className="flex flex-col space-y-1 leading-none">
+                    {profile?.full_name && (
+                      <p className="font-medium">{profile.full_name}</p>
+                    )}
+                    {user?.email && (
+                      <p className="text-sm text-muted-foreground">{user.email}</p>
+                    )}
+                  </div>
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/profile">
+                    <User className="mr-2 h-4 w-4" />
+                    Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/teams/settings">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Team Settings
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={signOut}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+}
