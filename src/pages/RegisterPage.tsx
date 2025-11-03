@@ -46,11 +46,33 @@ export function RegisterPage() {
     try {
       setIsLoading(true);
       setError(null);
-      await authService.signUp(data);
-      navigate('/dashboard');
+      
+      console.log('Attempting registration with:', data.email, data.role);
+      const result = await authService.signUp(data);
+      console.log('Registration result:', result);
+      
+      // Si requiere confirmación de email
+      if (result.session === null) {
+        setError('¡Cuenta creada! Revisa tu email para confirmar tu cuenta antes de iniciar sesión.');
+        setIsLoading(false);
+        // Redirigir al login después de 3 segundos
+        setTimeout(() => navigate('/auth/login'), 3000);
+      } else {
+        // Login automático exitoso - esperar un poco para el AuthProvider
+        console.log('Auto-login successful, redirecting to dashboard');
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 100);
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create account');
-    } finally {
+      console.error('Registration error:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create account';
+      
+      if (errorMessage.includes('already registered')) {
+        setError('Este email ya está registrado. ¿Quieres iniciar sesión?');
+      } else {
+        setError(errorMessage);
+      }
       setIsLoading(false);
     }
   };
@@ -67,16 +89,29 @@ export function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Vibrant background matching welcome page */}
+      <div className="absolute inset-0 -z-20">
+        <div className="absolute inset-0 bg-gradient-to-br from-violet-100 via-fuchsia-100 to-cyan-100" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-bl from-fuchsia-300/50 to-transparent rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-cyan-300/50 to-transparent rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+      </div>
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#8882_1px,transparent_1px),linear-gradient(to_bottom,#8882_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
+      
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight">Create an account</h1>
-          <p className="text-muted-foreground mt-2">
+          <div className="flex justify-center mb-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-fuchsia-600 to-violet-600 shadow-xl">
+              <span className="text-xl font-bold text-white">SC</span>
+            </div>
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-fuchsia-600 to-violet-600 bg-clip-text text-transparent">Create an account</h1>
+          <p className="text-slate-600 font-medium mt-2">
             Join SEO Compass and optimize your websites
           </p>
         </div>
 
-        <div className="bg-card border rounded-lg p-6 shadow-sm">
+        <div className="bg-white/90 backdrop-blur-sm border border-fuchsia-100 rounded-lg p-6 shadow-xl shadow-fuchsia-200/20">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               {error && (
@@ -257,9 +292,9 @@ export function RegisterPage() {
           </Button>
         </div>
 
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="text-center text-sm text-slate-600">
           Already have an account?{' '}
-          <Link to="/auth/login" className="text-primary hover:underline font-medium">
+          <Link to="/auth/login" className="text-fuchsia-600 hover:text-fuchsia-700 font-semibold hover:underline">
             Sign in
           </Link>
         </p>

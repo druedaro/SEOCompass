@@ -128,14 +128,29 @@ export const authService = {
    */
   async getUserProfile(userId: string) {
     try {
-      const { data, error } = await supabase
+      // Create a timeout promise (10s timeout)
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 10000);
+      });
+      
+      // Race between the query and timeout
+      const queryPromise = supabase
         .from('profiles')
         .select('*')
         .eq('user_id', userId)
         .single();
-
-      if (error) throw error;
-      return data;
+      
+      const result = await Promise.race([queryPromise, timeoutPromise]);
+      
+      if ('error' in result && result.error) {
+        throw result.error;
+      }
+      
+      if ('data' in result) {
+        return result.data;
+      }
+      
+      throw new Error('Unexpected response from database');
     } catch (error) {
       console.error('Get user profile error:', error);
       throw error;

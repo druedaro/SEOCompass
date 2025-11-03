@@ -3,6 +3,7 @@ import { AuthProvider } from '@/auth/AuthProvider';
 import { ProtectedRoute } from '@/routes/ProtectedRoute';
 import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
+import { AuthCallbackPage } from '@/pages/AuthCallbackPage';
 import WelcomePage from '@/pages/WelcomePage';
 import { AUTH_PATHS } from '@/routes/paths';
 
@@ -17,6 +18,7 @@ function App() {
           {/* Auth routes */}
           <Route path={AUTH_PATHS.LOGIN} element={<LoginPage />} />
           <Route path={AUTH_PATHS.REGISTER} element={<RegisterPage />} />
+          <Route path="/auth/callback" element={<AuthCallbackPage />} />
           
           {/* Protected routes - Dashboard placeholder */}
           <Route

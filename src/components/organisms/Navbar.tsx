@@ -26,15 +26,15 @@ export function Navbar() {
   };
 
   return (
-    <nav className="border-b bg-background">
+    <nav className="border-b bg-white/80 backdrop-blur-md shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-6">
-            <Link to="/dashboard" className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <span className="text-lg font-bold text-primary-foreground">SC</span>
+            <Link to="/dashboard" className="flex items-center gap-2 group">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-fuchsia-600 to-violet-600 shadow-md group-hover:shadow-lg transition-shadow">
+                <span className="text-lg font-bold text-white">SC</span>
               </div>
-              <span className="text-xl font-bold">SEO Compass</span>
+              <span className="text-xl font-bold bg-gradient-to-r from-fuchsia-600 to-violet-600 bg-clip-text text-transparent">SEO Compass</span>
             </Link>
 
             <TeamSelector onCreateTeam={() => window.location.href = '/teams/create'} />
