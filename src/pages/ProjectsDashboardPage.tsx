@@ -1,0 +1,100 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ProjectCard } from '@/components/molecules/ProjectCard';
+import { useProject } from '@/hooks/useProject';
+import { useWorkspace } from '@/context/WorkspaceContext';
+
+export function ProjectsDashboardPage() {
+  const navigate = useNavigate();
+  const { currentTeam } = useWorkspace();
+  const { projects, isLoading, deleteProject } = useProject();
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<any>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+
+  const handleSelectProject = (project: any) => {
+    navigate(`/projects/${project.id}`);
+  };
+
+  const handleEditProject = (project: any) => {
+    setSelectedProject(project);
+    setShowEditModal(true);
+  };
+
+  const handleDeleteProject = async (project: any) => {
+    if (window.confirm(`Are you sure you want to delete "${project.name}"?`)) {
+      try {
+        await deleteProject(project.id);
+      } catch (error) {
+        console.error('Failed to delete project:', error);
+      }
+    }
+  };
+
+  if (!currentTeam) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold">No Team Selected</h2>
+          <p className="text-muted-foreground mt-2">
+            Please select or create a team to view projects.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto py-8 px-4">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold">Projects</h1>
+          <p className="text-muted-foreground mt-1">
+            Manage your SEO projects and campaigns
+          </p>
+        </div>
+        <Button onClick={() => setShowCreateModal(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          New Project
+        </Button>
+      </div>
+
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-48 bg-muted animate-pulse rounded-lg" />
+          ))}
+        </div>
+      ) : projects.length === 0 ? (
+        <div className="text-center py-12">
+          <div className="max-w-md mx-auto">
+            <h3 className="text-xl font-semibold mb-2">No projects yet</h3>
+            <p className="text-muted-foreground mb-6">
+              Get started by creating your first SEO project
+            </p>
+            <Button onClick={() => setShowCreateModal(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Create Your First Project
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {projects.map((project) => (
+            <ProjectCard
+              key={project.id}
+              project={project}
+              onSelect={() => handleSelectProject(project)}
+              onEdit={() => handleEditProject(project)}
+              onDelete={() => handleDeleteProject(project)}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Modals would go here - will be created in next commits */}
+    </div>
+  );
+}
