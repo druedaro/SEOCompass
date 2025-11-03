@@ -10,10 +10,10 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/organisms/Dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+import { Button } from '@/components/atoms/Button';
+import { Input } from '@/components/atoms/Input';
+import { Textarea } from '@/components/atoms/Textarea';
+import { Label } from '@/components/atoms/Label';
 import { useProject } from '@/hooks/useProject';
 import type { Project } from '@/types/domain';
 

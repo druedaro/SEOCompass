@@ -1,5 +1,5 @@
-import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/atoms/Card';
+import { Button } from '@/components/atoms/Button';
 import { MoreVertical, Calendar, Users } from 'lucide-react';
 import {
   DropdownMenu,
@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/components/molecules/DropdownMenu';
 import type { Project } from '@/types/domain';
 import { formatDistanceToNow } from 'date-fns';
 

@@ -1,18 +1,18 @@
 import { Check, ChevronsUpDown, FolderOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/atoms/Button';
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-} from '@/components/ui/command';
+} from '@/components/molecules/Command';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
+} from '@/components/molecules/Popover';
 import { useProject } from '@/hooks/useProject';
 import { useState } from 'react';
 
