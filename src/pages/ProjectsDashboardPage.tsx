@@ -11,7 +11,7 @@ import type { Project } from '@/types/domain';
 
 export function ProjectsDashboardPage() {
   const navigate = useNavigate();
-  const { currentTeam, teams, createTeam } = useWorkspace();
+  const { currentTeam, createTeam } = useWorkspace();
   const { projects, isLoading, deleteProject } = useProject();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | undefined>(undefined);

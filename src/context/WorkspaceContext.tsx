@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { teamService } from '@/services/teamService';
-import type { Team, TeamMember, Invitation } from '@/types/domain';
+import type { Team, TeamMember } from '@/types/domain';
 import { useAuth } from '@/hooks/useAuth';
 
 interface WorkspaceContextType {
@@ -17,11 +17,7 @@ interface WorkspaceContextType {
   teamMembers: TeamMember[];
   isLoadingMembers: boolean;
   refreshMembers: () => Promise<void>;
-  
-  // Invitations
-  invitations: Invitation[];
-  isLoadingInvitations: boolean;
-  refreshInvitations: () => Promise<void>;
+  currentUserMember: TeamMember | null; // Current user's membership in current team
   
   // Actions
   createTeam: (data: { name: string; description?: string; location?: string }) => Promise<Team>;
@@ -37,11 +33,12 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
   const [teams, setTeams] = useState<Team[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
-  const [invitations, setInvitations] = useState<Invitation[]>([]);
   
   const [isLoadingTeams, setIsLoadingTeams] = useState(false);
   const [isLoadingMembers, setIsLoadingMembers] = useState(false);
-  const [isLoadingInvitations, setIsLoadingInvitations] = useState(false);
+
+  // Calculate current user's membership in current team
+  const currentUserMember = teamMembers.find(member => member.user_id === user?.id) || null;
 
   // Load teams when user is authenticated
   useEffect(() => {
@@ -52,7 +49,6 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       setTeams([]);
       setCurrentTeam(null);
       setTeamMembers([]);
-      setInvitations([]);
     }
   }, [user]);
 
@@ -60,10 +56,8 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (currentTeam) {
       refreshMembers();
-      refreshInvitations();
     } else {
       setTeamMembers([]);
-      setInvitations([]);
     }
   }, [currentTeam]);
 
@@ -109,21 +103,6 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const refreshInvitations = async () => {
-    if (!currentTeam) return;
-    
-    setIsLoadingInvitations(true);
-    try {
-      const data = await teamService.getTeamInvitations(currentTeam.id);
-      setInvitations(data);
-    } catch (error) {
-      console.error('Error loading invitations:', error);
-      setInvitations([]);
-    } finally {
-      setIsLoadingInvitations(false);
-    }
-  };
-
   const createTeam = async (data: { name: string; description?: string; location?: string }) => {
     const newTeam = await teamService.createTeam(data);
     await refreshTeams();
@@ -164,9 +143,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     teamMembers,
     isLoadingMembers,
     refreshMembers,
-    invitations,
-    isLoadingInvitations,
-    refreshInvitations,
+    currentUserMember,
     createTeam,
     updateTeam,
     deleteTeam,

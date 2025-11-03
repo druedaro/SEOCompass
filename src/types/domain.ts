@@ -34,20 +34,6 @@ export interface TeamMember {
   profile?: Profile; // Optional profile data
 }
 
-export type InvitationStatus = 'pending' | 'accepted' | 'rejected';
-
-export interface Invitation {
-  id: string;
-  team_id: string;
-  email: string;
-  token: string;
-  status: InvitationStatus;
-  role?: UserRole;
-  invited_by?: string;
-  expires_at?: string;
-  created_at: string;
-}
-
 // --- Projects ---
 export interface Project {
   id: string;

@@ -1,16 +1,12 @@
-import { useState } from 'react';
-import { UserPlus, MapPin } from 'lucide-react';
-import { Button } from '@/components/atoms/Button';
+import { MapPin } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/atoms/Avatar';
 import { Badge } from '@/components/atoms/Badge';
-import { InviteMemberForm } from '@/components/organisms/InviteMemberForm';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useWorkspace } from '@/context/WorkspaceContext';
 
 export default function TeamMembersPage() {
   const { currentTeam, teamMembers, isLoadingMembers } = useWorkspace();
-  const [showInviteDialog, setShowInviteDialog] = useState(false);
 
   const getInitials = (name?: string) => {
     if (!name) return '?';
@@ -39,6 +35,11 @@ export default function TeamMembersPage() {
         <div>
           <h1 className="text-3xl font-bold">{currentTeam.name}</h1>
           <p className="text-muted-foreground">Manage team members and roles</p>
+          {currentTeam.description && (
+            <p className="mt-2 text-sm text-muted-foreground">
+              {currentTeam.description}
+            </p>
+          )}
           {currentTeam.location && (
             <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
               <MapPin className="h-4 w-4" />
@@ -46,10 +47,7 @@ export default function TeamMembersPage() {
             </div>
           )}
         </div>
-        <Button onClick={() => setShowInviteDialog(true)}>
-          <UserPlus className="h-4 w-4 mr-2" />
-          Invite Member
-        </Button>
+        {/* Invite functionality removed */}
       </div>
 
       <Card>
@@ -100,7 +98,6 @@ export default function TeamMembersPage() {
         </CardContent>
       </Card>
 
-      <InviteMemberForm open={showInviteDialog} onOpenChange={setShowInviteDialog} />
       </div>
     </DashboardLayout>
   );
