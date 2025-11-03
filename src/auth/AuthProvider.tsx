@@ -2,8 +2,9 @@ import { useEffect, useState, useRef, useCallback, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/config/supabase';
 import { authService } from '@/services/authService';
-import type { Profile } from '@/types/domain';
+import type { Profile, UserRole } from '@/types/domain';
 import { AuthContext } from './AuthContext';
+import { RoleSelectionModal } from '@/components/organisms/RoleSelectionModal';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -14,6 +15,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showRoleModal, setShowRoleModal] = useState(false);
   const isFetchingProfileRef = useRef(false);
 
   // Fetch user profile
@@ -26,6 +28,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       isFetchingProfileRef.current = true;
       const profileData = await authService.getUserProfile(userId);
       setProfile(profileData);
+      
+      // Check if profile exists but has no role (OAuth user)
+      if (profileData && !profileData.role) {
+        setShowRoleModal(true);
+      }
     } catch (error) {
       console.error('Error fetching profile:', error);
       setProfile(null);
@@ -103,6 +110,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setProfile(null);
   };
 
+  // Handle role selection for OAuth users
+  const handleRoleSelection = async (role: UserRole) => {
+    if (!user) return;
+    
+    try {
+      await authService.updateUserRole(user.id, role);
+      // Refresh profile to get updated role
+      await fetchProfile(user.id);
+      setShowRoleModal(false);
+    } catch (error) {
+      console.error('Error updating role:', error);
+      throw error;
+    }
+  };
+
   const value = {
     user,
     session,
@@ -112,5 +134,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     refreshProfile,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+      {showRoleModal && <RoleSelectionModal onSelectRole={handleRoleSelection} />}
+    </AuthContext.Provider>
+  );
 }

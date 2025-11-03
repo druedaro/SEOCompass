@@ -188,4 +188,21 @@ export const authService = {
       throw error;
     }
   },
+
+  /**
+   * Update user role
+   */
+  async updateUserRole(userId: string, role: UserRole) {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ role })
+        .eq('user_id', userId);
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Update user role error:', error);
+      throw error;
+    }
+  },
 };
