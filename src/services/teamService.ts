@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/config/supabase';
 import type { Team, TeamMember, Invitation } from '@/types/domain';
 
 export interface CreateTeamData {
