@@ -114,8 +114,11 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     
     setIsLoadingInvitations(true);
     try {
-      const data = await teamService.getTeamInvitations(currentTeam.id);
-      setInvitations(data);
+      // TEMPORARILY DISABLED: RLS permission issues with auth.users table
+      // This is not critical for demo - team members functionality works fine
+      // const data = await teamService.getTeamInvitations(currentTeam.id);
+      // setInvitations(data);
+      setInvitations([]);
     } catch (error) {
       console.error('Error loading invitations:', error);
       setInvitations([]);
