@@ -110,14 +110,31 @@ export const teamService = {
   async getTeamMembers(teamId: string): Promise<TeamMember[]> {
     const { data, error } = await supabase
       .from('team_members')
-      .select(`
-        *,
-        profiles:user_id(*)
-      `)
+      .select('*')
       .eq('team_id', teamId)
       .order('joined_at', { ascending: true });
 
     if (error) throw error;
+    
+    // Fetch profile data separately for each member
+    if (data && data.length > 0) {
+      const membersWithProfiles = await Promise.all(
+        data.map(async (member) => {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('user_id', member.user_id)
+            .single();
+          
+          return {
+            ...member,
+            profile
+          };
+        })
+      );
+      return membersWithProfiles as TeamMember[];
+    }
+    
     return data as TeamMember[];
   },
 
