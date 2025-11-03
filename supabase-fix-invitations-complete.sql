@@ -155,7 +155,7 @@ USING (
   invited_by = auth.uid()
 );
 
--- Policy 5: Team admins and invitation creator can delete invitations
+-- Policy 5: Team owners, members, and invitation creator can delete invitations
 CREATE POLICY "Authorized users can delete invitations"
 ON invitations
 FOR DELETE
@@ -163,15 +163,14 @@ USING (
   invited_by = auth.uid()
   OR
   team_id IN (
-    SELECT team_id 
-    FROM team_members 
-    WHERE user_id = auth.uid() 
-    AND role = 'admin'
+    SELECT id
+    FROM teams
+    WHERE user_id = auth.uid()
   )
   OR
   team_id IN (
-    SELECT id
-    FROM teams
+    SELECT team_id 
+    FROM team_members 
     WHERE user_id = auth.uid()
   )
 );

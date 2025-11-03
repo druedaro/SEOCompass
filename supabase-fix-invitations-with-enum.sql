@@ -1,9 +1,58 @@
--- Simple Fix for Invitations System
+-- Fix for Invitations System with Enum Check
 -- Run this script in Supabase SQL Editor
--- This version removes ALL policies first, then recreates them
+-- This version checks and fixes the user_role enum
 
 -- ============================================
--- STEP 1: Add email column to profiles
+-- STEP 1: Check and fix user_role enum
+-- ============================================
+
+-- First, let's see what values the enum has
+DO $$
+BEGIN
+  RAISE NOTICE 'Current user_role enum values:';
+END $$;
+
+SELECT enumlabel as role_value 
+FROM pg_enum 
+WHERE enumtypid = 'user_role'::regtype
+ORDER BY enumsortorder;
+
+-- Add missing enum values if they don't exist
+DO $$
+BEGIN
+  -- Check if 'admin' exists, if not add it
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_enum 
+    WHERE enumtypid = 'user_role'::regtype 
+    AND enumlabel = 'admin'
+  ) THEN
+    ALTER TYPE user_role ADD VALUE IF NOT EXISTS 'admin';
+    RAISE NOTICE 'Added admin to user_role enum';
+  END IF;
+
+  -- Check if 'member' exists, if not add it
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_enum 
+    WHERE enumtypid = 'user_role'::regtype 
+    AND enumlabel = 'member'
+  ) THEN
+    ALTER TYPE user_role ADD VALUE IF NOT EXISTS 'member';
+    RAISE NOTICE 'Added member to user_role enum';
+  END IF;
+
+  -- Check if 'viewer' exists, if not add it
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_enum 
+    WHERE enumtypid = 'user_role'::regtype 
+    AND enumlabel = 'viewer'
+  ) THEN
+    ALTER TYPE user_role ADD VALUE IF NOT EXISTS 'viewer';
+    RAISE NOTICE 'Added viewer to user_role enum';
+  END IF;
+END $$;
+
+-- ============================================
+-- STEP 2: Add email column to profiles
 -- ============================================
 
 DO $$ 
@@ -22,14 +71,12 @@ BEGIN
 END $$;
 
 -- ============================================
--- STEP 2: Update profile creation trigger
+-- STEP 3: Update profile creation trigger
 -- ============================================
 
--- Drop existing trigger and function
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 DROP FUNCTION IF EXISTS public.handle_new_user() CASCADE;
 
--- Create improved function that includes email
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -55,7 +102,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Create trigger
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT OR UPDATE ON auth.users
   FOR EACH ROW
@@ -70,10 +116,9 @@ WHERE profiles.user_id = auth.users.id
 AND (profiles.email IS NULL OR profiles.email = '');
 
 -- ============================================
--- STEP 3: Remove ALL invitation policies
+-- STEP 4: Remove ALL invitation policies
 -- ============================================
 
--- This drops ALL policies on invitations table regardless of name
 DO $$
 DECLARE
   pol RECORD;
@@ -88,11 +133,11 @@ BEGIN
   END LOOP;
 END $$;
 
--- Enable RLS (if not already enabled)
 ALTER TABLE invitations ENABLE ROW LEVEL SECURITY;
 
 -- ============================================
--- STEP 4: Create NEW invitation policies
+-- STEP 5: Create NEW invitation policies
+-- (Using proper enum values from team_members)
 -- ============================================
 
 -- Policy 1: View team invitations
@@ -146,8 +191,8 @@ USING (
 );
 
 -- Policy 5: Delete invitations
--- Note: Team owners and invitation creators can delete
--- Also any team member can delete (simplified for now)
+-- Note: This version doesn't filter by role to avoid enum issues
+-- Team owners and invitation creators can delete
 CREATE POLICY "delete_invitations"
 ON invitations
 FOR DELETE
@@ -164,7 +209,7 @@ USING (
 );
 
 -- ============================================
--- STEP 5: Create indexes
+-- STEP 6: Create indexes
 -- ============================================
 
 CREATE INDEX IF NOT EXISTS idx_invitations_email ON invitations(email);
@@ -175,15 +220,22 @@ CREATE INDEX IF NOT EXISTS idx_profiles_email ON profiles(email);
 CREATE INDEX IF NOT EXISTS idx_profiles_user_id ON profiles(user_id);
 
 -- ============================================
--- STEP 6: Grant permissions
+-- STEP 7: Grant permissions
 -- ============================================
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON invitations TO authenticated;
 GRANT SELECT, UPDATE ON profiles TO authenticated;
 
 -- ============================================
--- STEP 7: Verify
+-- STEP 8: Verify
 -- ============================================
+
+-- Show current enum values
+SELECT 'Current user_role enum values:' as info;
+SELECT enumlabel as role_value 
+FROM pg_enum 
+WHERE enumtypid = 'user_role'::regtype
+ORDER BY enumsortorder;
 
 -- Check profiles
 SELECT 
