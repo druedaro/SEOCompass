@@ -10,6 +10,7 @@ import { Textarea } from '@/components/atoms/Textarea';
 import { Label } from '@/components/atoms/Label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
 import { useProject } from '@/hooks/useProject';
+import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 
 const projectSchema = z.object({
   name: z.string().min(1, 'Project name is required').max(100, 'Name is too long'),
@@ -91,22 +92,25 @@ export function ProjectSettingsPage() {
 
   if (!currentProject) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold">Project Not Found</h2>
-          <p className="text-muted-foreground mt-2">
-            The project you're looking for doesn't exist.
-          </p>
-          <Button onClick={() => navigate('/dashboard/projects')} className="mt-4">
-            Back to Projects
-          </Button>
+      <DashboardLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold">Project Not Found</h2>
+            <p className="text-muted-foreground mt-2">
+              The project you're looking for doesn't exist.
+            </p>
+            <Button onClick={() => navigate('/dashboard/projects')} className="mt-4">
+              Back to Projects
+            </Button>
+          </div>
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-3xl">
+    <DashboardLayout>
+      <div className="container mx-auto py-8 px-4 max-w-3xl">
       {/* Header */}
       <div className="mb-8">
         <Button
@@ -195,5 +199,6 @@ export function ProjectSettingsPage() {
         </CardContent>
       </Card>
     </div>
+    </DashboardLayout>
   );
 }

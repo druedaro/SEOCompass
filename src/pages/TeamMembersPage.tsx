@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/atoms/Avatar';
 import { Badge } from '@/components/atoms/Badge';
 import { InviteMemberForm } from '@/components/organisms/InviteMemberForm';
+import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useWorkspace } from '@/context/WorkspaceContext';
 
 export default function TeamMembersPage() {
@@ -23,14 +24,17 @@ export default function TeamMembersPage() {
 
   if (!currentTeam) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <p>No team selected</p>
-      </div>
+      <DashboardLayout>
+        <div className="container mx-auto px-4 py-8">
+          <p>No team selected</p>
+        </div>
+      </DashboardLayout>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <DashboardLayout>
+      <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold">{currentTeam.name}</h1>
@@ -97,6 +101,7 @@ export default function TeamMembersPage() {
       </Card>
 
       <InviteMemberForm open={showInviteDialog} onOpenChange={setShowInviteDialog} />
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }

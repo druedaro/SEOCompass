@@ -5,6 +5,7 @@ import { Button } from '@/components/atoms/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
 import { useProject } from '@/hooks/useProject';
 import { formatDistanceToNow } from 'date-fns';
+import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 
 export function ProjectOverviewPage() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -22,17 +23,19 @@ export function ProjectOverviewPage() {
 
   if (!currentProject) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold">Project Not Found</h2>
-          <p className="text-muted-foreground mt-2">
-            The project you're looking for doesn't exist.
-          </p>
-          <Button onClick={() => navigate('/dashboard/projects')} className="mt-4">
-            Back to Projects
-          </Button>
+      <DashboardLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold">Project Not Found</h2>
+            <p className="text-muted-foreground mt-2">
+              The project you're looking for doesn't exist.
+            </p>
+            <Button onClick={() => navigate('/dashboard/projects')} className="mt-4">
+              Back to Projects
+            </Button>
+          </div>
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
@@ -40,7 +43,8 @@ export function ProjectOverviewPage() {
   const timeAgo = formatDistanceToNow(createdDate, { addSuffix: true });
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <DashboardLayout>
+      <div className="container mx-auto py-8 px-4">
       {/* Header */}
       <div className="mb-8">
         <Button
@@ -173,5 +177,6 @@ export function ProjectOverviewPage() {
         </Card>
       </div>
     </div>
+    </DashboardLayout>
   );
 }

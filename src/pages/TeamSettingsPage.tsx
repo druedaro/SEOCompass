@@ -8,6 +8,7 @@ import { Input } from '@/components/atoms/Input';
 import { Label } from '@/components/atoms/Label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
 import { LocationAutocomplete } from '@/components/molecules/LocationAutocomplete';
+import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useWorkspace } from '@/context/WorkspaceContext';
 
 const updateTeamSchema = z.object({
@@ -74,14 +75,17 @@ export default function TeamSettingsPage() {
 
   if (!currentTeam) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <p>No team selected</p>
-      </div>
+      <DashboardLayout>
+        <div className="container mx-auto px-4 py-8">
+          <p>No team selected</p>
+        </div>
+      </DashboardLayout>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
+    <DashboardLayout>
+      <div className="container mx-auto px-4 py-8 max-w-2xl">
       <h1 className="text-3xl font-bold mb-6">Team Settings</h1>
 
       <div className="space-y-6">
@@ -153,6 +157,7 @@ export default function TeamSettingsPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }
