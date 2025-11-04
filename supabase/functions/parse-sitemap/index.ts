@@ -1,5 +1,4 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { DOMParser } from 'https://deno.land/x/deno_dom@v0.1.38/deno-dom-wasm.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -35,43 +34,40 @@ serve(async (req) => {
 
     const xmlContent = await response.text();
 
-    // Parse XML
-    const doc = new DOMParser().parseFromString(xmlContent, 'text/xml');
-
-    if (!doc) {
-      throw new Error('Failed to parse sitemap XML');
-    }
-
-    // Extract URLs from sitemap
-    const urlElements = doc.querySelectorAll('url');
+    // Parse XML using regex (DOMParser text/xml is not supported in Deno)
     const urls: SitemapUrl[] = [];
-
-    urlElements.forEach((urlElement) => {
-      const loc = urlElement.querySelector('loc')?.textContent?.trim();
-      const lastmod = urlElement.querySelector('lastmod')?.textContent?.trim();
-      const changefreq = urlElement.querySelector('changefreq')?.textContent?.trim();
-      const priority = urlElement.querySelector('priority')?.textContent?.trim();
-
-      if (loc) {
-        urls.push({
-          loc,
-          ...(lastmod && { lastmod }),
-          ...(changefreq && { changefreq }),
-          ...(priority && { priority }),
-        });
-      }
-    });
-
-    // Check for sitemap index (sitemaps containing other sitemaps)
-    const sitemapElements = doc.querySelectorAll('sitemap');
     const childSitemaps: string[] = [];
 
-    sitemapElements.forEach((sitemapElement) => {
-      const loc = sitemapElement.querySelector('loc')?.textContent?.trim();
-      if (loc) {
-        childSitemaps.push(loc);
+    // Extract URLs from <url> elements
+    const urlMatches = xmlContent.matchAll(/<url>(.*?)<\/url>/gs);
+    for (const match of urlMatches) {
+      const urlBlock = match[1];
+      
+      const locMatch = urlBlock.match(/<loc>(.*?)<\/loc>/);
+      const lastmodMatch = urlBlock.match(/<lastmod>(.*?)<\/lastmod>/);
+      const changefreqMatch = urlBlock.match(/<changefreq>(.*?)<\/changefreq>/);
+      const priorityMatch = urlBlock.match(/<priority>(.*?)<\/priority>/);
+
+      if (locMatch && locMatch[1]) {
+        urls.push({
+          loc: locMatch[1].trim(),
+          ...(lastmodMatch && lastmodMatch[1] && { lastmod: lastmodMatch[1].trim() }),
+          ...(changefreqMatch && changefreqMatch[1] && { changefreq: changefreqMatch[1].trim() }),
+          ...(priorityMatch && priorityMatch[1] && { priority: priorityMatch[1].trim() }),
+        });
       }
-    });
+    }
+
+    // Check for sitemap index (sitemaps containing other sitemaps)
+    const sitemapMatches = xmlContent.matchAll(/<sitemap>(.*?)<\/sitemap>/gs);
+    for (const match of sitemapMatches) {
+      const sitemapBlock = match[1];
+      const locMatch = sitemapBlock.match(/<loc>(.*?)<\/loc>/);
+      
+      if (locMatch && locMatch[1]) {
+        childSitemaps.push(locMatch[1].trim());
+      }
+    }
 
     return new Response(
       JSON.stringify({
