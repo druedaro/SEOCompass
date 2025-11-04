@@ -1,5 +1,5 @@
-import { supabase } from '@/lib/supabaseClient';
-import type { Team, TeamMember, Invitation } from '@/types/domain';
+import { supabase } from '@/config/supabase';
+import type { Team, TeamMember } from '@/types/domain';
 
 export interface CreateTeamData {
   name: string;
@@ -13,11 +13,6 @@ export interface UpdateTeamData {
   location?: string;
 }
 
-export interface InviteMemberData {
-  email: string;
-  role: 'admin' | 'member' | 'viewer';
-}
-
 /**
  * Team Service - Handles all team-related operations
  */
@@ -29,16 +24,17 @@ export const teamService = {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
+    // Get teams where user is owner or member
     const { data, error } = await supabase
       .from('teams')
-      .select(`
-        *,
-        team_members!inner(role)
-      `)
-      .eq('team_members.user_id', user.id)
+      .select('*')
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      console.warn('Error fetching teams:', error);
+      return [];
+    }
+
     return data as Team[];
   },
 
@@ -67,7 +63,7 @@ export const teamService = {
       .from('teams')
       .insert({
         ...teamData,
-        owner_id: user.id,
+        user_id: user.id,
       })
       .select()
       .single();
@@ -109,14 +105,34 @@ export const teamService = {
   async getTeamMembers(teamId: string): Promise<TeamMember[]> {
     const { data, error } = await supabase
       .from('team_members')
-      .select(`
-        *,
-        profiles:user_id(*)
-      `)
+      .select('*')
       .eq('team_id', teamId)
       .order('joined_at', { ascending: true });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Error fetching team members:', error);
+      throw error;
+    }
+    
+    // Fetch profile data separately for each member
+    if (data && data.length > 0) {
+      const membersWithProfiles = await Promise.all(
+        data.map(async (member) => {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('user_id, full_name, email, avatar_url')
+            .eq('user_id', member.user_id)
+            .single();
+          
+          return {
+            ...member,
+            profile: profile || undefined
+          };
+        })
+      );
+      return membersWithProfiles as TeamMember[];
+    }
+    
     return data as TeamMember[];
   },
 
@@ -126,7 +142,7 @@ export const teamService = {
   async updateMemberRole(
     teamId: string,
     userId: string,
-    role: 'admin' | 'member' | 'viewer'
+    role: 'tech_seo' | 'content_seo' | 'developer'
   ): Promise<TeamMember> {
     const { data, error } = await supabase
       .from('team_members')
@@ -149,136 +165,6 @@ export const teamService = {
       .delete()
       .eq('team_id', teamId)
       .eq('user_id', userId);
-
-    if (error) throw error;
-  },
-
-  /**
-   * Invite member to team
-   */
-  async inviteMember(teamId: string, inviteData: InviteMemberData): Promise<Invitation> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Not authenticated');
-
-    const { data, error } = await supabase
-      .from('invitations')
-      .insert({
-        team_id: teamId,
-        email: inviteData.email,
-        role: inviteData.role,
-        invited_by: user.id,
-        status: 'pending',
-        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
-  },
-
-  /**
-   * Get pending invitations for a team
-   */
-  async getTeamInvitations(teamId: string): Promise<Invitation[]> {
-    const { data, error } = await supabase
-      .from('invitations')
-      .select('*')
-      .eq('team_id', teamId)
-      .eq('status', 'pending')
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-    return data;
-  },
-
-  /**
-   * Get user's pending invitations
-   */
-  async getUserInvitations(): Promise<Invitation[]> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Not authenticated');
-
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('email')
-      .eq('id', user.id)
-      .single();
-
-    if (!profile) throw new Error('Profile not found');
-
-    const { data, error } = await supabase
-      .from('invitations')
-      .select(`
-        *,
-        teams:team_id(name)
-      `)
-      .eq('email', profile.email)
-      .eq('status', 'pending')
-      .gt('expires_at', new Date().toISOString())
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-    return data as Invitation[];
-  },
-
-  /**
-   * Accept invitation
-   */
-  async acceptInvitation(invitationId: string): Promise<void> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Not authenticated');
-
-    // Get invitation details
-    const { data: invitation, error: inviteError } = await supabase
-      .from('invitations')
-      .select('*')
-      .eq('id', invitationId)
-      .single();
-
-    if (inviteError) throw inviteError;
-    if (!invitation) throw new Error('Invitation not found');
-
-    // Add user to team
-    const { error: memberError } = await supabase
-      .from('team_members')
-      .insert({
-        team_id: invitation.team_id,
-        user_id: user.id,
-        role: invitation.role,
-      });
-
-    if (memberError) throw memberError;
-
-    // Update invitation status
-    const { error: updateError } = await supabase
-      .from('invitations')
-      .update({ status: 'accepted' })
-      .eq('id', invitationId);
-
-    if (updateError) throw updateError;
-  },
-
-  /**
-   * Decline invitation
-   */
-  async declineInvitation(invitationId: string): Promise<void> {
-    const { error } = await supabase
-      .from('invitations')
-      .update({ status: 'declined' })
-      .eq('id', invitationId);
-
-    if (error) throw error;
-  },
-
-  /**
-   * Cancel invitation (for team admins)
-   */
-  async cancelInvitation(invitationId: string): Promise<void> {
-    const { error } = await supabase
-      .from('invitations')
-      .delete()
-      .eq('id', invitationId);
 
     if (error) throw error;
   },

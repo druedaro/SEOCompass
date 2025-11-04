@@ -9,6 +9,9 @@ export interface Profile {
   id: string;
   user_id: string;
   role: UserRole | null; // Allow null for OAuth users before role selection
+  full_name?: string;
+  email?: string;
+  avatar_url?: string;
   created_at: string;
   updated_at: string;
 }
@@ -17,6 +20,7 @@ export interface Profile {
 export interface Team {
   id: string;
   name: string;
+  description?: string;
   location: string;
   user_id: string;
   created_at: string;
@@ -28,17 +32,7 @@ export interface TeamMember {
   user_id: string;
   role: UserRole;
   joined_at: string;
-}
-
-export type InvitationStatus = 'pending' | 'accepted' | 'rejected';
-
-export interface Invitation {
-  id: string;
-  team_id: string;
-  email: string;
-  token: string;
-  status: InvitationStatus;
-  created_at: string;
+  profile?: Profile; // Optional profile data
 }
 
 // --- Projects ---

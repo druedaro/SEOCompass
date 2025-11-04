@@ -1,15 +1,12 @@
-import { useState } from 'react';
-import { UserPlus } from 'lucide-react';
-import { Button } from '@/components/atoms/Button';
+import { MapPin } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
-import { Avatar, AvatarFallback } from '@/components/atoms/Avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/atoms/Avatar';
 import { Badge } from '@/components/atoms/Badge';
-import { InviteMemberForm } from '@/components/organisms/InviteMemberForm';
+import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useWorkspace } from '@/context/WorkspaceContext';
 
 export default function TeamMembersPage() {
   const { currentTeam, teamMembers, isLoadingMembers } = useWorkspace();
-  const [showInviteDialog, setShowInviteDialog] = useState(false);
 
   const getInitials = (name?: string) => {
     if (!name) return '?';
@@ -23,23 +20,34 @@ export default function TeamMembersPage() {
 
   if (!currentTeam) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <p>No team selected</p>
-      </div>
+      <DashboardLayout>
+        <div className="container mx-auto px-4 py-8">
+          <p>No team selected</p>
+        </div>
+      </DashboardLayout>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <DashboardLayout>
+      <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold">{currentTeam.name}</h1>
           <p className="text-muted-foreground">Manage team members and roles</p>
+          {currentTeam.description && (
+            <p className="mt-2 text-sm text-muted-foreground">
+              {currentTeam.description}
+            </p>
+          )}
+          {currentTeam.location && (
+            <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
+              <MapPin className="h-4 w-4" />
+              <span>{currentTeam.location}</span>
+            </div>
+          )}
         </div>
-        <Button onClick={() => setShowInviteDialog(true)}>
-          <UserPlus className="h-4 w-4 mr-2" />
-          Invite Member
-        </Button>
+        {/* Invite functionality removed */}
       </div>
 
       <Card>
@@ -56,31 +64,45 @@ export default function TeamMembersPage() {
             <p className="text-muted-foreground">No members yet</p>
           ) : (
             <div className="space-y-4">
-              {teamMembers.map((member) => (
-                <div
-                  key={member.user_id}
-                  className="flex items-center justify-between p-4 border rounded-lg"
-                >
-                  <div className="flex items-center gap-3">
-                    <Avatar>
-                      <AvatarFallback>
-                        {getInitials('User')}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-medium">Team Member</p>
-                      <p className="text-sm text-muted-foreground">{member.user_id}</p>
+              {teamMembers.map((member) => {
+                const userName = member.profile?.full_name || member.profile?.email || member.user_id;
+                const userAvatar = member.profile?.avatar_url;
+                const userEmail = member.profile?.email;
+                
+                return (
+                  <div
+                    key={member.user_id}
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Avatar>
+                        {userAvatar && <AvatarImage src={userAvatar} alt={userName} />}
+                        <AvatarFallback>
+                          {getInitials(userName)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-medium">{userName}</p>
+                        {member.profile?.full_name && userEmail && (
+                          <p className="text-xs text-muted-foreground">{userEmail}</p>
+                        )}
+                        <p className="text-sm text-muted-foreground">
+                          Joined {new Date(member.joined_at).toLocaleDateString()}
+                        </p>
+                      </div>
                     </div>
+                    <Badge variant={member.role === 'tech_seo' ? 'default' : 'secondary'}>
+                      {member.role.replace('_', ' ').toUpperCase()}
+                    </Badge>
                   </div>
-                  <Badge>{member.role}</Badge>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </CardContent>
       </Card>
 
-      <InviteMemberForm open={showInviteDialog} onOpenChange={setShowInviteDialog} />
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }
