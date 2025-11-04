@@ -10,6 +10,7 @@ export interface Profile {
   user_id: string;
   role: UserRole | null; // Allow null for OAuth users before role selection
   full_name?: string;
+  email?: string;
   avatar_url?: string;
   created_at: string;
   updated_at: string;

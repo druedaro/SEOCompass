@@ -13,12 +13,12 @@ import {
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { Label } from '@/components/atoms/Label';
+import { LocationAutocomplete } from '@/components/molecules/LocationAutocomplete';
 import { useWorkspace } from '@/context/WorkspaceContext';
 
 const createTeamSchema = z.object({
   name: z.string().min(3, 'Team name must be at least 3 characters').max(50),
   description: z.string().max(200).optional(),
-  location: z.string().max(100).optional(),
 });
 
 type CreateTeamFormData = z.infer<typeof createTeamSchema>;
@@ -31,6 +31,7 @@ interface CreateTeamDialogProps {
 export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) {
   const { createTeam } = useWorkspace();
   const [isLoading, setIsLoading] = useState(false);
+  const [location, setLocation] = useState('');
 
   const {
     register,
@@ -44,8 +45,9 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
   const onSubmit = async (data: CreateTeamFormData) => {
     setIsLoading(true);
     try {
-      await createTeam(data);
+      await createTeam({ ...data, location });
       reset();
+      setLocation('');
       onOpenChange(false);
     } catch (error) {
       console.error('Error creating team:', error);
@@ -91,18 +93,13 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="location">Location</Label>
-            <Input
-              id="location"
-              placeholder="San Francisco, CA"
-              {...register('location')}
-              disabled={isLoading}
-            />
-            {errors.location && (
-              <p className="text-sm text-destructive">{errors.location.message}</p>
-            )}
-          </div>
+          <LocationAutocomplete
+            value={location}
+            onChange={setLocation}
+            label="Location"
+            placeholder="San Francisco, CA"
+            disabled={isLoading}
+          />
 
           <DialogFooter>
             <Button

@@ -109,7 +109,10 @@ export const teamService = {
       .eq('team_id', teamId)
       .order('joined_at', { ascending: true });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Error fetching team members:', error);
+      throw error;
+    }
     
     // Fetch profile data separately for each member
     if (data && data.length > 0) {
@@ -117,13 +120,13 @@ export const teamService = {
         data.map(async (member) => {
           const { data: profile } = await supabase
             .from('profiles')
-            .select('*')
+            .select('user_id, full_name, email, avatar_url')
             .eq('user_id', member.user_id)
             .single();
           
           return {
             ...member,
-            profile
+            profile: profile || undefined
           };
         })
       );

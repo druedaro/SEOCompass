@@ -65,8 +65,9 @@ export default function TeamMembersPage() {
           ) : (
             <div className="space-y-4">
               {teamMembers.map((member) => {
-                const userName = member.profile?.full_name || 'Team Member';
+                const userName = member.profile?.full_name || member.profile?.email || member.user_id;
                 const userAvatar = member.profile?.avatar_url;
+                const userEmail = member.profile?.email;
                 
                 return (
                   <div
@@ -82,6 +83,9 @@ export default function TeamMembersPage() {
                       </Avatar>
                       <div>
                         <p className="font-medium">{userName}</p>
+                        {member.profile?.full_name && userEmail && (
+                          <p className="text-xs text-muted-foreground">{userEmail}</p>
+                        )}
                         <p className="text-sm text-muted-foreground">
                           Joined {new Date(member.joined_at).toLocaleDateString()}
                         </p>
