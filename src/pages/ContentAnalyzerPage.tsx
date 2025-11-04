@@ -3,7 +3,7 @@ import { UrlInputForm } from '@/components/organisms/UrlInputForm';
 import { AuditResultsTable } from '@/components/organisms/AuditResultsTable';
 import { scrapeUrl } from '@/services/contentScrapingService';
 import { parseHTMLContent } from '@/utils/htmlParser';
-import { analyzeKeywords, analyzeKeyword } from '@/utils/keywordAnalyzer';
+import { analyzeKeywords } from '@/utils/keywordAnalyzer';
 import {
   validateTitle,
   validateDescription,
@@ -13,10 +13,12 @@ import {
   validateImages,
   validateContentLength,
   validateCanonical,
+  validateLinks,
+  validateHreflang,
+  validateRobotsMeta,
 } from '@/utils/validators';
 import {
   calculateSEOScore,
-  calculateKeywordOptimizationScore,
   type SEOScoreBreakdown,
 } from '@/utils/scoreCalculator';
 import {
@@ -32,13 +34,12 @@ export default function ContentAnalyzerPage() {
   const [scoreBreakdown, setScoreBreakdown] = useState<SEOScoreBreakdown | null>(null);
   const { toast } = useToast();
 
-  const analyzeSinglePage = async (data: { url: string; focusKeyword?: string }) => {
+  const analyzePage = async (data: { url: string }) => {
     setIsAnalyzing(true);
     setRecommendations([]);
     setScoreBreakdown(null);
 
     try {
-      // Scrape the page
       toast({
         title: 'Scraping page...',
         description: 'Fetching content from the URL',
@@ -46,6 +47,10 @@ export default function ContentAnalyzerPage() {
 
       const scrapedContent = await scrapeUrl(data.url);
       const parsedContent = parseHTMLContent(scrapedContent.html, data.url);
+
+      // Check for critical errors (404, etc.)
+      const has404Error = scrapedContent.statusCode === 404;
+      const hasServerError = scrapedContent.statusCode >= 500;
 
       // Extract headings
       const h1s = parsedContent.headings
@@ -65,7 +70,18 @@ export default function ContentAnalyzerPage() {
         data.url
       );
 
-      // Analyze keywords (for potential future use)
+      // Count and validate links
+      const internalLinks = parsedContent.links.filter((link) => link.isInternal).length;
+      const externalLinks = parsedContent.links.filter((link) => link.isExternal).length;
+      const linksValidation = validateLinks({ internal: internalLinks, external: externalLinks });
+
+      // Validate hreflang tags
+      const hreflangValidation = validateHreflang(parsedContent.hreflangTags);
+
+      // Validate robots meta tag
+      const robotsValidation = validateRobotsMeta(parsedContent.metadata.robots);
+
+      // Analyze keywords
       analyzeKeywords(
         {
           title: parsedContent.metadata.title,
@@ -73,34 +89,10 @@ export default function ContentAnalyzerPage() {
           h1s,
           bodyText: parsedContent.bodyText,
           url: data.url,
-        },
-        {
-          focusKeyword: data.focusKeyword,
         }
       );
 
-      // Count links
-      const internalLinks = parsedContent.links.filter((link) => link.isInternal).length;
-      const externalLinks = parsedContent.links.filter((link) => link.isExternal).length;
-
-      // Calculate keyword optimization score
-      let keywordOptimization = 70; // Default
-      let focusKeywordMetrics = undefined;
-
-      if (data.focusKeyword) {
-        focusKeywordMetrics = analyzeKeyword(
-          data.focusKeyword,
-          {
-            title: parsedContent.metadata.title,
-            description: parsedContent.metadata.description,
-            h1s,
-            bodyText: parsedContent.bodyText,
-            url: data.url,
-          },
-          parsedContent.wordCount
-        );
-        keywordOptimization = calculateKeywordOptimizationScore(focusKeywordMetrics);
-      }
+      const keywordOptimization = 70; // Default score
 
       // Calculate overall score
       const scoreBreakdown = calculateSEOScore({
@@ -112,6 +104,9 @@ export default function ContentAnalyzerPage() {
         imagesValidation,
         contentLengthValidation,
         canonicalValidation,
+        linksValidation,
+        hreflangValidation,
+        robotsValidation,
         hasStructuredData: parsedContent.hasStructuredData,
         keywordOptimization,
         internalLinks,
@@ -132,10 +127,13 @@ export default function ContentAnalyzerPage() {
         images: parsedContent.images,
         contentLengthValidation,
         wordCount: parsedContent.wordCount,
+        canonicalValidation,
+        robotsValidation,
         hasStructuredData: parsedContent.hasStructuredData,
         internalLinks,
         externalLinks,
-        focusKeyword: focusKeywordMetrics,
+        has404Error,
+        hasServerError,
       });
 
       setScoreBreakdown(scoreBreakdown);
@@ -157,14 +155,6 @@ export default function ContentAnalyzerPage() {
     }
   };
 
-  const analyzeSitemap = async (data: { sitemapUrl: string; maxPages: number }) => {
-    toast({
-      title: 'Sitemap analysis',
-      description: 'This feature will be available soon',
-    });
-    console.log('Sitemap analysis:', data);
-  };
-
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="max-w-6xl mx-auto space-y-8">
@@ -177,16 +167,14 @@ export default function ContentAnalyzerPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Analyze Page or Sitemap</CardTitle>
+            <CardTitle>Analyze Page</CardTitle>
             <CardDescription>
-              Enter a URL to analyze a single page, or provide a sitemap URL to analyze multiple
-              pages
+              Enter a URL to get a comprehensive SEO analysis with actionable recommendations
             </CardDescription>
           </CardHeader>
           <CardContent>
             <UrlInputForm
-              onSubmitSinglePage={analyzeSinglePage}
-              onSubmitSitemap={analyzeSitemap}
+              onSubmit={analyzePage}
               isLoading={isAnalyzing}
             />
           </CardContent>

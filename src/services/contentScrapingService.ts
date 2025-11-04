@@ -14,7 +14,7 @@ export interface ScrapeOptions {
 }
 
 /**
- * Scrape a URL using the ScrapingBee edge function proxy
+ * Scrape a URL using the scrape-serp edge function
  * This protects the API key on the server side
  */
 export async function scrapeUrl(
@@ -22,12 +22,11 @@ export async function scrapeUrl(
   options: ScrapeOptions = {}
 ): Promise<ScrapedContent> {
   try {
-    const { data, error } = await supabase.functions.invoke('scrapingbee-proxy', {
+    const { data, error } = await supabase.functions.invoke('scrape-serp', {
       body: {
         url,
+        return_html: true, // Request full HTML instead of extracted data
         render_js: options.renderJs ?? false,
-        premium_proxy: options.premiumProxy ?? false,
-        country_code: options.countryCode,
       },
     });
 

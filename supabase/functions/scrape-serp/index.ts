@@ -22,7 +22,7 @@ serve(async (req) => {
   }
 
   try {
-    const { url, extract_rules } = await req.json();
+    const { url, extract_rules, return_html = false } = await req.json();
 
     if (!url) {
       throw new Error('URL is required');
@@ -49,6 +49,23 @@ serve(async (req) => {
 
     if (!response.ok) {
       throw new Error(`ScrapingBee API error: ${response.status} ${response.statusText}`);
+    }
+
+    // If return_html is true, return raw HTML
+    if (return_html) {
+      const html = await response.text();
+      const finalUrl = response.headers.get('spb-final-url') || url;
+      const statusCode = parseInt(response.headers.get('spb-status-code') || '200');
+      
+      return new Response(JSON.stringify({
+        html,
+        final_url: finalUrl,
+        status_code: statusCode,
+        headers: Object.fromEntries(response.headers.entries()),
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      });
     }
 
     const data = await response.json() as ScrapingBeeResponse;

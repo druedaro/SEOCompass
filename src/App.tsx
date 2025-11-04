@@ -13,6 +13,7 @@ import TeamSettingsPage from '@/pages/TeamSettingsPage';
 import { ProjectsDashboardPage } from '@/pages/ProjectsDashboardPage';
 import { ProjectOverviewPage } from '@/pages/ProjectOverviewPage';
 import { ProjectSettingsPage } from '@/pages/ProjectSettingsPage';
+import ContentAnalyzerPage from '@/pages/ContentAnalyzerPage';
 import { AUTH_PATHS } from '@/routes/paths';
 
 function App() {
@@ -91,6 +92,15 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <ProjectSettingsPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/dashboard/projects/:projectId/content"
+                element={
+                  <ProtectedRoute>
+                    <ContentAnalyzerPage />
                   </ProtectedRoute>
                 }
               />

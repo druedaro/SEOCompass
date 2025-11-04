@@ -21,8 +21,11 @@ export interface ScoreCalculationInput {
   imagesValidation: ValidationResult;
   contentLengthValidation: ValidationResult;
   canonicalValidation?: ValidationResult;
+  linksValidation?: ValidationResult;
+  hreflangValidation?: ValidationResult;
+  robotsValidation?: ValidationResult;
   hasStructuredData?: boolean;
-  keywordOptimization?: number; // 0-100
+  keywordOptimization?: number;
   internalLinks?: number;
   externalLinks?: number;
 }
@@ -31,18 +34,21 @@ export interface ScoreCalculationInput {
  * Weight constants for different SEO factors
  */
 const WEIGHTS = {
-  TITLE: 0.15,
-  DESCRIPTION: 0.1,
+  TITLE: 0.14,
+  DESCRIPTION: 0.10,
   URL: 0.05,
-  H1: 0.1,
+  H1: 0.10,
   HEADING_HIERARCHY: 0.05,
-  IMAGES: 0.08,
+  IMAGES: 0.09,
   CONTENT_LENGTH: 0.12,
   CANONICAL: 0.05,
   STRUCTURED_DATA: 0.05,
-  KEYWORD_OPTIMIZATION: 0.15,
+  KEYWORD_OPTIMIZATION: 0.13,
   INTERNAL_LINKS: 0.05,
-  EXTERNAL_LINKS: 0.05,
+  EXTERNAL_LINKS: 0.04,
+  LINKS: 0.05,
+  HREFLANG: 0.02,
+  ROBOTS: 0.01,
 };
 
 /**
@@ -131,6 +137,27 @@ export function calculateSEOScore(input: ScoreCalculationInput): SEOScoreBreakdo
   const externalLinksScore = Math.min(100, (input.externalLinks ?? 0) * 20);
   totalScore += externalLinksScore * WEIGHTS.EXTERNAL_LINKS;
 
+  // Links validation
+  if (input.linksValidation) {
+    totalScore += input.linksValidation.score * WEIGHTS.LINKS;
+  } else {
+    totalScore += 70 * WEIGHTS.LINKS;
+  }
+
+  // Hreflang validation
+  if (input.hreflangValidation) {
+    totalScore += input.hreflangValidation.score * WEIGHTS.HREFLANG;
+  } else {
+    totalScore += 80 * WEIGHTS.HREFLANG;
+  }
+
+  // Robots meta validation
+  if (input.robotsValidation) {
+    totalScore += input.robotsValidation.score * WEIGHTS.ROBOTS;
+  } else {
+    totalScore += 100 * WEIGHTS.ROBOTS;
+  }
+
   // Calculate category scores
   const categoryScores = calculateCategoryScores(input);
 
@@ -143,134 +170,4 @@ export function calculateSEOScore(input: ScoreCalculationInput): SEOScoreBreakdo
   };
 }
 
-/**
- * Get score grade (A, B, C, D, F)
- */
-export function getScoreGrade(score: number): {
-  grade: string;
-  label: string;
-  color: string;
-} {
-  if (score >= 90) {
-    return { grade: 'A', label: 'Excellent', color: 'green' };
-  } else if (score >= 80) {
-    return { grade: 'B', label: 'Good', color: 'blue' };
-  } else if (score >= 70) {
-    return { grade: 'C', label: 'Fair', color: 'yellow' };
-  } else if (score >= 60) {
-    return { grade: 'D', label: 'Poor', color: 'orange' };
-  } else {
-    return { grade: 'F', label: 'Critical', color: 'red' };
-  }
-}
 
-/**
- * Get priority level based on score
- */
-export function getIssuePriority(score: number): 'low' | 'medium' | 'high' | 'critical' {
-  if (score >= 80) return 'low';
-  if (score >= 60) return 'medium';
-  if (score >= 40) return 'high';
-  return 'critical';
-}
-
-/**
- * Count total issues and warnings
- */
-export function countIssues(input: ScoreCalculationInput): {
-  critical: number;
-  warnings: number;
-  total: number;
-} {
-  let critical = 0;
-  let warnings = 0;
-
-  const validations = [
-    input.titleValidation,
-    input.descriptionValidation,
-    input.urlValidation,
-    input.h1Validation,
-    input.headingHierarchyValidation,
-    input.imagesValidation,
-    input.contentLengthValidation,
-  ];
-
-  if (input.canonicalValidation) {
-    validations.push(input.canonicalValidation);
-  }
-
-  validations.forEach((validation) => {
-    critical += validation.issues.length;
-    warnings += validation.warnings.length;
-  });
-
-  return {
-    critical,
-    warnings,
-    total: critical + warnings,
-  };
-}
-
-/**
- * Get improvement suggestions based on score breakdown
- */
-export function getImprovementSuggestions(
-  scoreBreakdown: SEOScoreBreakdown
-): string[] {
-  const suggestions: string[] = [];
-
-  if (scoreBreakdown.meta < 70) {
-    suggestions.push('Focus on improving title and meta description');
-  }
-
-  if (scoreBreakdown.content < 70) {
-    suggestions.push('Enhance content quality, headings, and keyword usage');
-  }
-
-  if (scoreBreakdown.technical < 70) {
-    suggestions.push('Add structured data and optimize technical SEO');
-  }
-
-  if (scoreBreakdown.onPage < 70) {
-    suggestions.push('Improve internal and external linking strategy');
-  }
-
-  if (scoreBreakdown.overall < 60) {
-    suggestions.push('This page needs significant SEO improvements');
-  }
-
-  return suggestions;
-}
-
-/**
- * Calculate keyword optimization score
- */
-export function calculateKeywordOptimizationScore(
-  focusKeyword: {
-    inTitle: boolean;
-    inDescription: boolean;
-    inH1: boolean;
-    inUrl: boolean;
-    density: number;
-  } | undefined
-): number {
-  if (!focusKeyword) return 50; // Neutral score if no focus keyword
-
-  let score = 0;
-
-  if (focusKeyword.inTitle) score += 30;
-  if (focusKeyword.inDescription) score += 20;
-  if (focusKeyword.inH1) score += 20;
-  if (focusKeyword.inUrl) score += 15;
-
-  // Keyword density (optimal range: 1-2.5%)
-  if (focusKeyword.density >= 1 && focusKeyword.density <= 2.5) {
-    score += 15;
-  } else if (focusKeyword.density < 1) {
-    score += Math.round(focusKeyword.density * 15); // Partial score
-  } else if (focusKeyword.density > 3.5) {
-    score -= 10; // Penalty for keyword stuffing
-  }
-
-  return Math.max(0, Math.min(100, score));
-}

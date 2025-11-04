@@ -1,121 +1,78 @@
 /**
- * SEO Validators
- * Validate titles, meta descriptions, URLs, headings, and other SEO elements
+ * SEO Validators - Compact
  */
 
 export interface ValidationResult {
   isValid: boolean;
   issues: string[];
   warnings: string[];
-  score: number; // 0-100
+  score: number;
 }
 
-// SEO Best Practice Limits
 const SEO_LIMITS = {
   TITLE_MIN: 30,
   TITLE_MAX: 60,
-  TITLE_OPTIMAL_MIN: 50,
-  TITLE_OPTIMAL_MAX: 60,
-  DESCRIPTION_MIN: 120,
-  DESCRIPTION_MAX: 160,
-  DESCRIPTION_OPTIMAL_MIN: 150,
-  DESCRIPTION_OPTIMAL_MAX: 160,
+  DESC_MIN: 120,
+  DESC_MAX: 160,
   URL_MAX: 100,
   H1_MAX: 70,
   WORD_COUNT_MIN: 300,
-  KEYWORD_DENSITY_MAX: 3.5,
   IMAGE_ALT_MAX: 125,
 };
 
-/**
- * Validate title tag
- */
 export function validateTitle(title: string | null | undefined): ValidationResult {
   const issues: string[] = [];
   const warnings: string[] = [];
   let score = 100;
 
-  if (!title || title.trim().length === 0) {
-    issues.push('Title tag is missing');
-    return { isValid: false, issues, warnings, score: 0 };
+  if (!title?.trim()) {
+    return { isValid: false, issues: ['Title tag is missing'], warnings, score: 0 };
   }
 
-  const length = title.length;
-
-  // Check length
-  if (length < SEO_LIMITS.TITLE_MIN) {
-    issues.push(`Title is too short (${length} chars). Minimum: ${SEO_LIMITS.TITLE_MIN}`);
+  const len = title.length;
+  if (len < SEO_LIMITS.TITLE_MIN) {
+    issues.push(`Title too short (${len} chars, min: ${SEO_LIMITS.TITLE_MIN})`);
     score -= 30;
-  } else if (length > SEO_LIMITS.TITLE_MAX) {
-    issues.push(`Title is too long (${length} chars). Maximum: ${SEO_LIMITS.TITLE_MAX}`);
+  } else if (len > SEO_LIMITS.TITLE_MAX) {
+    issues.push(`Title too long (${len} chars, max: ${SEO_LIMITS.TITLE_MAX})`);
     score -= 20;
-  } else if (length < SEO_LIMITS.TITLE_OPTIMAL_MIN) {
-    warnings.push(`Title could be longer for better SEO (${length} chars). Optimal: ${SEO_LIMITS.TITLE_OPTIMAL_MIN}-${SEO_LIMITS.TITLE_OPTIMAL_MAX}`);
+  } else if (len < 50) {
+    warnings.push(`Title could be longer (${len} chars, optimal: 50-60)`);
     score -= 10;
   }
 
-  // Check for common issues
-  if (title.toLowerCase() === 'untitled' || title.toLowerCase() === 'home') {
-    warnings.push('Title appears to be generic or default');
+  if (/^(untitled|home)$/i.test(title)) {
+    warnings.push('Title appears generic');
     score -= 15;
   }
 
-  if (title.split('|').length > 2 || title.split('-').length > 2) {
-    warnings.push('Title contains multiple separators, may look cluttered');
-    score -= 5;
-  }
-
-  return {
-    isValid: issues.length === 0,
-    issues,
-    warnings,
-    score: Math.max(0, score),
-  };
+  return { isValid: issues.length === 0, issues, warnings, score: Math.max(0, score) };
 }
 
-/**
- * Validate meta description
- */
 export function validateDescription(description: string | null | undefined): ValidationResult {
   const issues: string[] = [];
   const warnings: string[] = [];
   let score = 100;
 
-  if (!description || description.trim().length === 0) {
-    issues.push('Meta description is missing');
-    return { isValid: false, issues, warnings, score: 0 };
+  if (!description?.trim()) {
+    return { isValid: false, issues: ['Meta description is missing'], warnings, score: 0 };
   }
 
-  const length = description.length;
-
-  // Check length
-  if (length < SEO_LIMITS.DESCRIPTION_MIN) {
-    issues.push(`Description is too short (${length} chars). Minimum: ${SEO_LIMITS.DESCRIPTION_MIN}`);
+  const len = description.length;
+  if (len < SEO_LIMITS.DESC_MIN) {
+    issues.push(`Description too short (${len} chars, min: ${SEO_LIMITS.DESC_MIN})`);
     score -= 30;
-  } else if (length > SEO_LIMITS.DESCRIPTION_MAX) {
-    issues.push(`Description is too long (${length} chars). Maximum: ${SEO_LIMITS.DESCRIPTION_MAX}`);
+  } else if (len > SEO_LIMITS.DESC_MAX) {
+    issues.push(`Description too long (${len} chars, max: ${SEO_LIMITS.DESC_MAX})`);
     score -= 20;
-  } else if (length < SEO_LIMITS.DESCRIPTION_OPTIMAL_MIN) {
-    warnings.push(`Description could be longer (${length} chars). Optimal: ${SEO_LIMITS.DESCRIPTION_OPTIMAL_MIN}-${SEO_LIMITS.DESCRIPTION_OPTIMAL_MAX}`);
+  } else if (len < 150) {
+    warnings.push(`Description could be longer (${len} chars, optimal: 150-160)`);
     score -= 10;
   }
 
-  // Check for duplicate content with title
-  if (description === description) { // Placeholder check
-    // Could add logic to compare with title
-  }
-
-  return {
-    isValid: issues.length === 0,
-    issues,
-    warnings,
-    score: Math.max(0, score),
-  };
+  return { isValid: issues.length === 0, issues, warnings, score: Math.max(0, score) };
 }
 
-/**
- * Validate URL structure
- */
 export function validateUrl(url: string): ValidationResult {
   const issues: string[] = [];
   const warnings: string[] = [];
@@ -125,144 +82,81 @@ export function validateUrl(url: string): ValidationResult {
     const urlObj = new URL(url);
     const path = urlObj.pathname;
 
-    // Check URL length
     if (url.length > SEO_LIMITS.URL_MAX) {
-      warnings.push(`URL is long (${url.length} chars). Keep it under ${SEO_LIMITS.URL_MAX}`);
+      warnings.push(`URL is long (${url.length} chars, keep under ${SEO_LIMITS.URL_MAX})`);
       score -= 10;
     }
-
-    // Check for query parameters
     if (urlObj.search) {
-      warnings.push('URL contains query parameters, consider using clean URLs');
+      warnings.push('URL contains query parameters');
       score -= 5;
     }
-
-    // Check for underscores (should use hyphens)
     if (path.includes('_')) {
-      warnings.push('URL contains underscores, consider using hyphens instead');
+      warnings.push('URL contains underscores, use hyphens');
       score -= 10;
     }
-
-    // Check for uppercase letters
     if (path !== path.toLowerCase()) {
-      warnings.push('URL contains uppercase letters, use lowercase for consistency');
+      warnings.push('URL contains uppercase, use lowercase');
       score -= 10;
     }
-
-    // Check for special characters
     if (/[^a-z0-9\-\/]/.test(path.toLowerCase())) {
       warnings.push('URL contains special characters');
       score -= 10;
     }
-
-    // Check for meaningful structure
-    const segments = path.split('/').filter(Boolean);
-    if (segments.length === 0) {
-      warnings.push('URL has no path segments (homepage)');
-    }
-
-    // Check for stop words in URL
-    const stopWords = ['and', 'or', 'but', 'the', 'a', 'an'];
-    const hasStopWords = segments.some((seg) =>
-      stopWords.some((word) => seg.toLowerCase().includes(word))
-    );
-    if (hasStopWords) {
-      warnings.push('URL contains stop words, consider removing them');
-      score -= 5;
-    }
   } catch (error) {
-    issues.push('Invalid URL format');
-    return { isValid: false, issues, warnings, score: 0 };
+    return { isValid: false, issues: ['Invalid URL format'], warnings, score: 0 };
   }
 
-  return {
-    isValid: issues.length === 0,
-    issues,
-    warnings,
-    score: Math.max(0, score),
-  };
+  return { isValid: issues.length === 0, issues, warnings, score: Math.max(0, score) };
 }
 
-/**
- * Validate H1 heading
- */
 export function validateH1(h1s: string[]): ValidationResult {
   const issues: string[] = [];
   const warnings: string[] = [];
   let score = 100;
 
   if (h1s.length === 0) {
-    issues.push('No H1 heading found on page');
-    return { isValid: false, issues, warnings, score: 0 };
+    return { isValid: false, issues: ['No H1 heading found'], warnings, score: 0 };
   }
-
   if (h1s.length > 1) {
-    issues.push(`Multiple H1 headings found (${h1s.length}). Use only one H1 per page`);
+    issues.push(`Multiple H1 headings (${h1s.length}), use only one`);
     score -= 40;
   }
 
-  const h1 = h1s[0];
-  const length = h1.length;
-
-  if (length > SEO_LIMITS.H1_MAX) {
-    warnings.push(`H1 is too long (${length} chars). Keep it under ${SEO_LIMITS.H1_MAX}`);
+  const len = h1s[0].length;
+  if (len > SEO_LIMITS.H1_MAX) {
+    warnings.push(`H1 too long (${len} chars, max: ${SEO_LIMITS.H1_MAX})`);
     score -= 15;
   }
-
-  if (length < 10) {
-    warnings.push('H1 is very short, consider making it more descriptive');
+  if (len < 10) {
+    warnings.push('H1 very short, make it more descriptive');
     score -= 10;
   }
 
-  return {
-    isValid: issues.length === 0,
-    issues,
-    warnings,
-    score: Math.max(0, score),
-  };
+  return { isValid: issues.length === 0, issues, warnings, score: Math.max(0, score) };
 }
 
-/**
- * Validate heading hierarchy (H1 -> H2 -> H3, etc.)
- */
-export function validateHeadingHierarchy(headings: Array<{ level: number; text: string }>): ValidationResult {
+export function validateHeadingHierarchy(headings: Array<{ level: number }>): ValidationResult {
   const issues: string[] = [];
   const warnings: string[] = [];
   let score = 100;
 
   if (headings.length === 0) {
-    issues.push('No headings found on page');
-    return { isValid: false, issues, warnings, score: 0 };
+    return { isValid: false, issues: ['No headings found'], warnings, score: 0 };
   }
 
-  let previousLevel = 0;
-
-  headings.forEach((heading, index) => {
-    const { level } = heading;
-
-    // Check for skipped levels
-    if (level > previousLevel + 1 && index > 0) {
-      warnings.push(`Heading hierarchy skips from H${previousLevel} to H${level}`);
+  let prevLevel = 0;
+  headings.forEach((h, i) => {
+    if (h.level > prevLevel + 1 && i > 0) {
+      warnings.push(`Heading hierarchy skips from H${prevLevel} to H${h.level}`);
       score -= 10;
     }
-
-    previousLevel = level;
+    prevLevel = h.level;
   });
 
-  return {
-    isValid: issues.length === 0,
-    issues,
-    warnings,
-    score: Math.max(0, score),
-  };
+  return { isValid: issues.length === 0, issues, warnings, score: Math.max(0, score) };
 }
 
-/**
- * Validate images for SEO
- */
-export function validateImages(
-  images: Array<{ src: string; alt: string | null }>
-): ValidationResult {
+export function validateImages(images: Array<{ src: string; alt: string | null }>): ValidationResult {
   const issues: string[] = [];
   const warnings: string[] = [];
   let score = 100;
@@ -271,62 +165,40 @@ export function validateImages(
     return { isValid: true, issues, warnings, score: 100 };
   }
 
-  const imagesWithoutAlt = images.filter((img) => !img.alt || img.alt.trim() === '');
-
-  if (imagesWithoutAlt.length > 0) {
-    issues.push(`${imagesWithoutAlt.length} images missing alt text`);
-    score -= Math.min(50, imagesWithoutAlt.length * 10);
+  const noAlt = images.filter((img) => !img.alt?.trim());
+  if (noAlt.length > 0) {
+    issues.push(`${noAlt.length} images missing alt text`);
+    score -= Math.min(50, noAlt.length * 10);
   }
 
-  // Check alt text length
   images.forEach((img) => {
     if (img.alt && img.alt.length > SEO_LIMITS.IMAGE_ALT_MAX) {
-      warnings.push(`Alt text too long for image ${img.src.substring(0, 30)}...`);
+      warnings.push(`Alt text too long for image`);
       score -= 5;
     }
   });
 
-  return {
-    isValid: issues.length === 0,
-    issues,
-    warnings,
-    score: Math.max(0, score),
-  };
+  return { isValid: issues.length === 0, issues, warnings, score: Math.max(0, score) };
 }
 
-/**
- * Validate content length
- */
 export function validateContentLength(wordCount: number): ValidationResult {
   const issues: string[] = [];
   const warnings: string[] = [];
   let score = 100;
 
   if (wordCount < SEO_LIMITS.WORD_COUNT_MIN) {
-    warnings.push(`Content is short (${wordCount} words). Aim for at least ${SEO_LIMITS.WORD_COUNT_MIN} words`);
+    warnings.push(`Content short (${wordCount} words, aim for ${SEO_LIMITS.WORD_COUNT_MIN}+)`);
     score -= 20;
   }
-
   if (wordCount < 100) {
-    issues.push('Content is very thin, unlikely to rank well');
+    issues.push('Content very thin, unlikely to rank');
     score -= 40;
   }
 
-  return {
-    isValid: issues.length === 0,
-    issues,
-    warnings,
-    score: Math.max(0, score),
-  };
+  return { isValid: issues.length === 0, issues, warnings, score: Math.max(0, score) };
 }
 
-/**
- * Validate canonical URL
- */
-export function validateCanonical(
-  canonicalUrl: string | null,
-  currentUrl: string
-): ValidationResult {
+export function validateCanonical(canonicalUrl: string | null, currentUrl: string): ValidationResult {
   const issues: string[] = [];
   const warnings: string[] = [];
   let score = 100;
@@ -337,12 +209,8 @@ export function validateCanonical(
     return { isValid: true, issues, warnings, score };
   }
 
-  // Check if canonical is the same as current URL
   try {
-    const canonical = new URL(canonicalUrl);
-    const current = new URL(currentUrl);
-
-    if (canonical.href !== current.href) {
+    if (new URL(canonicalUrl).href !== new URL(currentUrl).href) {
       warnings.push('Canonical URL differs from current URL');
       score -= 10;
     }
@@ -351,10 +219,97 @@ export function validateCanonical(
     score -= 20;
   }
 
-  return {
-    isValid: issues.length === 0,
-    issues,
-    warnings,
-    score: Math.max(0, score),
-  };
+  return { isValid: issues.length === 0, issues, warnings, score: Math.max(0, score) };
 }
+
+/**
+ * Validate internal/external links
+ */
+export function validateLinks(links: { internal: number; external: number; broken?: number }): ValidationResult {
+  const issues: string[] = [];
+  const warnings: string[] = [];
+  let score = 100;
+
+  if (links.internal === 0) {
+    warnings.push('No internal links - add links to related content');
+    score -= 20;
+  } else if (links.internal < 3) {
+    warnings.push('Few internal links');
+    score -= 10;
+  }
+
+  if (links.external === 0) {
+    warnings.push('No external links - consider citing sources');
+    score -= 10;
+  }
+
+  if (links.broken && links.broken > 0) {
+    issues.push(`${links.broken} broken links detected`);
+    score -= links.broken * 10;
+  }
+
+  return { isValid: issues.length === 0, issues, warnings, score: Math.max(0, score) };
+}
+
+/**
+ * Validate hreflang tags for international SEO
+ */
+export function validateHreflang(hreflangTags: Array<{ hreflang: string; href: string }>): ValidationResult {
+  const issues: string[] = [];
+  const warnings: string[] = [];
+  let score = 100;
+
+  if (hreflangTags.length === 0) {
+    warnings.push('No hreflang tags - consider adding for international SEO');
+    score -= 20;
+    return { isValid: true, issues, warnings, score };
+  }
+
+  const hasXDefault = hreflangTags.some((tag) => tag.hreflang === 'x-default');
+  if (!hasXDefault) {
+    warnings.push('Missing x-default hreflang tag');
+    score -= 15;
+  }
+
+  hreflangTags.forEach((tag) => {
+    if (!tag.href || !tag.hreflang) {
+      issues.push('Invalid hreflang tag format');
+      score -= 20;
+    }
+  });
+
+  return { isValid: issues.length === 0, issues, warnings, score: Math.max(0, score) };
+}
+
+/**
+ * Validate robots meta tag
+ */
+export function validateRobotsMeta(robotsMeta: string | null): ValidationResult {
+  const issues: string[] = [];
+  const warnings: string[] = [];
+  let score = 100;
+
+  if (!robotsMeta) {
+    return { isValid: true, issues, warnings, score };
+  }
+
+  const robotsLower = robotsMeta.toLowerCase();
+
+  if (robotsLower.includes('noindex')) {
+    issues.push('Page is set to noindex - will not appear in search results');
+    score -= 100;
+  }
+
+  if (robotsLower.includes('nofollow')) {
+    warnings.push('Page has nofollow directive - search engines won\'t follow links');
+    score -= 30;
+  }
+
+  if (robotsLower.includes('none')) {
+    issues.push('Robots set to "none" - equivalent to noindex, nofollow');
+    score -= 100;
+  }
+
+  return { isValid: issues.length === 0, issues, warnings, score: Math.max(0, score) };
+}
+

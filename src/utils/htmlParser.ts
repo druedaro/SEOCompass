@@ -7,14 +7,11 @@ export interface ParsedMetadata {
   title: string | null;
   description: string | null;
   keywords: string | null;
-  ogTitle: string | null;
-  ogDescription: string | null;
-  ogImage: string | null;
-  ogType: string | null;
   canonicalUrl: string | null;
   robots: string | null;
   author: string | null;
   language: string | null;
+  viewport: string | null;
 }
 
 export interface ParsedHeading {
@@ -45,6 +42,7 @@ export interface ParsedContent {
   headings: ParsedHeading[];
   images: ParsedImage[];
   links: ParsedLink[];
+  hreflangTags: Array<{ hreflang: string; href: string }>;
   bodyText: string;
   wordCount: number;
   hasStructuredData: boolean;
@@ -72,14 +70,11 @@ export function extractMetadata(doc: Document): ParsedMetadata {
     title: doc.querySelector('title')?.textContent || null,
     description: getMetaContent('meta[name="description"]'),
     keywords: getMetaContent('meta[name="keywords"]'),
-    ogTitle: getMetaContent('meta[property="og:title"]'),
-    ogDescription: getMetaContent('meta[property="og:description"]'),
-    ogImage: getMetaContent('meta[property="og:image"]'),
-    ogType: getMetaContent('meta[property="og:type"]'),
     canonicalUrl: doc.querySelector('link[rel="canonical"]')?.getAttribute('href') || null,
     robots: getMetaContent('meta[name="robots"]'),
     author: getMetaContent('meta[name="author"]'),
     language: doc.documentElement.getAttribute('lang') || null,
+    viewport: getMetaContent('meta[name="viewport"]'),
   };
 }
 
@@ -211,6 +206,24 @@ export function detectStructuredData(doc: Document): {
 }
 
 /**
+ * Extract hreflang tags
+ */
+export function extractHreflangTags(doc: Document): Array<{ hreflang: string; href: string }> {
+  const hreflangTags: Array<{ hreflang: string; href: string }> = [];
+  const linkElements = doc.querySelectorAll('link[rel="alternate"][hreflang]');
+
+  linkElements.forEach((link) => {
+    const hreflang = link.getAttribute('hreflang');
+    const href = link.getAttribute('href');
+    if (hreflang && href) {
+      hreflangTags.push({ hreflang, href });
+    }
+  });
+
+  return hreflangTags;
+}
+
+/**
  * Parse complete HTML and extract all relevant SEO data
  */
 export function parseHTMLContent(html: string, baseUrl: string): ParsedContent {
@@ -223,6 +236,7 @@ export function parseHTMLContent(html: string, baseUrl: string): ParsedContent {
     headings: extractHeadings(doc),
     images: extractImages(doc),
     links: extractLinks(doc, baseUrl),
+    hreflangTags: extractHreflangTags(doc),
     bodyText,
     wordCount: countWords(bodyText),
     hasStructuredData: structuredData.hasStructuredData,
