@@ -1,5 +1,6 @@
-import { Play, ExternalLink, History } from 'lucide-react';
+import { Play, ExternalLink, Eye } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
+import { Link, useParams } from 'react-router-dom';
 import {
   Table,
   TableBody,
@@ -13,7 +14,6 @@ import type { ProjectUrl } from '@/services/projectUrlsService';
 interface ProjectUrlsListProps {
   urls: ProjectUrl[];
   onAudit: (urlId: string) => void;
-  onViewHistory?: (urlId: string) => void;
   isAuditing?: boolean;
   currentAuditingUrlId?: string;
 }
@@ -21,10 +21,11 @@ interface ProjectUrlsListProps {
 export function ProjectUrlsList({
   urls,
   onAudit,
-  onViewHistory,
   isAuditing = false,
   currentAuditingUrlId,
 }: ProjectUrlsListProps) {
+  const { projectId } = useParams<{ projectId: string }>();
+  
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -79,17 +80,16 @@ export function ProjectUrlsList({
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
-                      {onViewHistory && (
+                      <Link to={`/dashboard/projects/${projectId}/url/${url.id}`}>
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => onViewHistory(url.id)}
                           disabled={isAuditing}
                         >
-                          <History className="h-4 w-4 mr-1" />
-                          History
+                          <Eye className="h-4 w-4 mr-1" />
+                          View Details
                         </Button>
-                      )}
+                      </Link>
                       <Button
                         variant="default"
                         size="sm"
