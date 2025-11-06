@@ -16,6 +16,7 @@ import { ProjectSettingsPage } from '@/pages/ProjectSettingsPage';
 import ContentAnalyzerPage from '@/pages/ContentAnalyzerPage';
 import ProjectUrlsManagementPage from '@/pages/ProjectUrlsManagementPage';
 import { UrlDetailsPage } from '@/pages/UrlDetailsPage';
+import { ActionCenterPage } from '@/pages/ActionCenterPage';
 import { AUTH_PATHS } from '@/routes/paths';
 
 function App() {
@@ -121,6 +122,15 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <UrlDetailsPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/dashboard/projects/:projectId/actions"
+                element={
+                  <ProtectedRoute>
+                    <ActionCenterPage />
                   </ProtectedRoute>
                 }
               />
