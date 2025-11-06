@@ -9,8 +9,8 @@ interface ProjectContextType {
   isLoading: boolean;
   error: string | null;
   setCurrentProject: (project: Project | null) => void;
-  createProject: (name: string, description?: string) => Promise<Project>;
-  updateProject: (projectId: string, updates: { name?: string; description?: string }) => Promise<Project>;
+  createProject: (name: string, description?: string, domain?: string) => Promise<Project>;
+  updateProject: (projectId: string, updates: { name?: string; description?: string; domain?: string }) => Promise<Project>;
   deleteProject: (projectId: string) => Promise<void>;
   refreshProjects: () => Promise<void>;
 }
@@ -86,7 +86,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     };
   }, [currentTeam, currentProject]);
 
-  const createProject = async (name: string, description?: string): Promise<Project> => {
+  const createProject = async (name: string, description?: string, domain?: string): Promise<Project> => {
     if (!currentTeam) throw new Error('No team selected');
 
     try {
@@ -94,7 +94,8 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
       const newProject = await projectService.createProject(
         currentTeam.id,
         name,
-        description
+        description,
+        domain
       );
       // Real-time subscription will handle adding to list
       return newProject;
@@ -107,7 +108,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
 
   const updateProject = async (
     projectId: string,
-    updates: { name?: string; description?: string }
+    updates: { name?: string; description?: string; domain?: string }
   ): Promise<Project> => {
     try {
       setError(null);

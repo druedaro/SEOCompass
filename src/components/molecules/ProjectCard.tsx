@@ -30,6 +30,11 @@ export function ProjectCard({ project, onSelect, onEdit, onDelete }: ProjectCard
             <CardTitle className="text-lg group-hover:text-primary transition-colors">
               {project.name}
             </CardTitle>
+            {project.domain && (
+              <p className="text-sm text-muted-foreground mt-1">
+                {project.domain}
+              </p>
+            )}
             {project.description && (
               <CardDescription className="mt-1.5 line-clamp-2">
                 {project.description}

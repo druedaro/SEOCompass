@@ -19,6 +19,7 @@ import type { Project } from '@/types/domain';
 
 const projectSchema = z.object({
   name: z.string().min(1, 'Project name is required').max(100, 'Name is too long'),
+  domain: z.string().max(100, 'Domain is too long').optional(),
   description: z.string().max(500, 'Description is too long').optional(),
 });
 
@@ -44,6 +45,7 @@ export function ProjectModal({ open, onClose, project, mode = 'create' }: Projec
     resolver: zodResolver(projectSchema),
     defaultValues: {
       name: project?.name || '',
+      domain: project?.domain || '',
       description: project?.description || '',
     },
   });
@@ -55,7 +57,7 @@ export function ProjectModal({ open, onClose, project, mode = 'create' }: Projec
       if (mode === 'edit' && project) {
         await updateProject(project.id, data);
       } else {
-        await createProject(data.name, data.description);
+        await createProject(data.name, data.description, data.domain);
       }
 
       reset();
@@ -96,6 +98,18 @@ export function ProjectModal({ open, onClose, project, mode = 'create' }: Projec
             />
             {errors.name && (
               <p className="text-sm text-destructive">{errors.name.message}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="domain">Domain</Label>
+            <Input
+              id="domain"
+              placeholder="example.com"
+              {...register('domain')}
+            />
+            {errors.domain && (
+              <p className="text-sm text-destructive">{errors.domain.message}</p>
             )}
           </div>
 
