@@ -1,16 +1,43 @@
 import { supabase } from '@/lib/supabaseClient';
+import { getProjectUrlById } from './projectUrlsService';
 
 export interface ScrapedContent {
   html: string;
   statusCode: number;
   finalUrl: string;
   headers: Record<string, string>;
+  projectUrlId?: string;
 }
 
 export interface ScrapeOptions {
   renderJs?: boolean;
   premiumProxy?: boolean;
   countryCode?: string;
+}
+
+/**
+ * Scrape a URL by project_url_id
+ * Fetches the URL from the database and then scrapes it
+ */
+export async function scrapeByProjectUrlId(
+  projectUrlId: string,
+  options: ScrapeOptions = {}
+): Promise<ScrapedContent> {
+  // Get the URL from the database
+  const projectUrl = await getProjectUrlById(projectUrlId);
+  
+  if (!projectUrl) {
+    throw new Error('Project URL not found');
+  }
+
+  // Scrape the URL
+  const scrapedData = await scrapeUrl(projectUrl.url, options);
+  
+  // Return with project_url_id attached
+  return {
+    ...scrapedData,
+    projectUrlId,
+  };
 }
 
 /**
