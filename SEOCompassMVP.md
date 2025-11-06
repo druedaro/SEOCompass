@@ -341,10 +341,11 @@ refactor(content-analyzer): remove old audit results modal
 ✅ PHASE 9: Module 3 - Action Center with Shadcn Calendar
 Branch: feature/action-center
 
-Commits (13)
-chore: add shadcn components (calendar, popover)
+Commits (9):
 
-npx shadcn-ui@latest add calendar popover tabs
+chore: add shadcn components (calendar, popover, table, badge, dialog)
+
+npx shadcn-ui@latest add calendar popover table badge dialog
 
 feat: create task database migration (tasks)
 
@@ -356,24 +357,29 @@ Usa Badge de shadcn con variantes de color.
 
 feat: create due date picker molecule with shadcn calendar and popover
 
-src/components/molecules/DatePicker.tsx
+src/components/molecules/DatePicker.tsx (para fecha única)
 
 feat: create modern task list organism
 
 src/components/organisms/TaskList.tsx (usando Table de shadcn).
 
+Esta es la UI principal. Muestra las tareas con sus badges visuales.
+
 feat: create task modals (create and edit)
 
 src/components/organisms/CreateTaskModal.tsx (usando Dialog).
 
-El formulario usa el DatePicker de shadcn (paso 5).
+El formulario usa el DatePicker del paso 5.
+
+feat: use textual references for task-audit link
+
+Añade un campo de texto en el modal que se auto-rellenará cuando se llame desde el botón [+ Add Task] de la Fase 7.5.
 
 feat: implement action center page
 
-src/pages/ActionCenterPage.tsx
+Página simple que renderiza el TaskList (paso 6) y el botón "Crear Tarea".
 
-
-Merge to develop: git merge feature/action-center --ff -m "feat: complete action center with shadcn calendar"
+Merge to develop: git merge feature/action-center --ff -m "feat: complete action center with simplified tasklist"
 
 🎨 PHASE 10: UI/UX Modern Enhancement
 Branch: feature/ui-enhancement
