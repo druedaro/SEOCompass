@@ -138,6 +138,7 @@ export interface AuditHistoryEntry {
   content_score: number;
   technical_score: number;
   on_page_score: number;
+  recommendations?: any[];
 }
 
 /**
@@ -146,7 +147,7 @@ export interface AuditHistoryEntry {
 export async function getAuditHistory(projectUrlId: string): Promise<AuditHistoryEntry[]> {
   const { data, error } = await supabase
     .from('content_audits')
-    .select('id, created_at, overall_score, meta_score, content_score, technical_score, on_page_score')
+    .select('id, created_at, overall_score, meta_score, content_score, technical_score, on_page_score, recommendations')
     .eq('project_url_id', projectUrlId)
     .order('created_at', { ascending: true })
     .limit(30);

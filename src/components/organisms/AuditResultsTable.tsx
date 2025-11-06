@@ -1,4 +1,5 @@
 import { Badge } from '@/components/atoms/Badge';
+import { Button } from '@/components/atoms/Button';
 import {
   Table,
   TableBody,
@@ -8,7 +9,7 @@ import {
   TableRow,
 } from '@/components/atoms/Table';
 import { Card } from '@/components/atoms/Card';
-import { AlertCircle, AlertTriangle, Info } from 'lucide-react';
+import { AlertCircle, AlertTriangle, Info, Plus } from 'lucide-react';
 import type { Recommendation } from '@/utils/recommendationsEngine';
 
 interface AuditResultsTableProps {
@@ -49,17 +50,17 @@ function getSeverityBadge(severity: 'critical' | 'warning' | 'info') {
 }
 
 function getCategoryBadge(category: Recommendation['category']) {
-  const categoryColors: Record<Recommendation['category'], string> = {
-    meta: 'bg-blue-100 text-blue-800',
-    content: 'bg-green-100 text-green-800',
-    technical: 'bg-purple-100 text-purple-800',
-    links: 'bg-orange-100 text-orange-800',
+  const categoryStyles: Record<Recommendation['category'], string> = {
+    meta: 'bg-[#82ca9d] text-white border-[#82ca9d]',
+    content: 'bg-[#ffc658] text-gray-900 border-[#ffc658]',
+    technical: 'bg-[#ff7c7c] text-white border-[#ff7c7c]',
+    links: 'bg-[#a28dd8] text-white border-[#a28dd8]',
     images: 'bg-pink-100 text-pink-800',
     keywords: 'bg-indigo-100 text-indigo-800',
   };
 
   return (
-    <Badge variant="outline" className={categoryColors[category]}>
+    <Badge variant="outline" className={categoryStyles[category]}>
       {category.charAt(0).toUpperCase() + category.slice(1)}
     </Badge>
   );
@@ -152,12 +153,13 @@ export function AuditResultsTable({
               <TableHead className="w-[120px]">Category</TableHead>
               <TableHead>Issue</TableHead>
               <TableHead>Action Required</TableHead>
+              <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {recommendations.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center text-muted-foreground">
+                <TableCell colSpan={5} className="text-center text-muted-foreground">
                   No issues found. Great job! 🎉
                 </TableCell>
               </TableRow>
@@ -175,6 +177,17 @@ export function AuditResultsTable({
                     </div>
                   </TableCell>
                   <TableCell className="text-sm">{recommendation.action}</TableCell>
+                  <TableCell>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      disabled
+                      title="Task management coming in Phase 9"
+                    >
+                      <Plus className="h-3 w-3 mr-1" />
+                      Task
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))
             )}

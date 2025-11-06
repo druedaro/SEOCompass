@@ -4,8 +4,6 @@ import { Settings } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
 import { ProjectUrlsList } from '@/components/organisms/ProjectUrlsList';
-import { AuditResultsDialog } from '@/components/organisms/AuditResultsDialog';
-import { AuditHistoryChart } from '@/components/organisms/AuditHistoryChart';
 import { scrapeByProjectUrlId } from '@/services/contentScrapingService';
 import { getProjectUrls, type ProjectUrl } from '@/services/projectUrlsService';
 import { supabase } from '@/lib/supabaseClient';
@@ -26,12 +24,8 @@ import {
 } from '@/utils/validators';
 import {
   calculateSEOScore,
-  type SEOScoreBreakdown,
 } from '@/utils/scoreCalculator';
-import {
-  generateRecommendations,
-  type Recommendation,
-} from '@/utils/recommendationsEngine';
+import { generateRecommendations } from '@/utils/recommendationsEngine';
 import { useToast } from '@/hooks/useToast';
 
 export default function ContentAnalyzerPage() {
@@ -40,11 +34,6 @@ export default function ContentAnalyzerPage() {
   const [isLoadingUrls, setIsLoadingUrls] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [currentAuditingUrlId, setCurrentAuditingUrlId] = useState<string | null>(null);
-  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
-  const [scoreBreakdown, setScoreBreakdown] = useState<SEOScoreBreakdown | null>(null);
-  const [currentUrl, setCurrentUrl] = useState<string>('');
-  const [showResultsDialog, setShowResultsDialog] = useState(false);
-  const [selectedUrlForHistory, setSelectedUrlForHistory] = useState<ProjectUrl | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -72,18 +61,9 @@ export default function ContentAnalyzerPage() {
     }
   };
 
-  const handleViewHistory = (urlId: string) => {
-    const url = urls.find((u) => u.id === urlId);
-    if (url) {
-      setSelectedUrlForHistory(url);
-    }
-  };
-
   const analyzePageByUrlId = async (projectUrlId: string) => {
     setIsAnalyzing(true);
     setCurrentAuditingUrlId(projectUrlId);
-    setRecommendations([]);
-    setScoreBreakdown(null);
 
     try {
       toast({
@@ -93,9 +73,6 @@ export default function ContentAnalyzerPage() {
 
       const scrapedContent = await scrapeByProjectUrlId(projectUrlId);
       const parsedContent = parseHTMLContent(scrapedContent.html, scrapedContent.finalUrl);
-
-      // Store the URL being analyzed
-      setCurrentUrl(scrapedContent.finalUrl);
 
       // Check for critical errors (404, etc.)
       const has404Error = scrapedContent.statusCode === 404;
@@ -185,9 +162,6 @@ export default function ContentAnalyzerPage() {
         hasServerError,
       });
 
-      setScoreBreakdown(scoreBreakdown);
-      setRecommendations(recommendations);
-
       // Save audit to database
       if (projectId) {
         const { error: insertError } = await supabase.from('content_audits').insert({
@@ -199,15 +173,13 @@ export default function ContentAnalyzerPage() {
           content_score: scoreBreakdown.content,
           technical_score: scoreBreakdown.technical,
           on_page_score: scoreBreakdown.onPage,
+          recommendations: recommendations,
         });
 
         if (insertError) {
           console.error('Error saving audit:', insertError);
         }
       }
-
-      // Open results dialog
-      setShowResultsDialog(true);
 
       toast({
         title: 'Analysis complete!',
@@ -292,32 +264,12 @@ export default function ContentAnalyzerPage() {
                 <ProjectUrlsList
                   urls={urls}
                   onAudit={analyzePageByUrlId}
-                  onViewHistory={handleViewHistory}
                   isAuditing={isAnalyzing}
                   currentAuditingUrlId={currentAuditingUrlId || undefined}
                 />
               </CardContent>
             </Card>
-
-            {/* Audit History Chart */}
-            {selectedUrlForHistory && (
-              <AuditHistoryChart
-                projectUrlId={selectedUrlForHistory.id}
-                urlLabel={selectedUrlForHistory.label || selectedUrlForHistory.url}
-              />
-            )}
           </>
-        )}
-
-        {/* Audit Results Dialog */}
-        {scoreBreakdown && (
-          <AuditResultsDialog
-            open={showResultsDialog}
-            onClose={() => setShowResultsDialog(false)}
-            url={currentUrl}
-            recommendations={recommendations}
-            scoreBreakdown={scoreBreakdown}
-          />
         )}
       </div>
     </div>

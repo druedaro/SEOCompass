@@ -116,7 +116,7 @@ export function UrlDetailsPage() {
             </CardHeader>
             <CardContent>
               <AuditResultsTable
-                recommendations={[]}
+                recommendations={latestAudit.recommendations || []}
                 overallScore={latestAudit.overall_score}
                 categoryScores={{
                   meta: latestAudit.meta_score,
