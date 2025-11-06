@@ -13,6 +13,7 @@ export function ProjectOverviewPage() {
   const navigate = useNavigate();
   const { projects, currentProject, setCurrentProject } = useProject();
   const [pagesAudited, setPagesAudited] = useState(0);
+  const [openTasks, setOpenTasks] = useState(0);
 
   useEffect(() => {
     if (projectId) {
@@ -35,7 +36,21 @@ export function ProjectOverviewPage() {
       setPagesAudited(count || 0);
     };
 
+    const fetchOpenTasksCount = async () => {
+      if (!projectId) return;
+      
+      const { count } = await supabase
+        .from('tasks')
+        .select('*', { count: 'exact', head: true })
+        .eq('project_id', projectId)
+        .neq('status', 'completed')
+        .neq('status', 'cancelled');
+      
+      setOpenTasks(count || 0);
+    };
+
     fetchAuditCount();
+    fetchOpenTasksCount();
   }, [projectId]);
 
   if (!currentProject) {
@@ -130,11 +145,11 @@ export function ProjectOverviewPage() {
         <Card>
           <CardHeader className="pb-3">
             <CardDescription>Open Tasks</CardDescription>
-            <CardTitle className="text-3xl">0</CardTitle>
+            <CardTitle className="text-3xl">{openTasks}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-xs text-muted-foreground">
-              No tasks created yet
+              {openTasks === 0 ? 'No tasks created yet' : `Active tasks to complete`}
             </p>
           </CardContent>
         </Card>
@@ -184,7 +199,7 @@ export function ProjectOverviewPage() {
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate(`/dashboard/projects/${projectId}/tasks`)}>
+        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate(`/dashboard/projects/${projectId}/actions`)}>
           <CardHeader>
             <CardTitle>Action Center</CardTitle>
             <CardDescription>

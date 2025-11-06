@@ -78,16 +78,26 @@ export const taskService = {
    * Create a new task
    */
   async createTask(input: CreateTaskInput): Promise<Task> {
-    const { data: userData } = await supabase.auth.getUser();
+    const taskData: any = {
+      title: input.title,
+      description: input.description || null,
+      priority: input.priority || 'medium',
+      status: input.status || 'todo',
+      project_id: input.project_id,
+    };
+
+    // Add optional fields only if they exist
+    if (input.due_date) {
+      taskData.due_date = input.due_date;
+    }
+
+    if (input.audit_reference) {
+      taskData.audit_reference = input.audit_reference;
+    }
 
     const { data, error } = await supabase
       .from('tasks')
-      .insert([
-        {
-          ...input,
-          created_by: userData?.user?.id,
-        },
-      ])
+      .insert([taskData])
       .select()
       .single();
 

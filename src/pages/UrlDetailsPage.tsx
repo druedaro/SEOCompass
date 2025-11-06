@@ -10,6 +10,7 @@ import { getProjectUrlById } from '@/services/projectUrlsService';
 import { getAuditHistory } from '@/services/contentScrapingService';
 import type { ProjectUrl } from '@/services/projectUrlsService';
 import type { AuditHistoryEntry } from '@/services/contentScrapingService';
+import type { Recommendation } from '@/utils/recommendationsEngine';
 
 export function UrlDetailsPage() {
   const { projectId, urlId } = useParams<{ projectId: string; urlId: string }>();
@@ -19,6 +20,7 @@ export function UrlDetailsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [latestAudit, setLatestAudit] = useState<AuditHistoryEntry | null>(null);
   const [createTaskModalOpen, setCreateTaskModalOpen] = useState(false);
+  const [selectedRecommendation, setSelectedRecommendation] = useState<Recommendation | null>(null);
 
   useEffect(() => {
     if (urlId) {
@@ -126,6 +128,11 @@ export function UrlDetailsPage() {
                   technical: latestAudit.technical_score,
                   onPage: latestAudit.on_page_score,
                 }}
+                urlLabel={projectUrl?.url || ''}
+                onAddTask={(recommendation) => {
+                  setSelectedRecommendation(recommendation);
+                  setCreateTaskModalOpen(true);
+                }}
               />
             </CardContent>
           </Card>
@@ -157,7 +164,9 @@ export function UrlDetailsPage() {
           onTaskCreated={() => {
             setCreateTaskModalOpen(false);
           }}
-          auditReference={`URL: ${projectUrl.url}`}
+          auditReference={`URL: ${projectUrl?.url}`}
+          initialTitle={selectedRecommendation?.title || ''}
+          initialDescription={selectedRecommendation?.description || ''}
         />
       )}
     </div>

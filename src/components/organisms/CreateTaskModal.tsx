@@ -48,6 +48,8 @@ interface CreateTaskModalProps {
   projectId: string;
   onTaskCreated: () => void;
   auditReference?: string;
+  initialTitle?: string;
+  initialDescription?: string;
 }
 
 const priorityOptions = [
@@ -70,6 +72,8 @@ export function CreateTaskModal({
   projectId,
   onTaskCreated,
   auditReference,
+  initialTitle,
+  initialDescription,
 }: CreateTaskModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
@@ -77,20 +81,26 @@ export function CreateTaskModal({
   const form = useForm<TaskFormData>({
     resolver: zodResolver(taskSchema),
     defaultValues: {
-      title: '',
-      description: '',
+      title: initialTitle || '',
+      description: initialDescription || '',
       priority: 'medium',
       status: 'todo',
       audit_reference: auditReference || '',
     },
   });
 
-  // Update audit_reference when prop changes
+  // Update form fields when props change
   useEffect(() => {
+    if (initialTitle) {
+      form.setValue('title', initialTitle);
+    }
+    if (initialDescription) {
+      form.setValue('description', initialDescription);
+    }
     if (auditReference) {
       form.setValue('audit_reference', auditReference);
     }
-  }, [auditReference, form]);
+  }, [auditReference, initialTitle, initialDescription, form]);
 
   const onSubmit = async (data: TaskFormData) => {
     setIsSubmitting(true);
