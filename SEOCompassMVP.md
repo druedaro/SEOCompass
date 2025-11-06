@@ -257,8 +257,6 @@ feat: implement content scraping service with edge function
 
 feat: create html parser utilities
 
-feat: implement sitemap parser service
-
 feat: create keyword analysis utility
 
 feat: create redirect and 404 analyzer utility
@@ -277,35 +275,66 @@ feat: implement content analyzer page
 
 Merge to develop: git merge feature/content-analyzer --ff -m "feat: complete content analyzer module"
 
-🔧 PHASE 8: Module 2 - Technical SEO Audit
-Branch: feature/technical-audit
+🔧 PHASE 7.5: Refactor - Implement 45 URL Tracking
+Branch: refactor/project-url-management
 
-Commits (10)
-feat: create technical audit database migration (audits)
+Objective: Modify the existing Phase 7 architecture. The "random URL audit" feature will be removed and replaced with a management and tracking system for 45 URLs per project.
 
-feat: implement pagespeed service with edge function
+Commits (10):
 
-feat: create modern score gauge molecule
+feat: create project_urls migration (table, FK, RLS limit 45)
 
-feat: create lighthouse scores display organism (usando Card de shadcn)
+Creates the new project_urls table (id, project_id, url).
 
-feat: implement core web vitals display
+Adds the Supabase RLS policy to limit to 45 URLs.
 
-feat: create opportunities list organism (usando Accordion de shadcn)
+refactor(db): modify content_audits table to link to project_url_id
 
-feat: create diagnostics list organism
+Modifies your content audit database migration (from Phase 7).
 
-feat: create technical audit form organism (usando RadioGroup de shadcn)
+Adds the project_url_id (FK) column and removes the plain text url column (if it existed).
 
-feat: implement technical audit page
+feat: implement project_urls service (add, delete, getByProject)
 
-Merge to develop: git merge feature/technical-audit --ff -m "feat: complete technical audit module"
+Creates the new projectUrlsService.ts for the CRUD management of the 45 URLs.
+
+feat: create project urls management page (in Project Settings)
+
+Creates the new UI in "Project Settings" (Phase 6) for the user to add/remove their 45 URLs.
+
+refactor(service): update scraping service to audit by project_url_id
+
+Modifies the content scraping service (from Phase 7).
+
+Changes its signature: it no longer receives a url string, but a project_url_id.
+
+refactor(content-analyzer): remove modern url input form organism
+
+Removes the modern url input form organism component (from Phase 7) and its logic.
+
+feat: create project urls list organism (table with audit button)
+
+Creates the new main component for the page: the table that lists the project's 45 URLs.
+
+refactor(content-analyzer): move audit results table to details view
+
+Takes your audit results table (from Phase 7) and refactors it to show the issues for a specific URL (in a modal or details view).
+
+feat(content-analyzer): add audit history chart per url (recharts)
+
+Creates the new recharts chart component that consumes the history data for a project_url_id.
+
+refactor(content-analyzer): implement empty state logic on page
+
+Modifies the content analyzer page (from Phase 7) to show the "Empty State" if urls.length === 0.
+
+Merge to develop: git merge refactor/project-url-management --ff -m "refactor(content): complete migration to project url management"
 
 ✅ PHASE 9: Module 3 - Action Center with Shadcn Calendar
 Branch: feature/action-center
 
 Commits (13)
-chore: add shadcn components (calendar, popover, tabs)
+chore: add shadcn components (calendar, popover)
 
 npx shadcn-ui@latest add calendar popover tabs
 
@@ -317,21 +346,13 @@ feat: create modern priority badge molecule
 
 Usa Badge de shadcn con variantes de color.
 
-feat: create date picker with shadcn calendar and popover
+feat: create due date picker molecule with shadcn calendar and popover
 
 src/components/molecules/DatePicker.tsx
 
-feat: create modern task card molecule
-
-src/components/molecules/TaskCard.tsx (usando Card de shadcn).
-
-feat: create kanban column and board organisms
-
-src/components/molecules/KanbanColumn.tsx, src/components/organisms/KanbanBoard.tsx (lógica de React DnD).
-
 feat: create modern task list organism
 
-src/components/organisms/TaskList.tsx (usando Table).
+src/components/organisms/TaskList.tsx (usando Table de shadcn).
 
 feat: create task modals (create and edit)
 
@@ -343,11 +364,6 @@ feat: implement action center page
 
 src/pages/ActionCenterPage.tsx
 
-Usa Tabs de shadcn para cambiar entre "List View" y "Kanban Board".
-
-feat: add task basic filters inline
-
-feat: use textual references for task-audit link
 
 Merge to develop: git merge feature/action-center --ff -m "feat: complete action center with shadcn calendar"
 
