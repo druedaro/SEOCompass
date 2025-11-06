@@ -1,6 +1,6 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Plus } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
 import { AuditHistoryChart } from '@/components/organisms/AuditHistoryChart';
@@ -101,10 +101,18 @@ export function UrlDetailsPage() {
         {latestAudit && (
           <Card>
             <CardHeader>
-              <CardTitle>Latest Audit Results</CardTitle>
-              <CardDescription>
-                Last audited: {new Date(latestAudit.created_at).toLocaleString()}
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Latest Audit Results</CardTitle>
+                  <CardDescription>
+                    Last audited: {new Date(latestAudit.created_at).toLocaleString()}
+                  </CardDescription>
+                </div>
+                <Button size="sm" disabled title="Task management coming in Phase 9">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Task
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <AuditResultsTable
