@@ -5,6 +5,7 @@ import { Button } from '@/components/atoms/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
 import { ProjectUrlsList } from '@/components/organisms/ProjectUrlsList';
 import { AuditResultsDialog } from '@/components/organisms/AuditResultsDialog';
+import { AuditHistoryChart } from '@/components/organisms/AuditHistoryChart';
 import { scrapeByProjectUrlId } from '@/services/contentScrapingService';
 import { getProjectUrls, type ProjectUrl } from '@/services/projectUrlsService';
 import { parseHTMLContent } from '@/utils/htmlParser';
@@ -42,6 +43,7 @@ export default function ContentAnalyzerPage() {
   const [scoreBreakdown, setScoreBreakdown] = useState<SEOScoreBreakdown | null>(null);
   const [currentUrl, setCurrentUrl] = useState<string>('');
   const [showResultsDialog, setShowResultsDialog] = useState(false);
+  const [selectedUrlForHistory, setSelectedUrlForHistory] = useState<ProjectUrl | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -66,6 +68,13 @@ export default function ContentAnalyzerPage() {
       });
     } finally {
       setIsLoadingUrls(false);
+    }
+  };
+
+  const handleViewHistory = (urlId: string) => {
+    const url = urls.find((u) => u.id === urlId);
+    if (url) {
+      setSelectedUrlForHistory(url);
     }
   };
 
@@ -237,11 +246,20 @@ export default function ContentAnalyzerPage() {
             <ProjectUrlsList
               urls={urls}
               onAudit={analyzePageByUrlId}
+              onViewHistory={handleViewHistory}
               isAuditing={isAnalyzing}
               currentAuditingUrlId={currentAuditingUrlId || undefined}
             />
           </CardContent>
         </Card>
+
+        {/* Audit History Chart */}
+        {selectedUrlForHistory && (
+          <AuditHistoryChart
+            projectUrlId={selectedUrlForHistory.id}
+            urlLabel={selectedUrlForHistory.label || selectedUrlForHistory.url}
+          />
+        )}
 
         {/* Audit Results Dialog */}
         {scoreBreakdown && (

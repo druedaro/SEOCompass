@@ -129,3 +129,32 @@ export async function checkUrlStatus(url: string): Promise<{
     };
   }
 }
+
+export interface AuditHistoryEntry {
+  id: string;
+  created_at: string;
+  overall_score: number;
+  meta_score: number;
+  content_score: number;
+  technical_score: number;
+  on_page_score: number;
+}
+
+/**
+ * Get audit history for a specific project URL
+ */
+export async function getAuditHistory(projectUrlId: string): Promise<AuditHistoryEntry[]> {
+  const { data, error } = await supabase
+    .from('content_audits')
+    .select('id, created_at, overall_score, meta_score, content_score, technical_score, on_page_score')
+    .eq('project_url_id', projectUrlId)
+    .order('created_at', { ascending: true })
+    .limit(30);
+
+  if (error) {
+    console.error('Error fetching audit history:', error);
+    throw new Error('Failed to fetch audit history');
+  }
+
+  return data || [];
+}
