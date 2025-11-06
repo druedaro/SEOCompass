@@ -8,6 +8,7 @@ import { AuditResultsDialog } from '@/components/organisms/AuditResultsDialog';
 import { AuditHistoryChart } from '@/components/organisms/AuditHistoryChart';
 import { scrapeByProjectUrlId } from '@/services/contentScrapingService';
 import { getProjectUrls, type ProjectUrl } from '@/services/projectUrlsService';
+import { supabase } from '@/lib/supabaseClient';
 import { parseHTMLContent } from '@/utils/htmlParser';
 import { analyzeKeywords } from '@/utils/keywordAnalyzer';
 import {
@@ -186,6 +187,24 @@ export default function ContentAnalyzerPage() {
 
       setScoreBreakdown(scoreBreakdown);
       setRecommendations(recommendations);
+
+      // Save audit to database
+      if (projectId) {
+        const { error: insertError } = await supabase.from('content_audits').insert({
+          project_id: projectId,
+          project_url_id: projectUrlId,
+          url: scrapedContent.finalUrl,
+          overall_score: scoreBreakdown.overall,
+          meta_score: scoreBreakdown.meta,
+          content_score: scoreBreakdown.content,
+          technical_score: scoreBreakdown.technical,
+          on_page_score: scoreBreakdown.onPage,
+        });
+
+        if (insertError) {
+          console.error('Error saving audit:', insertError);
+        }
+      }
 
       // Open results dialog
       setShowResultsDialog(true);
