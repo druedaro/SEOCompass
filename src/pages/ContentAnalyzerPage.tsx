@@ -4,7 +4,7 @@ import { Settings } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
 import { ProjectUrlsList } from '@/components/organisms/ProjectUrlsList';
-import { AuditResultsTable } from '@/components/organisms/AuditResultsTable';
+import { AuditResultsDialog } from '@/components/organisms/AuditResultsDialog';
 import { scrapeByProjectUrlId } from '@/services/contentScrapingService';
 import { getProjectUrls, type ProjectUrl } from '@/services/projectUrlsService';
 import { parseHTMLContent } from '@/utils/htmlParser';
@@ -41,6 +41,7 @@ export default function ContentAnalyzerPage() {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [scoreBreakdown, setScoreBreakdown] = useState<SEOScoreBreakdown | null>(null);
   const [currentUrl, setCurrentUrl] = useState<string>('');
+  const [showResultsDialog, setShowResultsDialog] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -177,6 +178,9 @@ export default function ContentAnalyzerPage() {
       setScoreBreakdown(scoreBreakdown);
       setRecommendations(recommendations);
 
+      // Open results dialog
+      setShowResultsDialog(true);
+
       toast({
         title: 'Analysis complete!',
         description: `Overall SEO score: ${scoreBreakdown.overall}/100`,
@@ -239,23 +243,15 @@ export default function ContentAnalyzerPage() {
           </CardContent>
         </Card>
 
+        {/* Audit Results Dialog */}
         {scoreBreakdown && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold">Analysis Results</h2>
-              <p className="text-sm text-muted-foreground">{currentUrl}</p>
-            </div>
-            <AuditResultsTable
-              recommendations={recommendations}
-              overallScore={scoreBreakdown.overall}
-              categoryScores={{
-                meta: scoreBreakdown.meta,
-                content: scoreBreakdown.content,
-                technical: scoreBreakdown.technical,
-                onPage: scoreBreakdown.onPage,
-              }}
-            />
-          </div>
+          <AuditResultsDialog
+            open={showResultsDialog}
+            onClose={() => setShowResultsDialog(false)}
+            url={currentUrl}
+            recommendations={recommendations}
+            scoreBreakdown={scoreBreakdown}
+          />
         )}
       </div>
     </div>
