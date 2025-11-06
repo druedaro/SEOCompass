@@ -1,7 +1,12 @@
-import { useState } from 'react';
-import { UrlInputForm } from '@/components/organisms/UrlInputForm';
+import { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { Settings } from 'lucide-react';
+import { Button } from '@/components/atoms/Button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
+import { ProjectUrlsList } from '@/components/organisms/ProjectUrlsList';
 import { AuditResultsTable } from '@/components/organisms/AuditResultsTable';
-import { scrapeUrl } from '@/services/contentScrapingService';
+import { scrapeByProjectUrlId } from '@/services/contentScrapingService';
+import { getProjectUrls, type ProjectUrl } from '@/services/projectUrlsService';
 import { parseHTMLContent } from '@/utils/htmlParser';
 import { analyzeKeywords } from '@/utils/keywordAnalyzer';
 import {
@@ -26,16 +31,46 @@ import {
   type Recommendation,
 } from '@/utils/recommendationsEngine';
 import { useToast } from '@/hooks/useToast';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
 
 export default function ContentAnalyzerPage() {
+  const { projectId } = useParams<{ projectId: string }>();
+  const [urls, setUrls] = useState<ProjectUrl[]>([]);
+  const [isLoadingUrls, setIsLoadingUrls] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [currentAuditingUrlId, setCurrentAuditingUrlId] = useState<string | null>(null);
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [scoreBreakdown, setScoreBreakdown] = useState<SEOScoreBreakdown | null>(null);
+  const [currentUrl, setCurrentUrl] = useState<string>('');
   const { toast } = useToast();
 
-  const analyzePage = async (data: { url: string }) => {
+  useEffect(() => {
+    if (projectId) {
+      loadProjectUrls();
+    }
+  }, [projectId]);
+
+  const loadProjectUrls = async () => {
+    if (!projectId) return;
+
+    setIsLoadingUrls(true);
+    try {
+      const data = await getProjectUrls(projectId);
+      setUrls(data);
+    } catch (error) {
+      const err = error as Error;
+      toast({
+        title: 'Error loading URLs',
+        description: err.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoadingUrls(false);
+    }
+  };
+
+  const analyzePageByUrlId = async (projectUrlId: string) => {
     setIsAnalyzing(true);
+    setCurrentAuditingUrlId(projectUrlId);
     setRecommendations([]);
     setScoreBreakdown(null);
 
@@ -45,8 +80,11 @@ export default function ContentAnalyzerPage() {
         description: 'Fetching content from the URL',
       });
 
-      const scrapedContent = await scrapeUrl(data.url);
-      const parsedContent = parseHTMLContent(scrapedContent.html, data.url);
+      const scrapedContent = await scrapeByProjectUrlId(projectUrlId);
+      const parsedContent = parseHTMLContent(scrapedContent.html, scrapedContent.finalUrl);
+
+      // Store the URL being analyzed
+      setCurrentUrl(scrapedContent.finalUrl);
 
       // Check for critical errors (404, etc.)
       const has404Error = scrapedContent.statusCode === 404;
@@ -60,14 +98,14 @@ export default function ContentAnalyzerPage() {
       // Validate SEO elements
       const titleValidation = validateTitle(parsedContent.metadata.title);
       const descriptionValidation = validateDescription(parsedContent.metadata.description);
-      const urlValidation = validateUrl(data.url);
+      const urlValidation = validateUrl(scrapedContent.finalUrl);
       const h1Validation = validateH1(h1s);
       const headingHierarchyValidation = validateHeadingHierarchy(parsedContent.headings);
       const imagesValidation = validateImages(parsedContent.images);
       const contentLengthValidation = validateContentLength(parsedContent.wordCount);
       const canonicalValidation = validateCanonical(
         parsedContent.metadata.canonicalUrl,
-        data.url
+        scrapedContent.finalUrl
       );
 
       // Count and validate links
@@ -88,7 +126,7 @@ export default function ContentAnalyzerPage() {
           description: parsedContent.metadata.description,
           h1s,
           bodyText: parsedContent.bodyText,
-          url: data.url,
+          url: scrapedContent.finalUrl,
         }
       );
 
@@ -152,37 +190,61 @@ export default function ContentAnalyzerPage() {
       });
     } finally {
       setIsAnalyzing(false);
+      setCurrentAuditingUrlId(null);
     }
   };
+
+  if (isLoadingUrls) {
+    return (
+      <div className="container mx-auto py-8 px-4">
+        <p>Loading project URLs...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="max-w-6xl mx-auto space-y-8">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">Content & On-Page Analyzer</h1>
-          <p className="text-muted-foreground">
-            Analyze your web pages for SEO optimization and get actionable recommendations
-          </p>
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold tracking-tight">Content & On-Page Analyzer</h1>
+            <p className="text-muted-foreground">
+              Analyze your tracked URLs for SEO optimization and get actionable recommendations
+            </p>
+          </div>
+          {projectId && (
+            <Link to={`/dashboard/projects/${projectId}/urls`}>
+              <Button variant="outline">
+                <Settings className="mr-2 h-4 w-4" />
+                Manage URLs
+              </Button>
+            </Link>
+          )}
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Analyze Page</CardTitle>
+            <CardTitle>Project URLs</CardTitle>
             <CardDescription>
-              Enter a URL to get a comprehensive SEO analysis with actionable recommendations
+              Select a URL to analyze its SEO performance
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <UrlInputForm
-              onSubmit={analyzePage}
-              isLoading={isAnalyzing}
+            <ProjectUrlsList
+              urls={urls}
+              onAudit={analyzePageByUrlId}
+              isAuditing={isAnalyzing}
+              currentAuditingUrlId={currentAuditingUrlId || undefined}
             />
           </CardContent>
         </Card>
 
         {scoreBreakdown && (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold">Analysis Results</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold">Analysis Results</h2>
+              <p className="text-sm text-muted-foreground">{currentUrl}</p>
+            </div>
             <AuditResultsTable
               recommendations={recommendations}
               overallScore={scoreBreakdown.overall}
