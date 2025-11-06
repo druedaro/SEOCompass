@@ -235,30 +235,59 @@ export default function ContentAnalyzerPage() {
           )}
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Project URLs</CardTitle>
-            <CardDescription>
-              Select a URL to analyze its SEO performance
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ProjectUrlsList
-              urls={urls}
-              onAudit={analyzePageByUrlId}
-              onViewHistory={handleViewHistory}
-              isAuditing={isAnalyzing}
-              currentAuditingUrlId={currentAuditingUrlId || undefined}
-            />
-          </CardContent>
-        </Card>
+        {urls.length === 0 ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>No URLs Configured</CardTitle>
+              <CardDescription>
+                Get started by adding URLs to track for this project
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center justify-center py-12">
+              <div className="text-center space-y-4">
+                <p className="text-muted-foreground max-w-md">
+                  To analyze content and track SEO performance, you need to add URLs to your project.
+                  You can add up to 45 URLs per project.
+                </p>
+                {projectId && (
+                  <Link to={`/dashboard/projects/${projectId}/urls`}>
+                    <Button>
+                      <Settings className="mr-2 h-4 w-4" />
+                      Configure URLs
+                    </Button>
+                  </Link>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <>
+            <Card>
+              <CardHeader>
+                <CardTitle>Project URLs</CardTitle>
+                <CardDescription>
+                  Select a URL to analyze its SEO performance
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ProjectUrlsList
+                  urls={urls}
+                  onAudit={analyzePageByUrlId}
+                  onViewHistory={handleViewHistory}
+                  isAuditing={isAnalyzing}
+                  currentAuditingUrlId={currentAuditingUrlId || undefined}
+                />
+              </CardContent>
+            </Card>
 
-        {/* Audit History Chart */}
-        {selectedUrlForHistory && (
-          <AuditHistoryChart
-            projectUrlId={selectedUrlForHistory.id}
-            urlLabel={selectedUrlForHistory.label || selectedUrlForHistory.url}
-          />
+            {/* Audit History Chart */}
+            {selectedUrlForHistory && (
+              <AuditHistoryChart
+                projectUrlId={selectedUrlForHistory.id}
+                urlLabel={selectedUrlForHistory.label || selectedUrlForHistory.url}
+              />
+            )}
+          </>
         )}
 
         {/* Audit Results Dialog */}
