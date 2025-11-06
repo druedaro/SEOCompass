@@ -338,7 +338,27 @@ refactor(content-analyzer): update main list to link to details page
 
 refactor(content-analyzer): remove old audit results modal
 
-✅ PHASE 9: Module 3 - Action Center with Shadcn Calendar
+🎨 PHASE 7.9: UI/UX Modern Enhancement
+
+Branch: feature/core-ui-components
+
+Commits (3):
+
+chore: add shadcn components (alert-dialog)
+
+Solo añade el alert-dialog por ahora.
+
+feat(ui): create reusable empty state component
+
+Crea tu EmptyState.tsx para guiar al usuario.
+
+feat(ui): create reusable delete confirmation dialog
+
+Crea un componente DeleteConfirmationDialog.tsx que use el alert-dialog y que puedas reutilizar para "Eliminar URL" y "Eliminar TAREA".
+
+Merge to develop: git merge feature/core-ui-components --ff -m "feat(ui): add core functional ui (empty-state, delete-dialog)"
+
+✅ PHASE 8: Module 3 - Action Center with Shadcn Calendar
 Branch: feature/action-center
 
 Commits (9):
@@ -381,41 +401,7 @@ Página simple que renderiza el TaskList (paso 6) y el botón "Crear Tarea".
 
 Merge to develop: git merge feature/action-center --ff -m "feat: complete action center with simplified tasklist"
 
-🎨 PHASE 10: UI/UX Modern Enhancement
-Branch: feature/ui-enhancement
-
-Commits (6)
-chore: add shadcn components (toast, skeleton, alert)
-
-npx shadcn-ui@latest add toast skeleton alert-dialog
-
-feat: configure toaster component
-
-Añadir el <Toaster /> al layout principal.
-
-Crear src/hooks/useToast.ts (que usa el hook useToast de shadcn).
-
-feat: create loading and error components
-
-src/components/organisms/ErrorBoundary.tsx.
-
-Usar Skeleton de shadcn para los estados de carga.
-
-feat: create reusable modal and empty states
-
-src/components/molecules/EmptyState.tsx.
-
-feat: implement breadcrumbs navigation
-
-src/components/molecules/Breadcrumbs.tsx.
-
-feat: implement accessibility and responsive final pass
-
-Pulir breakpoints.
-
-Merge to develop: git merge feature/ui-enhancement --ff -m "feat: complete modern ui/ux with shadcn"
-
-🧪 PHASE 11: Comprehensive Testing - Moscow Method
+🧪 PHASE 10: Comprehensive Testing - Moscow Method
 Branch: feature/comprehensive-testing
 
 Commits (6)
@@ -431,7 +417,7 @@ test: add action center moscow tests (5 tests)
 
 Merge to develop: git merge feature/comprehensive-testing --ff -m "test: complete moscow testing suite"
 
-🚀 PHASE 12: Production Preparation
+🚀 PHASE 11: Production Preparation
 Branch: release/v1.0.0
 
 Commits (4)
