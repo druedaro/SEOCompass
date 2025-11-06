@@ -1,16 +1,43 @@
 import { supabase } from '@/lib/supabaseClient';
+import { getProjectUrlById } from './projectUrlsService';
 
 export interface ScrapedContent {
   html: string;
   statusCode: number;
   finalUrl: string;
   headers: Record<string, string>;
+  projectUrlId?: string;
 }
 
 export interface ScrapeOptions {
   renderJs?: boolean;
   premiumProxy?: boolean;
   countryCode?: string;
+}
+
+/**
+ * Scrape a URL by project_url_id
+ * Fetches the URL from the database and then scrapes it
+ */
+export async function scrapeByProjectUrlId(
+  projectUrlId: string,
+  options: ScrapeOptions = {}
+): Promise<ScrapedContent> {
+  // Get the URL from the database
+  const projectUrl = await getProjectUrlById(projectUrlId);
+  
+  if (!projectUrl) {
+    throw new Error('Project URL not found');
+  }
+
+  // Scrape the URL
+  const scrapedData = await scrapeUrl(projectUrl.url, options);
+  
+  // Return with project_url_id attached
+  return {
+    ...scrapedData,
+    projectUrlId,
+  };
 }
 
 /**
@@ -101,4 +128,34 @@ export async function checkUrlStatus(url: string): Promise<{
       finalUrl: url,
     };
   }
+}
+
+export interface AuditHistoryEntry {
+  id: string;
+  created_at: string;
+  overall_score: number;
+  meta_score: number;
+  content_score: number;
+  technical_score: number;
+  on_page_score: number;
+  recommendations?: any[];
+}
+
+/**
+ * Get audit history for a specific project URL
+ */
+export async function getAuditHistory(projectUrlId: string): Promise<AuditHistoryEntry[]> {
+  const { data, error } = await supabase
+    .from('content_audits')
+    .select('id, created_at, overall_score, meta_score, content_score, technical_score, on_page_score, recommendations')
+    .eq('project_url_id', projectUrlId)
+    .order('created_at', { ascending: true })
+    .limit(30);
+
+  if (error) {
+    console.error('Error fetching audit history:', error);
+    throw new Error('Failed to fetch audit history');
+  }
+
+  return data || [];
 }

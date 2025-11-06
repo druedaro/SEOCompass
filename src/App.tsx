@@ -14,6 +14,8 @@ import { ProjectsDashboardPage } from '@/pages/ProjectsDashboardPage';
 import { ProjectOverviewPage } from '@/pages/ProjectOverviewPage';
 import { ProjectSettingsPage } from '@/pages/ProjectSettingsPage';
 import ContentAnalyzerPage from '@/pages/ContentAnalyzerPage';
+import ProjectUrlsManagementPage from '@/pages/ProjectUrlsManagementPage';
+import { UrlDetailsPage } from '@/pages/UrlDetailsPage';
 import { AUTH_PATHS } from '@/routes/paths';
 
 function App() {
@@ -101,6 +103,24 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <ContentAnalyzerPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/dashboard/projects/:projectId/urls"
+                element={
+                  <ProtectedRoute>
+                    <ProjectUrlsManagementPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/dashboard/projects/:projectId/url/:urlId"
+                element={
+                  <ProtectedRoute>
+                    <UrlDetailsPage />
                   </ProtectedRoute>
                 }
               />

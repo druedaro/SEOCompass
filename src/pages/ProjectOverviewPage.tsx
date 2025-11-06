@@ -1,16 +1,18 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowLeft, Settings } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
 import { useProject } from '@/hooks/useProject';
 import { formatDistanceToNow } from 'date-fns';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
+import { supabase } from '@/lib/supabaseClient';
 
 export function ProjectOverviewPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
   const { projects, currentProject, setCurrentProject } = useProject();
+  const [pagesAudited, setPagesAudited] = useState(0);
 
   useEffect(() => {
     if (projectId) {
@@ -20,6 +22,21 @@ export function ProjectOverviewPage() {
       }
     }
   }, [projectId, projects, setCurrentProject]);
+
+  useEffect(() => {
+    const fetchAuditCount = async () => {
+      if (!projectId) return;
+      
+      const { count } = await supabase
+        .from('content_audits')
+        .select('*', { count: 'exact', head: true })
+        .eq('project_id', projectId);
+      
+      setPagesAudited(count || 0);
+    };
+
+    fetchAuditCount();
+  }, [projectId]);
 
   if (!currentProject) {
     return (
@@ -60,8 +77,13 @@ export function ProjectOverviewPage() {
         <div className="flex items-start justify-between">
           <div>
             <h1 className="text-4xl font-bold">{currentProject.name}</h1>
+            {currentProject.domain && (
+              <p className="text-lg text-muted-foreground mt-1">
+                {currentProject.domain}
+              </p>
+            )}
             {currentProject.description && (
-              <p className="text-muted-foreground mt-2 text-lg">
+              <p className="text-muted-foreground mt-2">
                 {currentProject.description}
               </p>
             )}
@@ -96,11 +118,11 @@ export function ProjectOverviewPage() {
         <Card>
           <CardHeader className="pb-3">
             <CardDescription>Pages Audited</CardDescription>
-            <CardTitle className="text-3xl">0</CardTitle>
+            <CardTitle className="text-3xl">{pagesAudited}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-xs text-muted-foreground">
-              No pages audited yet
+              {pagesAudited === 0 ? 'No pages audited yet' : `Total audits performed`}
             </p>
           </CardContent>
         </Card>

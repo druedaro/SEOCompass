@@ -36,7 +36,8 @@ export const projectService = {
   async createProject(
     teamId: string,
     name: string,
-    description?: string
+    description?: string,
+    domain?: string
   ): Promise<Project> {
     const { data, error } = await supabase
       .from('projects')
@@ -44,6 +45,7 @@ export const projectService = {
         team_id: teamId,
         name,
         description,
+        domain,
       })
       .select()
       .single();
@@ -57,7 +59,7 @@ export const projectService = {
    */
   async updateProject(
     projectId: string,
-    updates: { name?: string; description?: string }
+    updates: { name?: string; description?: string; domain?: string }
   ): Promise<Project> {
     const { data, error } = await supabase
       .from('projects')

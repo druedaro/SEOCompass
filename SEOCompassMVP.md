@@ -330,6 +330,14 @@ Modifies the content analyzer page (from Phase 7) to show the "Empty State" if u
 
 Merge to develop: git merge refactor/project-url-management --ff -m "refactor(content): complete migration to project url management"
 
+feat: create url details page (with chart and results table)
+
+feat: create "add task" button (in details view)
+
+refactor(content-analyzer): update main list to link to details page
+
+refactor(content-analyzer): remove old audit results modal
+
 ✅ PHASE 9: Module 3 - Action Center with Shadcn Calendar
 Branch: feature/action-center
 
