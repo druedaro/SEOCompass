@@ -401,6 +401,41 @@ Página simple que renderiza el TaskList (paso 6) y el botón "Crear Tarea".
 
 Merge to develop: git merge feature/action-center --ff -m "feat: complete action center with simplified tasklist"
 
+🚀 PHASE 9: MVP Stabilization
+Branch: fix/mvp-stabilization
+
+Commits (5):
+
+fix(forms): ensure zod errors are displayed in form components
+
+Arregla el bug de Zod asegurándote de que <FormMessage /> esté en todos tus campos de formulario.
+
+fix(layout): ensure main layout wraps all protected pages
+
+Arregla tus rutas para que el Content Analyzer y el Action Center muestren la Navbar y el Footer.
+
+feat(ui): disable postponed features in sidebar navigation
+
+Aplica estilos de deshabilitado a "Keyword Tracker" y "Technical Audit".
+
+feat(team): add google map to create team page
+
+Qué hace: Modifica tu CreateTeamPage.tsx.
+
+Ya tienes el useGoogleMaps hook y el <LocationAutocomplete>.
+
+Ahora, añade el componente <GoogleMap> debajo.
+
+Conecta el estado del Autocomplete al estado del Map. Cuando el usuario seleccione una ubicación, el mapa debe centrarse en esa ubicación y mostrar un <Marker>.
+
+Esto es mucho más simple que intentar mostrar un mapa en la página de "Ajustes" (que requeriría Geocoding inverso).
+
+chore: code cleanup and final pre-test review
+
+Un último repaso general antes de pasar a la Fase 12.
+
+Merge to develop: git merge fix/mvp-stabilization --ff -m "fix: complete mvp stabilization before testing"
+
 🧪 PHASE 10: Comprehensive Testing - Moscow Method
 Branch: feature/comprehensive-testing
 
