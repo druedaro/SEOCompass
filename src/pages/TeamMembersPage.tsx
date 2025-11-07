@@ -1,12 +1,13 @@
-import { MapPin } from 'lucide-react';
+import { MapPin, RefreshCw } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/atoms/Avatar';
 import { Badge } from '@/components/atoms/Badge';
+import { Button } from '@/components/atoms/Button';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useWorkspace } from '@/context/WorkspaceContext';
 
 export default function TeamMembersPage() {
-  const { currentTeam, teamMembers, isLoadingMembers } = useWorkspace();
+  const { currentTeam, teamMembers, isLoadingMembers, refreshMembers } = useWorkspace();
 
   const getInitials = (name?: string) => {
     if (!name) return '?';
@@ -47,7 +48,15 @@ export default function TeamMembersPage() {
             </div>
           )}
         </div>
-        {/* Invite functionality removed */}
+        <Button
+          onClick={refreshMembers}
+          variant="outline"
+          size="sm"
+          disabled={isLoadingMembers}
+        >
+          <RefreshCw className={`h-4 w-4 mr-2 ${isLoadingMembers ? 'animate-spin' : ''}`} />
+          Refresh
+        </Button>
       </div>
 
       <Card>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -98,6 +98,25 @@ export default function TeamSettingsPage() {
       setMarkerPosition(newCenter);
     }
   };
+
+  // Load team location coordinates when component mounts or team changes
+  useEffect(() => {
+    if (currentTeam?.location && isLoaded) {
+      // Use Geocoding API to convert address to coordinates
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode({ address: currentTeam.location }, (results, status) => {
+        if (status === 'OK' && results && results[0]) {
+          const location = results[0].geometry.location;
+          const coords = {
+            lat: location.lat(),
+            lng: location.lng(),
+          };
+          setMapCenter(coords);
+          setMarkerPosition(coords);
+        }
+      });
+    }
+  }, [currentTeam?.location, isLoaded]);
 
   if (!currentTeam) {
     return (
