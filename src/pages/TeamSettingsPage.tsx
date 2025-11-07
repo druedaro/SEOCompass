@@ -3,12 +3,14 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Save, Trash2 } from 'lucide-react';
+import { GoogleMap, Marker } from '@react-google-maps/api';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { Label } from '@/components/atoms/Label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
 import { LocationAutocomplete } from '@/components/molecules/LocationAutocomplete';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
+import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { useWorkspace } from '@/context/WorkspaceContext';
 
 const updateTeamSchema = z.object({
@@ -19,10 +21,23 @@ const updateTeamSchema = z.object({
 
 type UpdateTeamFormData = z.infer<typeof updateTeamSchema>;
 
+const mapContainerStyle = {
+  width: '100%',
+  height: '300px',
+};
+
+const defaultCenter = {
+  lat: 37.7749, // San Francisco
+  lng: -122.4194,
+};
+
 export default function TeamSettingsPage() {
   const { currentTeam, updateTeam, deleteTeam } = useWorkspace();
+  const { isLoaded } = useGoogleMaps();
   const [isLoading, setIsLoading] = useState(false);
   const [location, setLocation] = useState(currentTeam?.location || '');
+  const [mapCenter, setMapCenter] = useState(defaultCenter);
+  const [markerPosition, setMarkerPosition] = useState<google.maps.LatLngLiteral | null>(null);
 
   const {
     register,
@@ -71,6 +86,17 @@ export default function TeamSettingsPage() {
   const handleLocationChange = (value: string) => {
     setLocation(value);
     setValue('location', value);
+  };
+
+  const handlePlaceSelect = (place: google.maps.places.PlaceResult) => {
+    if (place.geometry?.location) {
+      const lat = place.geometry.location.lat();
+      const lng = place.geometry.location.lng();
+      const newCenter = { lat, lng };
+      
+      setMapCenter(newCenter);
+      setMarkerPosition(newCenter);
+    }
   };
 
   if (!currentTeam) {
@@ -125,9 +151,36 @@ export default function TeamSettingsPage() {
               <LocationAutocomplete
                 value={location}
                 onChange={handleLocationChange}
+                onPlaceSelect={handlePlaceSelect}
                 label="Location"
                 disabled={isLoading}
               />
+
+              {/* Google Map */}
+              {isLoaded && (
+                <div className="space-y-2">
+                  <Label>Map Preview</Label>
+                  <div className="rounded-lg overflow-hidden border">
+                    <GoogleMap
+                      mapContainerStyle={mapContainerStyle}
+                      center={mapCenter}
+                      zoom={markerPosition ? 13 : 10}
+                      options={{
+                        disableDefaultUI: false,
+                        zoomControl: true,
+                        mapTypeControl: false,
+                        streetViewControl: false,
+                        fullscreenControl: false,
+                      }}
+                    >
+                      {markerPosition && <Marker position={markerPosition} />}
+                    </GoogleMap>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Select a location to see it on the map
+                  </p>
+                </div>
+              )}
 
               <Button type="submit" disabled={isLoading} className="w-full">
                 <Save className="h-4 w-4 mr-2" />
