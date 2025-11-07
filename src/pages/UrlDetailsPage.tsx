@@ -5,10 +5,12 @@ import { Button } from '@/components/atoms/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
 import { AuditHistoryChart } from '@/components/organisms/AuditHistoryChart';
 import { AuditResultsTable } from '@/components/organisms/AuditResultsTable';
+import { CreateTaskModal } from '@/components/organisms/CreateTaskModal';
 import { getProjectUrlById } from '@/services/projectUrlsService';
 import { getAuditHistory } from '@/services/contentScrapingService';
 import type { ProjectUrl } from '@/services/projectUrlsService';
 import type { AuditHistoryEntry } from '@/services/contentScrapingService';
+import type { Recommendation } from '@/utils/recommendationsEngine';
 
 export function UrlDetailsPage() {
   const { projectId, urlId } = useParams<{ projectId: string; urlId: string }>();
@@ -17,6 +19,8 @@ export function UrlDetailsPage() {
   const [auditHistory, setAuditHistory] = useState<AuditHistoryEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [latestAudit, setLatestAudit] = useState<AuditHistoryEntry | null>(null);
+  const [createTaskModalOpen, setCreateTaskModalOpen] = useState(false);
+  const [selectedRecommendation, setSelectedRecommendation] = useState<Recommendation | null>(null);
 
   useEffect(() => {
     if (urlId) {
@@ -108,7 +112,7 @@ export function UrlDetailsPage() {
                     Last audited: {new Date(latestAudit.created_at).toLocaleString()}
                   </CardDescription>
                 </div>
-                <Button size="sm" disabled title="Task management coming in Phase 9">
+                <Button size="sm" onClick={() => setCreateTaskModalOpen(true)}>
                   <Plus className="h-4 w-4 mr-2" />
                   Add Task
                 </Button>
@@ -123,6 +127,11 @@ export function UrlDetailsPage() {
                   content: latestAudit.content_score,
                   technical: latestAudit.technical_score,
                   onPage: latestAudit.on_page_score,
+                }}
+                urlLabel={projectUrl?.url || ''}
+                onAddTask={(recommendation) => {
+                  setSelectedRecommendation(recommendation);
+                  setCreateTaskModalOpen(true);
                 }}
               />
             </CardContent>
@@ -145,6 +154,21 @@ export function UrlDetailsPage() {
           </Card>
         )}
       </div>
+
+      {/* Create Task Modal */}
+      {projectId && (
+        <CreateTaskModal
+          open={createTaskModalOpen}
+          onOpenChange={setCreateTaskModalOpen}
+          projectId={projectId}
+          onTaskCreated={() => {
+            setCreateTaskModalOpen(false);
+          }}
+          auditReference={`URL: ${projectUrl?.url}`}
+          initialTitle={selectedRecommendation?.title || ''}
+          initialDescription={selectedRecommendation?.description || ''}
+        />
+      )}
     </div>
   );
 }

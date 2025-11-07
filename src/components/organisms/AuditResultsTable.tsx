@@ -21,6 +21,8 @@ interface AuditResultsTableProps {
     technical: number;
     onPage: number;
   };
+  onAddTask?: (recommendation: Recommendation) => void;
+  urlLabel?: string;
 }
 
 function getSeverityBadge(severity: 'critical' | 'warning' | 'info') {
@@ -93,6 +95,8 @@ export function AuditResultsTable({
   recommendations,
   overallScore,
   categoryScores,
+  onAddTask,
+  urlLabel,
 }: AuditResultsTableProps) {
   const criticalIssues = recommendations.filter((r) => r.severity === 'critical');
   const warnings = recommendations.filter((r) => r.severity === 'warning');
@@ -181,8 +185,8 @@ export function AuditResultsTable({
                     <Button 
                       size="sm" 
                       variant="outline" 
-                      disabled
-                      title="Task management coming in Phase 9"
+                      onClick={() => onAddTask?.(recommendation)}
+                      disabled={!onAddTask}
                     >
                       <Plus className="h-3 w-3 mr-1" />
                       Task
