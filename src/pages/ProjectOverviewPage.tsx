@@ -157,15 +157,18 @@ export function ProjectOverviewPage() {
 
       {/* Modules */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate(`/dashboard/projects/${projectId}/keywords`)}>
+        <Card className="opacity-50 cursor-not-allowed">
           <CardHeader>
-            <CardTitle>Keyword Tracker</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              Keyword Tracker
+              <span className="text-xs bg-muted px-2 py-1 rounded">Coming Soon</span>
+            </CardTitle>
             <CardDescription>
               Track your keyword rankings and visibility
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full" disabled>
               Go to Keyword Tracker →
             </Button>
           </CardContent>
@@ -185,15 +188,18 @@ export function ProjectOverviewPage() {
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate(`/dashboard/projects/${projectId}/technical`)}>
+        <Card className="opacity-50 cursor-not-allowed">
           <CardHeader>
-            <CardTitle>Technical Audit</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              Technical Audit
+              <span className="text-xs bg-muted px-2 py-1 rounded">Coming Soon</span>
+            </CardTitle>
             <CardDescription>
               Run technical SEO audits with PageSpeed Insights
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full" disabled>
               Go to Technical Audit →
             </Button>
           </CardContent>
