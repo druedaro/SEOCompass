@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/atoms/Button';
 import { TaskList } from '@/components/organisms/TaskList';
 import { CreateTaskModal } from '@/components/organisms/CreateTaskModal';
 import { EmptyState } from '@/components/molecules/EmptyState';
+import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { Task, taskService } from '@/services/taskService';
 import { useProject } from '@/hooks/useProject';
 
 export function ActionCenterPage() {
   const { currentProject } = useProject();
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -39,28 +42,46 @@ export function ActionCenterPage() {
 
   if (!currentProject) {
     return (
-      <div className="container mx-auto py-8">
-        <EmptyState
-          icon={Plus}
-          title="No Project Selected"
-          description="Please select a project to view and manage tasks."
-        />
-      </div>
+      <DashboardLayout>
+        <div className="container mx-auto py-8">
+          <EmptyState
+            icon={Plus}
+            title="No Project Selected"
+            description="Please select a project to view and manage tasks."
+          />
+        </div>
+      </DashboardLayout>
     );
   }
 
   if (isLoading) {
     return (
-      <div className="container mx-auto py-8">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-muted-foreground">Loading tasks...</div>
+      <DashboardLayout>
+        <div className="container mx-auto py-8">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-muted-foreground">Loading tasks...</div>
+          </div>
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <DashboardLayout>
+      <div className="container mx-auto py-8">
+      {/* Back button */}
+      {currentProject && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate(`/dashboard/projects/${currentProject.id}`)}
+          className="mb-4"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Project
+        </Button>
+      )}
+      
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold">Action Center</h1>
@@ -100,5 +121,6 @@ export function ActionCenterPage() {
         onTaskCreated={loadTasks}
       />
     </div>
+    </DashboardLayout>
   );
 }

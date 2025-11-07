@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { Settings } from 'lucide-react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Settings, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
 import { ProjectUrlsList } from '@/components/organisms/ProjectUrlsList';
+import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { scrapeByProjectUrlId } from '@/services/contentScrapingService';
 import { getProjectUrls, type ProjectUrl } from '@/services/projectUrlsService';
 import { supabase } from '@/lib/supabaseClient';
@@ -30,6 +31,7 @@ import { useToast } from '@/hooks/useToast';
 
 export default function ContentAnalyzerPage() {
   const { projectId } = useParams<{ projectId: string }>();
+  const navigate = useNavigate();
   const [urls, setUrls] = useState<ProjectUrl[]>([]);
   const [isLoadingUrls, setIsLoadingUrls] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -200,15 +202,31 @@ export default function ContentAnalyzerPage() {
 
   if (isLoadingUrls) {
     return (
-      <div className="container mx-auto py-8 px-4">
-        <p>Loading project URLs...</p>
-      </div>
+      <DashboardLayout>
+        <div className="container mx-auto py-8 px-4">
+          <p>Loading project URLs...</p>
+        </div>
+      </DashboardLayout>
     );
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <DashboardLayout>
+      <div className="container mx-auto py-8 px-4">
       <div className="max-w-6xl mx-auto space-y-8">
+        {/* Back button */}
+        {projectId && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(`/dashboard/projects/${projectId}`)}
+            className="mb-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Project
+          </Button>
+        )}
+        
         <div className="flex items-center justify-between">
           <div className="space-y-2">
             <h1 className="text-3xl font-bold tracking-tight">Content & On-Page Analyzer</h1>
@@ -272,6 +290,7 @@ export default function ContentAnalyzerPage() {
           </>
         )}
       </div>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }
