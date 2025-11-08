@@ -27,6 +27,7 @@ export const createQueryBuilder = () => {
     single: vi.fn(),
     maybeSingle: vi.fn(),
     order: vi.fn(),
+    limit: vi.fn(),
   };
   
   // Make methods chainable
@@ -37,6 +38,7 @@ export const createQueryBuilder = () => {
   builder.eq.mockReturnValue(builder);
   builder.neq.mockReturnValue(builder);
   builder.order.mockReturnValue(builder);
+  builder.limit.mockReturnValue(builder);
   
   return builder;
 };

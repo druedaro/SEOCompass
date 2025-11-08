@@ -53,7 +53,7 @@ export async function scrapeUrl(
       body: {
         url,
         return_html: true, // Request full HTML instead of extracted data
-        render_js: options.renderJs ?? false,
+        render_js: options.renderJs ?? true,
       },
     });
 
