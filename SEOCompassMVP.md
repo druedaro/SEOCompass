@@ -450,7 +450,7 @@ test: add content analyzer moscow tests (5 tests)
 
 test: add action center moscow tests (5 tests)
 
-Merge to develop: git merge feature/comprehensive-testing --ff -m "test: complete moscow testing suite"
+Merge to develop: git merge feature/testing --ff -m "test: complete moscow testing suite"
 
 🚀 PHASE 11: Production Preparation
 Branch: release/v1.0.0
