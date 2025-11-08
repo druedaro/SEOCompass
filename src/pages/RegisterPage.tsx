@@ -101,9 +101,9 @@ export function RegisterPage() {
       
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <div className="flex justify-center mb-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-fuchsia-600 to-violet-600 shadow-xl">
-              <span className="text-xl font-bold text-white">SC</span>
+          <div className="flex justify-center mb-8">
+            <div className="flex h-12 w-12 items-center justify-center">
+              <img src="/logo.svg" alt="SEO Compass" className="h-12 w-12" />
             </div>
           </div>
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-fuchsia-600 to-violet-600 bg-clip-text text-transparent">Create an account</h1>

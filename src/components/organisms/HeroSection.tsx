@@ -23,8 +23,8 @@ export function HeroSection() {
         {/* Top bar with brand */}
         <div className="mb-8 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary">
-              <span className="text-sm font-bold text-primary-foreground">SC</span>
+            <div className="flex h-10 w-10 items-center justify-center">
+              <img src="/logo.svg" alt="SEO Compass" className="h-10 w-10" />
             </div>
             <span className="text-lg font-semibold">SEO Compass</span>
           </Link>

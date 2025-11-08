@@ -30,8 +30,8 @@ export function RoleSelectionModal({ onSelectRole }: RoleSelectionModalProps) {
       <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
         <div className="text-center mb-6">
           <div className="flex justify-center mb-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-fuchsia-600 to-violet-600 shadow-xl">
-              <span className="text-xl font-bold text-white">SC</span>
+            <div className="flex h-12 w-12 items-center justify-center">
+              <img src="/logo.svg" alt="SEO Compass" className="h-12 w-12" />
             </div>
           </div>
           <h2 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-fuchsia-600 to-violet-600 bg-clip-text text-transparent">

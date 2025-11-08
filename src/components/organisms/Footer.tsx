@@ -18,12 +18,12 @@ export function Footer() {
       
       <div className="container mx-auto px-4 py-10">
         <div className="flex flex-col items-center gap-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-gradient-to-br from-fuchsia-600 to-violet-600 shadow-lg">
-              <span className="text-sm font-bold text-white">SC</span>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex h-10 w-10 items-center justify-center">
+              <img src="/logo.svg" alt="SEO Compass" className="h-10 w-10" />
             </div>
             <div>
-              <div className="text-lg font-semibold bg-gradient-to-r from-fuchsia-600 to-violet-600 bg-clip-text text-transparent">SEO Compass</div>
+              <div className="font-bold text-xl bg-gradient-to-r from-fuchsia-600 to-violet-600 bg-clip-text text-transparent">SEO Compass</div>
               <div className="text-sm text-slate-600 font-medium">The complete SEO platform for Technical SEO specialists, Content experts, and Developers.</div>
             </div>
           </div>
