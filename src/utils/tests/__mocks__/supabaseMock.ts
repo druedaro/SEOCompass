@@ -26,6 +26,7 @@ export const createQueryBuilder = () => {
     neq: vi.fn(),
     single: vi.fn(),
     maybeSingle: vi.fn(),
+    order: vi.fn(),
   };
   
   // Make methods chainable
@@ -35,6 +36,7 @@ export const createQueryBuilder = () => {
   builder.delete.mockReturnValue(builder);
   builder.eq.mockReturnValue(builder);
   builder.neq.mockReturnValue(builder);
+  builder.order.mockReturnValue(builder);
   
   return builder;
 };
