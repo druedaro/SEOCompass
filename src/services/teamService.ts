@@ -130,6 +130,7 @@ export const teamService = {
           };
         })
       );
+      
       return membersWithProfiles as TeamMember[];
     }
     

@@ -29,7 +29,8 @@ import {
   SelectValue,
 } from '@/components/molecules/Select';
 import { DatePicker } from '@/components/molecules/DatePicker';
-import { taskService, CreateTaskInput } from '@/services/taskService';
+import { taskService, CreateTaskInput, Task } from '@/services/taskService';
+import { useWorkspace } from '@/context/WorkspaceContext';
 
 const taskSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title is too long'),
@@ -38,6 +39,7 @@ const taskSchema = z.object({
   status: z.enum(['todo', 'in_progress', 'completed', 'cancelled']).default('todo'),
   due_date: z.string().optional(),
   audit_reference: z.string().optional(),
+  assigned_to: z.string().optional(),
 });
 
 type TaskFormData = z.infer<typeof taskSchema>;
@@ -50,6 +52,7 @@ interface CreateTaskModalProps {
   auditReference?: string;
   initialTitle?: string;
   initialDescription?: string;
+  taskToEdit?: Task | null;
 }
 
 const priorityOptions = [
@@ -74,9 +77,13 @@ export function CreateTaskModal({
   auditReference,
   initialTitle,
   initialDescription,
+  taskToEdit,
 }: CreateTaskModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+  const { teamMembers } = useWorkspace();
+  
+  const isEditing = !!taskToEdit;
 
   const form = useForm<TaskFormData>({
     resolver: zodResolver(taskSchema),
@@ -86,38 +93,70 @@ export function CreateTaskModal({
       priority: 'medium',
       status: 'todo',
       audit_reference: auditReference || '',
+      assigned_to: 'unassigned',
     },
   });
 
-  // Update form fields when props change
+  // Update form fields when props or taskToEdit change
   useEffect(() => {
-    if (initialTitle) {
-      form.setValue('title', initialTitle);
+    if (open) {
+      if (taskToEdit) {
+        form.reset({
+          title: taskToEdit.title,
+          description: taskToEdit.description || '',
+          priority: taskToEdit.priority,
+          status: taskToEdit.status,
+          audit_reference: taskToEdit.audit_reference || '',
+          assigned_to: taskToEdit.assigned_to || 'unassigned',
+        });
+        if (taskToEdit.due_date) {
+          setSelectedDate(new Date(taskToEdit.due_date));
+        }
+      } else {
+        form.reset({
+          title: initialTitle || '',
+          description: initialDescription || '',
+          priority: 'medium',
+          status: 'todo',
+          audit_reference: auditReference || '',
+          assigned_to: 'unassigned',
+        });
+        setSelectedDate(undefined);
+      }
     }
-    if (initialDescription) {
-      form.setValue('description', initialDescription);
-    }
-    if (auditReference) {
-      form.setValue('audit_reference', auditReference);
-    }
-  }, [auditReference, initialTitle, initialDescription, form]);
+  }, [open, taskToEdit, auditReference, initialTitle, initialDescription, form]);
 
   const onSubmit = async (data: TaskFormData) => {
     setIsSubmitting(true);
     try {
+      const assignedToValue = data.assigned_to === 'unassigned' ? undefined : data.assigned_to;
+      
       const input: CreateTaskInput = {
         ...data,
         project_id: projectId,
         due_date: selectedDate?.toISOString(),
+        assigned_to: assignedToValue,
       };
 
-      await taskService.createTask(input);
+      if (isEditing && taskToEdit) {
+        await taskService.updateTask(taskToEdit.id, input);
+      } else {
+        await taskService.createTask(input);
+      }
+      
       onTaskCreated();
       onOpenChange(false);
-      form.reset();
+      form.reset({
+        title: '',
+        description: '',
+        priority: 'medium',
+        status: 'todo',
+        audit_reference: '',
+        assigned_to: 'unassigned',
+      });
       setSelectedDate(undefined);
     } catch (error) {
-      console.error('Error creating task:', error);
+      console.error('Error saving task:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -127,9 +166,11 @@ export function CreateTaskModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[525px]">
         <DialogHeader>
-          <DialogTitle>Create New Task</DialogTitle>
+          <DialogTitle>{isEditing ? 'Edit Task' : 'Create New Task'}</DialogTitle>
           <DialogDescription>
-            Add a new task to track your SEO improvements and fixes.
+            {isEditing
+              ? 'Update the task details below.'
+              : 'Add a new task to track your SEO improvements and fixes.'}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -219,6 +260,32 @@ export function CreateTaskModal({
               />
             </div>
 
+            <FormField
+              control={form.control}
+              name="assigned_to"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Assign to</FormLabel>
+                  <Select value={field.value || 'unassigned'} onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select team member" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="unassigned">Unassigned</SelectItem>
+                      {teamMembers.map((member) => (
+                        <SelectItem key={member.user_id} value={member.user_id}>
+                          {member.profile?.full_name || member.profile?.email || 'Unknown'}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormItem>
               <FormLabel>Due Date</FormLabel>
               <DatePicker
@@ -259,7 +326,7 @@ export function CreateTaskModal({
                 Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Creating...' : 'Create Task'}
+                {isSubmitting ? (isEditing ? 'Updating...' : 'Creating...') : (isEditing ? 'Update Task' : 'Create Task')}
               </Button>
             </DialogFooter>
           </form>

@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { AuditHistoryChart } from '@/components/organisms/AuditHistoryChart';
 import { AuditResultsTable } from '@/components/organisms/AuditResultsTable';
 import { CreateTaskModal } from '@/components/organisms/CreateTaskModal';
+import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { getProjectUrlById } from '@/services/projectUrlsService';
 import { getAuditHistory } from '@/services/contentScrapingService';
 import type { ProjectUrl } from '@/services/projectUrlsService';
@@ -59,14 +60,17 @@ export function UrlDetailsPage() {
 
   if (!projectUrl) {
     return (
-      <div className="container mx-auto py-8 px-4">
-        <p>URL not found</p>
-      </div>
+      <DashboardLayout>
+        <div className="container mx-auto py-8 px-4">
+          <p>URL not found</p>
+        </div>
+      </DashboardLayout>
     );
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <DashboardLayout>
+      <div className="container mx-auto py-8 px-4">
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Header */}
         <div>
@@ -170,5 +174,6 @@ export function UrlDetailsPage() {
         />
       )}
     </div>
+    </DashboardLayout>
   );
 }

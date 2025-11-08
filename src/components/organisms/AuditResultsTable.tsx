@@ -182,15 +182,17 @@ export function AuditResultsTable({
                   </TableCell>
                   <TableCell className="text-sm">{recommendation.action}</TableCell>
                   <TableCell>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      onClick={() => onAddTask?.(recommendation)}
-                      disabled={!onAddTask}
-                    >
-                      <Plus className="h-3 w-3 mr-1" />
-                      Task
-                    </Button>
+                    {recommendation.severity !== 'info' && (
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => onAddTask?.(recommendation)}
+                        disabled={!onAddTask}
+                      >
+                        <Plus className="h-3 w-3 mr-1" />
+                        Task
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))

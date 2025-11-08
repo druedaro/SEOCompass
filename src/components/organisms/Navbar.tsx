@@ -35,10 +35,10 @@ export function Navbar() {
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-6">
               <Link to="/dashboard" className="flex items-center gap-2 group">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-fuchsia-600 to-violet-600 shadow-md group-hover:shadow-lg transition-shadow">
-                  <span className="text-lg font-bold text-white">SC</span>
+                <div className="flex h-8 w-8 items-center justify-center">
+                  <img src="/logo.svg" alt="SEO Compass" className="h-8 w-8" />
                 </div>
-                <span className="text-xl font-bold bg-gradient-to-r from-fuchsia-600 to-violet-600 bg-clip-text text-transparent">SEO Compass</span>
+                <span className="text-xl font-bold bg-gradient-to-r from-fuchsia-600 to-[#ee208e] bg-clip-text text-transparent">SEO Compass</span>
               </Link>
 
               <TeamSelector onCreateTeam={() => setShowCreateTeamDialog(true)} />
@@ -66,13 +66,7 @@ export function Navbar() {
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link to="/profile">
-                      <User className="mr-2 h-4 w-4" />
-                      Profile
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/teams/settings">
+                    <Link to="/dashboard/team/settings">
                       <Settings className="mr-2 h-4 w-4" />
                       Team Settings
                     </Link>

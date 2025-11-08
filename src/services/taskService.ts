@@ -12,6 +12,7 @@ export interface Task {
   due_date: string | null;
   project_id: string;
   audit_reference: string | null;
+  assigned_to: string | null;
   created_by: string | null;
   created_at: string;
   updated_at: string;
@@ -26,6 +27,7 @@ export interface CreateTaskInput {
   due_date?: string;
   project_id: string;
   audit_reference?: string;
+  assigned_to?: string;
 }
 
 export interface UpdateTaskInput {
@@ -35,6 +37,7 @@ export interface UpdateTaskInput {
   status?: TaskStatus;
   due_date?: string;
   audit_reference?: string;
+  assigned_to?: string;
 }
 
 export const taskService = {
@@ -95,6 +98,10 @@ export const taskService = {
       taskData.audit_reference = input.audit_reference;
     }
 
+    if (input.assigned_to) {
+      taskData.assigned_to = input.assigned_to;
+    }
+
     const { data, error } = await supabase
       .from('tasks')
       .insert([taskData])
@@ -113,9 +120,15 @@ export const taskService = {
    * Update a task
    */
   async updateTask(taskId: string, input: UpdateTaskInput): Promise<Task> {
+    // Convert undefined assigned_to to null for proper database update
+    const updateData: any = { ...input };
+    if ('assigned_to' in input && input.assigned_to === undefined) {
+      updateData.assigned_to = null;
+    }
+
     const { data, error } = await supabase
       .from('tasks')
-      .update(input)
+      .update(updateData)
       .eq('id', taskId)
       .select()
       .single();
