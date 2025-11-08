@@ -437,7 +437,7 @@ Un último repaso general antes de pasar a la Fase 12.
 Merge to develop: git merge fix/mvp-stabilization --ff -m "fix: complete mvp stabilization before testing"
 
 🧪 PHASE 10: Comprehensive Testing - Moscow Method
-Branch: feature/comprehensive-testing
+Branch: feature/testing
 
 Commits (6)
 test: add auth moscow tests (10 tests)
