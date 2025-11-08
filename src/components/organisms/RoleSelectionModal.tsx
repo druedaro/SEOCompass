@@ -1,22 +1,24 @@
 import { useState } from 'react';
 import { Button } from '@/components/atoms/Button';
+import { Input } from '@/components/atoms/Input';
 import { roleOptions } from '@/schemas/authSchema';
 import type { UserRole } from '@/types/domain';
 
 interface RoleSelectionModalProps {
-  onSelectRole: (role: UserRole) => Promise<void>;
+  onSelectRole: (role: UserRole, fullName: string) => Promise<void>;
 }
 
 export function RoleSelectionModal({ onSelectRole }: RoleSelectionModalProps) {
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
+  const [fullName, setFullName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async () => {
-    if (!selectedRole) return;
+    if (!selectedRole || !fullName.trim()) return;
     
     setIsSubmitting(true);
     try {
-      await onSelectRole(selectedRole);
+      await onSelectRole(selectedRole, fullName.trim());
     } catch (error) {
       console.error('Error selecting role:', error);
       setIsSubmitting(false);
@@ -36,8 +38,23 @@ export function RoleSelectionModal({ onSelectRole }: RoleSelectionModalProps) {
             Welcome to SEO Compass!
           </h2>
           <p className="text-slate-600 mt-2">
-            Please select your role to continue
+            Please complete your profile to continue
           </p>
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="fullName" className="block text-sm font-medium text-slate-700 mb-2">
+            Full Name
+          </label>
+          <Input
+            id="fullName"
+            type="text"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            placeholder="Enter your full name"
+            className="w-full"
+            disabled={isSubmitting}
+          />
         </div>
 
         <div className="space-y-3 mb-6">
@@ -63,14 +80,14 @@ export function RoleSelectionModal({ onSelectRole }: RoleSelectionModalProps) {
 
         <Button
           onClick={handleSubmit}
-          disabled={!selectedRole || isSubmitting}
+          disabled={!selectedRole || !fullName.trim() || isSubmitting}
           className="w-full"
         >
           {isSubmitting ? 'Saving...' : 'Continue'}
         </Button>
 
         <p className="text-xs text-center text-slate-500 mt-4">
-          You can change your role later in settings
+          You can't change your role later!
         </p>
       </div>
     </div>

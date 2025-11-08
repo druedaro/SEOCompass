@@ -26,12 +26,47 @@ export function AuthProvider({ children }: AuthProviderProps) {
     
     try {
       isFetchingProfileRef.current = true;
-      const profileData = await authService.getUserProfile(userId);
-      setProfile(profileData);
       
-      // Check if profile exists but has no role (OAuth user)
-      if (profileData && !profileData.role) {
-        setShowRoleModal(true);
+      // First, try to get the profile (use maybeSingle to avoid 406 error)
+      const { data: profileData, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      // If profile doesn't exist (OAuth user), create it
+      if (!profileData && !error) {
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (user) {
+          const { data: newProfile, error: insertError } = await supabase
+            .from('profiles')
+            .insert({
+              user_id: userId,
+              email: user.email || '',
+            })
+            .select()
+            .single();
+
+          if (insertError) {
+            console.error('Error creating profile:', insertError);
+            setProfile(null);
+          } else {
+            setProfile(newProfile);
+            // Show role modal for OAuth users
+            setShowRoleModal(true);
+          }
+        }
+      } else if (error) {
+        console.error('Error fetching profile:', error);
+        setProfile(null);
+      } else {
+        setProfile(profileData);
+        
+        // Check if profile exists but has no role (OAuth user)
+        if (profileData && !profileData.role) {
+          setShowRoleModal(true);
+        }
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -111,16 +146,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   // Handle role selection for OAuth users
-  const handleRoleSelection = async (role: UserRole) => {
+  const handleRoleSelection = async (role: UserRole, fullName: string) => {
     if (!user) return;
     
     try {
-      await authService.updateUserRole(user.id, role);
-      // Refresh profile to get updated role
+      // Update both role and full_name
+      const { error } = await supabase
+        .from('profiles')
+        .update({ 
+          role,
+          full_name: fullName,
+        })
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      // Refresh profile to get updated data
       await fetchProfile(user.id);
       setShowRoleModal(false);
     } catch (error) {
-      console.error('Error updating role:', error);
+      console.error('Error updating profile:', error);
       throw error;
     }
   };

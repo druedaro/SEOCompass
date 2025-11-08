@@ -27,17 +27,44 @@ export const authService = {
       if (authError) throw authError;
       if (!authData.user) throw new Error('User creation failed');
 
-      // 2. Profile is created automatically by trigger handle_new_user()
-      // But we update the role and full_name from metadata
-      const { error: profileError } = await supabase
+      // 2. Create profile manually (trigger might not work consistently)
+      // First, check if profile exists
+      const { data: existingProfile } = await supabase
         .from('profiles')
-        .update({ 
-          role: data.role as UserRole,
-          full_name: data.fullName,
-        })
-        .eq('user_id', authData.user.id);
+        .select('user_id')
+        .eq('user_id', authData.user.id)
+        .single();
 
-      if (profileError) throw profileError;
+      if (!existingProfile) {
+        // Profile doesn't exist, create it
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({ 
+            user_id: authData.user.id,
+            email: data.email,
+            role: data.role as UserRole,
+            full_name: data.fullName,
+          });
+
+        if (profileError) {
+          console.error('Profile creation error:', profileError);
+          throw profileError;
+        }
+      } else {
+        // Profile exists, update it
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({ 
+            role: data.role as UserRole,
+            full_name: data.fullName,
+          })
+          .eq('user_id', authData.user.id);
+
+        if (profileError) {
+          console.error('Profile update error:', profileError);
+          throw profileError;
+        }
+      }
 
       return { user: authData.user, session: authData.session };
     } catch (error) {

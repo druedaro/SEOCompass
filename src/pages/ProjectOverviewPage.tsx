@@ -118,14 +118,14 @@ export function ProjectOverviewPage() {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card>
+        <Card className="opacity-50 pointer-events-none">
           <CardHeader className="pb-3">
             <CardDescription>Total Keywords</CardDescription>
             <CardTitle className="text-3xl">0</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-xs text-muted-foreground">
-              No keywords tracked yet
+              Coming in future updates
             </p>
           </CardContent>
         </Card>

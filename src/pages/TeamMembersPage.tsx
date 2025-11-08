@@ -19,6 +19,19 @@ export default function TeamMembersPage() {
       .slice(0, 2);
   };
 
+  const getRoleBadgeVariant = (role: string): "default" | "secondary" | "destructive" | "outline" => {
+    switch (role) {
+      case 'tech_seo':
+        return 'default'; // Blue
+      case 'content_seo':
+        return 'secondary'; // Gray
+      case 'developer':
+        return 'outline'; // Border only
+      default:
+        return 'secondary';
+    }
+  };
+
   if (!currentTeam) {
     return (
       <DashboardLayout>
@@ -100,7 +113,7 @@ export default function TeamMembersPage() {
                         </p>
                       </div>
                     </div>
-                    <Badge variant={member.role === 'tech_seo' ? 'default' : 'secondary'}>
+                    <Badge variant={getRoleBadgeVariant(member.role)}>
                       {member.role.replace('_', ' ').toUpperCase()}
                     </Badge>
                   </div>
