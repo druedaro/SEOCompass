@@ -119,6 +119,7 @@ export function ActionCenterPage() {
         }}
         projectId={currentProject.id}
         onTaskCreated={loadTasks}
+        taskToEdit={taskToEdit}
       />
     </div>
     </DashboardLayout>

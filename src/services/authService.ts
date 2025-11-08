@@ -19,6 +19,7 @@ export const authService = {
         options: {
           data: {
             role: data.role,
+            full_name: data.fullName,
           },
         },
       });
@@ -27,10 +28,13 @@ export const authService = {
       if (!authData.user) throw new Error('User creation failed');
 
       // 2. Profile is created automatically by trigger handle_new_user()
-      // But we update the role from metadata
+      // But we update the role and full_name from metadata
       const { error: profileError } = await supabase
         .from('profiles')
-        .update({ role: data.role as UserRole })
+        .update({ 
+          role: data.role as UserRole,
+          full_name: data.fullName,
+        })
         .eq('user_id', authData.user.id);
 
       if (profileError) throw profileError;

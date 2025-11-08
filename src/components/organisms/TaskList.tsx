@@ -21,6 +21,7 @@ import {
 import { Button } from '@/components/atoms/Button';
 import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
 import { Task, taskService } from '@/services/taskService';
+import { useWorkspace } from '@/context/WorkspaceContext';
 
 interface TaskListProps {
   tasks: Task[];
@@ -39,6 +40,13 @@ export function TaskList({ tasks, onTaskUpdate, onTaskEdit }: TaskListProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const { teamMembers } = useWorkspace();
+
+  const getAssigneeName = (userId: string | null) => {
+    if (!userId) return 'Unassigned';
+    const member = teamMembers.find(m => m.user_id === userId);
+    return member?.profile?.full_name || member?.profile?.email || 'Unknown';
+  };
 
   const handleDeleteClick = (task: Task) => {
     setTaskToDelete(task);
@@ -91,6 +99,7 @@ export function TaskList({ tasks, onTaskUpdate, onTaskEdit }: TaskListProps) {
               <TableHead>Title</TableHead>
               <TableHead>Priority</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Assigned To</TableHead>
               <TableHead>Due Date</TableHead>
               <TableHead>Reference</TableHead>
               <TableHead className="w-[70px]"></TableHead>
@@ -116,6 +125,11 @@ export function TaskList({ tasks, onTaskUpdate, onTaskEdit }: TaskListProps) {
                   <Badge className={statusConfig[task.status].className}>
                     {statusConfig[task.status].label}
                   </Badge>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">
+                    {getAssigneeName(task.assigned_to)}
+                  </span>
                 </TableCell>
                 <TableCell>
                   {task.due_date ? (
