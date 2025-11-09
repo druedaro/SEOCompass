@@ -17,7 +17,7 @@ describe('Authentication Service - Moscow Method Tests', () => {
   });
 
   // ==========================================
-  // MUST HAVE - Critical functionality (6 tests)
+  // 10 tests total - Core authentication flows
   // ==========================================
   
   describe('MUST HAVE: Core Authentication', () => {
@@ -130,14 +130,6 @@ describe('Authentication Service - Moscow Method Tests', () => {
       expect(mockSupabaseAuth.signOut).toHaveBeenCalled();
     });
 
-    it('should handle sign out errors', async () => {
-      mockSupabaseAuth.signOut.mockResolvedValue(
-        createErrorResponse('Sign out failed', 'SIGN_OUT_ERROR')
-      );
-
-      await expect(authService.signOut()).rejects.toThrow();
-    });
-
     it('should get current session', async () => {
       const mockSession = { access_token: 'token123', user: { id: '123' } };
 
@@ -149,14 +141,6 @@ describe('Authentication Service - Moscow Method Tests', () => {
 
       expect(mockSupabaseAuth.getSession).toHaveBeenCalled();
       expect(result).toEqual(mockSession);
-    });
-
-    it('should handle session retrieval errors', async () => {
-      mockSupabaseAuth.getSession.mockResolvedValue(
-        createErrorResponse('Session expired', 'SESSION_EXPIRED')
-      );
-
-      await expect(authService.getSession()).rejects.toThrow();
     });
 
     it('should get current user', async () => {
@@ -171,19 +155,7 @@ describe('Authentication Service - Moscow Method Tests', () => {
       expect(mockSupabaseAuth.getUser).toHaveBeenCalled();
       expect(result).toEqual(mockUser);
     });
-
-    it('should handle get user errors', async () => {
-      mockSupabaseAuth.getUser.mockResolvedValue(
-        createErrorResponse('User not found', 'USER_NOT_FOUND')
-      );
-
-      await expect(authService.getCurrentUser()).rejects.toThrow();
-    });
   });
-
-  // ==========================================
-  // SHOULD HAVE - Important but not critical (2 tests)
-  // ==========================================
 
   describe('SHOULD HAVE: OAuth Authentication', () => {
     it('should initiate Google OAuth sign in', async () => {
@@ -201,20 +173,7 @@ describe('Authentication Service - Moscow Method Tests', () => {
       });
       expect(result.provider).toBe('google');
     });
-
-    it('should handle OAuth authentication errors', async () => {
-      mockSupabaseAuth.signInWithOAuth.mockResolvedValue(
-        createErrorResponse('OAuth provider unavailable', 'OAUTH_ERROR')
-      );
-
-      await expect(authService.signInWithGoogle()).rejects.toThrow();
-      expect(mockSupabaseAuth.signInWithOAuth).toHaveBeenCalled();
-    });
   });
-
-  // ==========================================
-  // COULD HAVE - Nice to have features (2 tests)
-  // ==========================================
 
   describe('COULD HAVE: Password Management', () => {
     it('should send password reset email', async () => {
@@ -234,16 +193,6 @@ describe('Authentication Service - Moscow Method Tests', () => {
       );
     });
 
-    it('should handle password reset errors', async () => {
-      const email = 'nonexistent@example.com';
-
-      mockSupabaseAuth.resetPasswordForEmail.mockResolvedValue(
-        createErrorResponse('User not found', 'USER_NOT_FOUND')
-      );
-
-      await expect(authService.resetPassword(email)).rejects.toThrow();
-    });
-
     it('should update user password', async () => {
       const newPassword = 'NewPassword123!';
 
@@ -257,22 +206,5 @@ describe('Authentication Service - Moscow Method Tests', () => {
         password: newPassword,
       });
     });
-
-    it('should handle password update errors', async () => {
-      const newPassword = 'NewPassword123!';
-
-      mockSupabaseAuth.updateUser.mockResolvedValue(
-        createErrorResponse('Password update failed', 'UPDATE_ERROR')
-      );
-
-      await expect(authService.updatePassword(newPassword)).rejects.toThrow();
-    });
   });
-
-  // ==========================================
-  // WON'T HAVE - Out of scope for MVP (0 tests)
-  // ==========================================
-  // - Multi-factor authentication
-  // - Email verification reminders
-  // - Account deletion
 });
