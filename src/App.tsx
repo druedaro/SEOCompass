@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from '@/auth/AuthProvider';
-import { WorkspaceProvider } from '@/context/WorkspaceContext';
+import { WorkspaceProvider } from '@/contexts/WorkspaceContext';
 import { ProjectProvider } from '@/contexts/ProjectContext';
 import { ProtectedRoute } from '@/routes/ProtectedRoute';
 import { LoginPage } from '@/pages/LoginPage';
@@ -26,15 +26,10 @@ function App() {
         <WorkspaceProvider>
           <ProjectProvider>
             <Routes>
-              {/* Welcome page */}
               <Route path="/" element={<WelcomePage />} />
-              
-              {/* Auth routes */}
               <Route path={AUTH_PATHS.LOGIN} element={<LoginPage />} />
               <Route path={AUTH_PATHS.REGISTER} element={<RegisterPage />} />
               <Route path="/auth/callback" element={<AuthCallbackPage />} />
-              
-              {/* Protected routes - Team Management */}
               <Route
                 path="/dashboard"
                 element={
@@ -70,8 +65,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              
-              {/* Protected routes - Project Management */}
+
               <Route
                 path="/dashboard/projects"
                 element={
@@ -134,8 +128,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              
-              {/* Catch all - redirect to welcome */}
+
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </ProjectProvider>
