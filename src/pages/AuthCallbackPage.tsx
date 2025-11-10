@@ -7,10 +7,8 @@ export function AuthCallbackPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Handle the email confirmation callback
     const handleCallback = async () => {
       try {
-        // Get the current session after email confirmation
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
         if (sessionError) {
@@ -20,10 +18,8 @@ export function AuthCallbackPage() {
         }
 
         if (session) {
-          // Email confirmed successfully, redirect to dashboard
           setTimeout(() => navigate('/dashboard'), 1000);
         } else {
-          // No session found, redirect to login
           setTimeout(() => navigate('/auth/login'), 2000);
         }
       } catch (err) {

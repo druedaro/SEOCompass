@@ -97,7 +97,6 @@ export function CreateTaskModal({
     },
   });
 
-  // Update form fields when props or taskToEdit change
   useEffect(() => {
     if (open) {
       if (taskToEdit) {

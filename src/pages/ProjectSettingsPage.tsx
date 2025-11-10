@@ -48,7 +48,6 @@ export function ProjectSettingsPage() {
     },
   });
 
-  // Update form when currentProject changes
   useEffect(() => {
     if (currentProject) {
       reset({

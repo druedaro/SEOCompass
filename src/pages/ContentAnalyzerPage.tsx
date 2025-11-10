@@ -76,16 +76,13 @@ export default function ContentAnalyzerPage() {
       const scrapedContent = await scrapeByProjectUrlId(projectUrlId);
       const parsedContent = parseHTMLContent(scrapedContent.html, scrapedContent.finalUrl);
 
-      // Check for critical errors (404, etc.)
       const has404Error = scrapedContent.statusCode === 404;
       const hasServerError = scrapedContent.statusCode >= 500;
 
-      // Extract headings
       const h1s = parsedContent.headings
         .filter((h) => h.level === 1)
         .map((h) => h.text);
 
-      // Validate SEO elements
       const titleValidation = validateTitle(parsedContent.metadata.title);
       const descriptionValidation = validateDescription(parsedContent.metadata.description);
       const urlValidation = validateUrl(scrapedContent.finalUrl);
@@ -98,18 +95,14 @@ export default function ContentAnalyzerPage() {
         scrapedContent.finalUrl
       );
 
-      // Count and validate links
       const internalLinks = parsedContent.links.filter((link) => link.isInternal).length;
       const externalLinks = parsedContent.links.filter((link) => link.isExternal).length;
       const linksValidation = validateLinks({ internal: internalLinks, external: externalLinks });
 
-      // Validate hreflang tags
       const hreflangValidation = validateHreflang(parsedContent.hreflangTags);
 
-      // Validate robots meta tag
       const robotsValidation = validateRobotsMeta(parsedContent.metadata.robots);
 
-      // Analyze keywords
       analyzeKeywords(
         {
           title: parsedContent.metadata.title,
@@ -122,7 +115,6 @@ export default function ContentAnalyzerPage() {
 
       const keywordOptimization = 70; // Default score
 
-      // Calculate overall score
       const scoreBreakdown = calculateSEOScore({
         titleValidation,
         descriptionValidation,
@@ -141,7 +133,6 @@ export default function ContentAnalyzerPage() {
         externalLinks,
       });
 
-      // Generate recommendations
       const recommendations = generateRecommendations({
         titleValidation,
         title: parsedContent.metadata.title,
@@ -164,7 +155,6 @@ export default function ContentAnalyzerPage() {
         hasServerError,
       });
 
-      // Save audit to database
       if (projectId) {
         const { error: insertError } = await supabase.from('content_audits').insert({
           project_id: projectId,

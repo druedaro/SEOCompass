@@ -12,7 +12,6 @@ interface DashboardLayoutProps {
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const location = useLocation();
 
-  // Hide sidebar when inside a specific project (after /dashboard/projects/:projectId)
   const isInsideProject = /^\/dashboard\/projects\/[^/]+/.test(location.pathname);
 
   const navigation = [

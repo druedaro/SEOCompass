@@ -24,7 +24,6 @@ export function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Redirect if already logged in
   useEffect(() => {
     if (!loading && user) {
       navigate('/dashboard', { replace: true });
@@ -46,10 +45,8 @@ export function LoginPage() {
       
       await authService.signIn(data);
       
-      // Navigate immediately - AuthProvider will handle loading state
       navigate('/dashboard');
     } catch (err) {
-      // More specific error messages
       const errorMessage = err instanceof Error ? err.message : 'Failed to sign in';
       
       if (errorMessage.includes('Invalid login credentials')) {

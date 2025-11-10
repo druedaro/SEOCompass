@@ -52,14 +52,11 @@ export function RegisterPage() {
       const result = await authService.signUp(data);
       console.log('Registration result:', result);
       
-      // Si requiere confirmación de email
       if (result.session === null) {
         setError('¡Cuenta creada! Revisa tu email para confirmar tu cuenta antes de iniciar sesión.');
         setIsLoading(false);
-        // Redirigir al login después de 3 segundos
         setTimeout(() => navigate('/auth/login'), 3000);
       } else {
-        // Login automático exitoso - esperar un poco para el AuthProvider
         console.log('Auto-login successful, redirecting to dashboard');
         setTimeout(() => {
           navigate('/dashboard');

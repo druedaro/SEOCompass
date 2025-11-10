@@ -99,10 +99,8 @@ export default function TeamSettingsPage() {
     }
   };
 
-  // Load team location coordinates when component mounts or team changes
   useEffect(() => {
     if (currentTeam?.location && isLoaded) {
-      // Use Geocoding API to convert address to coordinates
       const geocoder = new google.maps.Geocoder();
       geocoder.geocode({ address: currentTeam.location }, (results, status) => {
         if (status === 'OK' && results && results[0]) {
