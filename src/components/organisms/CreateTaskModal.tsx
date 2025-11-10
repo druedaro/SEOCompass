@@ -9,7 +9,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/organisms/Dialog';
+} from '@/components/atoms/Dialog';
 import {
   Form,
   FormControl,
@@ -27,7 +27,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/molecules/Select';
+} from '@/components/atoms/Select';
 import { DatePicker } from '@/components/molecules/DatePicker';
 import { taskService, CreateTaskInput, Task } from '@/services/taskService';
 import { useWorkspace } from '@/contexts/WorkspaceContext';

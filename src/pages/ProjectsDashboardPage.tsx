@@ -126,14 +126,12 @@ export function ProjectsDashboardPage() {
           </div>
         )}
 
-        {/* Create Project Modal */}
         <ProjectModal
           open={showCreateModal}
           onClose={() => setShowCreateModal(false)}
           mode="create"
         />
 
-        {/* Edit Project Modal */}
         <ProjectModal
           open={showEditModal}
           onClose={() => {

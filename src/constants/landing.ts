@@ -9,7 +9,6 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 
-// Hero Section Data
 export const HERO_DATA = {
   badge: {
     text: '🚀 Now in Beta',
@@ -34,7 +33,6 @@ export const HERO_DATA = {
   ],
 };
 
-// Features Section Data
 export interface Feature {
   icon: LucideIcon;
   title: string;
@@ -71,7 +69,6 @@ export const FEATURES_DATA: Feature[] = [
   },
 ];
 
-// How It Works Section Data
 export interface Step {
   icon: LucideIcon;
   title: string;

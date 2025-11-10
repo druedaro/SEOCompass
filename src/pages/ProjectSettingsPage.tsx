@@ -107,7 +107,6 @@ export function ProjectSettingsPage() {
   return (
     <DashboardLayout>
       <div className="container mx-auto py-8 px-4 max-w-3xl">
-      {/* Header */}
       <div className="mb-8">
         <Button
           variant="ghost"
@@ -125,7 +124,6 @@ export function ProjectSettingsPage() {
         </p>
       </div>
 
-      {/* General Settings */}
       <Card className="mb-6">
         <CardHeader>
           <CardTitle>General Information</CardTitle>
@@ -167,7 +165,6 @@ export function ProjectSettingsPage() {
         </CardContent>
       </Card>
 
-      {/* Danger Zone */}
       <Card className="border-destructive">
         <CardHeader>
           <CardTitle className="text-destructive">Danger Zone</CardTitle>

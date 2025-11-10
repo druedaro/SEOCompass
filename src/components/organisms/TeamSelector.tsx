@@ -1,4 +1,4 @@
-import { Check, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
 import {
   Select,
@@ -6,7 +6,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/molecules/Select';
+} from '@/components/atoms/Select';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 
 interface TeamSelectorProps {
@@ -28,10 +28,7 @@ export function TeamSelector({ onCreateTeam }: TeamSelectorProps) {
         <SelectContent>
           {teams.map((team) => (
             <SelectItem key={team.id} value={team.id}>
-              <div className="flex items-center gap-2">
-                {currentTeam?.id === team.id && <Check className="h-4 w-4" />}
-                <span>{team.name}</span>
-              </div>
+              {team.name}
             </SelectItem>
           ))}
         </SelectContent>

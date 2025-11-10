@@ -39,7 +39,6 @@ export function UrlDetailsPage() {
     <DashboardLayout>
       <div className="container mx-auto py-8 px-4">
       <div className="max-w-6xl mx-auto space-y-8">
-        {/* Header */}
         <div>
           <Button
             variant="ghost"
@@ -57,7 +56,6 @@ export function UrlDetailsPage() {
           </div>
         </div>
 
-        {/* Audit History Chart */}
         {auditHistory.length > 0 && (
           <Card>
             <CardHeader>
@@ -72,7 +70,6 @@ export function UrlDetailsPage() {
           </Card>
         )}
 
-        {/* Latest Audit Results */}
         {latestAudit && (
           <Card>
             <CardHeader>
@@ -109,7 +106,6 @@ export function UrlDetailsPage() {
           </Card>
         )}
 
-        {/* No audits state */}
         {auditHistory.length === 0 && (
           <Card>
             <CardContent className="py-12 text-center">
@@ -126,7 +122,6 @@ export function UrlDetailsPage() {
         )}
       </div>
 
-      {/* Create Task Modal */}
       {projectId && (
         <CreateTaskModal
           open={createTaskModalOpen}

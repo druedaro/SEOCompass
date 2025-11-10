@@ -86,7 +86,6 @@ export function RegisterPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Vibrant background matching welcome page */}
       <div className="absolute inset-0 -z-20">
         <div className="absolute inset-0 bg-gradient-to-br from-violet-100 via-fuchsia-100 to-cyan-100" />
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-bl from-fuchsia-300/50 to-transparent rounded-full blur-3xl animate-pulse" />

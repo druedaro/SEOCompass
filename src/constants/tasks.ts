@@ -1,6 +1,5 @@
 import type { TaskPriority, TaskStatus } from '@/services/taskService';
 
-// Priority Options for Selects
 export const PRIORITY_OPTIONS = [
   { value: 'low', label: 'Low' },
   { value: 'medium', label: 'Medium' },
@@ -8,7 +7,6 @@ export const PRIORITY_OPTIONS = [
   { value: 'urgent', label: 'Urgent' },
 ] as const;
 
-// Status Options for Selects
 export const STATUS_OPTIONS = [
   { value: 'todo', label: 'To Do' },
   { value: 'in_progress', label: 'In Progress' },
@@ -16,7 +14,6 @@ export const STATUS_OPTIONS = [
   { value: 'cancelled', label: 'Cancelled' },
 ] as const;
 
-// Priority Visual Configuration
 export const PRIORITY_CONFIG: Record<
   TaskPriority,
   {
@@ -47,7 +44,6 @@ export const PRIORITY_CONFIG: Record<
   },
 };
 
-// Status Visual Configuration
 export const STATUS_CONFIG: Record<
   TaskStatus,
   { label: string; className: string }

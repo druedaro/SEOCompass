@@ -1,4 +1,3 @@
-// SEO Validation Limits
 export const SEO_LIMITS = {
   title: { min: 30, max: 60 },
   description: { min: 120, max: 160 },
@@ -8,7 +7,6 @@ export const SEO_LIMITS = {
   externalLinks: { max: 10 },
 } as const;
 
-// Category Styles for Audit Results
 export const CATEGORY_STYLES: Record<
   'meta' | 'content' | 'technical' | 'links' | 'images',
   string
@@ -20,7 +18,6 @@ export const CATEGORY_STYLES: Record<
   images: 'bg-pink-100 text-pink-800',
 };
 
-// HTTP Status Code Descriptions
 export const HTTP_STATUS_DESCRIPTIONS: Record<number, string> = {
   200: 'OK - The request was successful',
   201: 'Created - Resource successfully created',

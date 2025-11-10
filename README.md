@@ -295,7 +295,6 @@ src/
 │
 ├── hooks/               
 │   ├── useContentAnalyzer.ts
-│   ├── useErrorHandler.ts
 │   ├── useProjectUrls.ts
 │   └── useUrlDetails.ts
 │

@@ -169,7 +169,6 @@ export default function TeamSettingsPage() {
                 disabled={isLoading}
               />
 
-              {/* Google Map */}
               {isLoaded && (
                 <div className="space-y-2">
                   <Label>Map Preview</Label>

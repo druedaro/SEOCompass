@@ -12,7 +12,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/molecules/Popover';
+} from '@/components/atoms/Popover';
 import { useProject } from '@/hooks/useProject';
 import { useState } from 'react';
 

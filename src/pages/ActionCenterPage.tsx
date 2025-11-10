@@ -67,7 +67,6 @@ export function ActionCenterPage() {
   return (
     <DashboardLayout>
       <div className="container mx-auto py-8">
-      {/* Back button */}
       {currentProject && (
         <Button
           variant="ghost"

@@ -1,9 +1,5 @@
 import type { ValidationResult } from './validators';
 
-/**
- * Calculate overall SEO score based on various validation results
- */
-
 export interface SEOScoreBreakdown {
   overall: number;
   meta: number;
@@ -29,9 +25,6 @@ export interface ScoreCalculationInput {
   externalLinks?: number;
 }
 
-/**
- * Weight constants for different SEO factors
- */
 const WEIGHTS = {
   TITLE: 0.16,
   DESCRIPTION: 0.12,

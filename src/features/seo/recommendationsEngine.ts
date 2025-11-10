@@ -1,8 +1,3 @@
-/**
- * Recommendations Engine - Simplified & Compact
- * Generate actionable SEO recommendations based on detected issues
- */
-
 import type { ValidationResult } from './validators';
 
 export interface Recommendation {
@@ -37,14 +32,10 @@ interface RecommendationInput {
   hasServerError?: boolean;
 }
 
-/**
- * Generate all recommendations from validation results
- */
 export function generateRecommendations(input: RecommendationInput): Recommendation[] {
   const recommendations: Recommendation[] = [];
-  let counter = 0; // Counter único para IDs
+  let counter = 0;
 
-  // Check for critical HTTP errors first
   if (input.has404Error) {
     recommendations.push({
       id: `rec-${counter++}`,
@@ -69,7 +60,6 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
     });
   }
 
-  // Meta recommendations
   counter = addIssueRecommendations(
     recommendations,
     input.titleValidation,
@@ -97,7 +87,6 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
     counter
   );
 
-  // Content recommendations
   counter = addIssueRecommendations(
     recommendations,
     input.h1Validation,
@@ -127,7 +116,6 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
     counter
   );
 
-  // Technical validators (critical)
   if (input.canonicalValidation) {
     counter = addIssueRecommendations(
       recommendations,
@@ -160,7 +148,6 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
     );
   }
 
-  // Images recommendations
   if (input.imagesValidation.issues.length > 0) {
     const missingAlt = input.imagesValidation.issues[0];
     recommendations.push({
@@ -184,7 +171,6 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
     });
   }
 
-  // Structured data
   if (!input.hasStructuredData) {
     recommendations.push({
       id: `rec-${counter++}`,
@@ -207,7 +193,6 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
     });
   }
 
-  // Links recommendations
   if (input.internalLinks !== undefined) {
     if (input.internalLinks < 3) {
       recommendations.push({
@@ -259,10 +244,6 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
   return recommendations.sort((a, b) => b.priority - a.priority);
 }
 
-/**
- * Helper to generate recommendations from a validation result
- * Now also adds INFO when validation passes
- */
 function addIssueRecommendations(
   recommendations: Recommendation[],
   validation: ValidationResult,
@@ -273,7 +254,6 @@ function addIssueRecommendations(
 ): number {
   let counter = startCounter;
 
-  // Critical issues
   if (validation.issues.length > 0) {
     validation.issues.forEach((issue) => {
       recommendations.push({
@@ -287,7 +267,6 @@ function addIssueRecommendations(
       });
     });
   }
-  // Warnings
   else if (validation.warnings.length > 0) {
     validation.warnings.forEach((warning) => {
       recommendations.push({
@@ -301,7 +280,6 @@ function addIssueRecommendations(
       });
     });
   }
-  // Si todo está bien, añadir INFO
   else if (validation.isValid && validation.score >= 80) {
     recommendations.push({
       id: `rec-${counter++}`,
