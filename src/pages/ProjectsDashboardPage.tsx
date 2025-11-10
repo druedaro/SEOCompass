@@ -6,7 +6,7 @@ import { ProjectCard } from '@/components/molecules/ProjectCard';
 import { ProjectModal } from '@/components/organisms/ProjectModal';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useProject } from '@/hooks/useProject';
-import { useWorkspace } from '@/context/WorkspaceContext';
+import { useWorkspace } from '@/contexts/WorkspaceContext';
 import type { Project } from '@/types/domain';
 
 export function ProjectsDashboardPage() {

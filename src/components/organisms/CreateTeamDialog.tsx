@@ -15,7 +15,7 @@ import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { Label } from '@/components/atoms/Label';
 import { LocationAutocomplete } from '@/components/molecules/LocationAutocomplete';
-import { useWorkspace } from '@/context/WorkspaceContext';
+import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 
 const createTeamSchema = z.object({

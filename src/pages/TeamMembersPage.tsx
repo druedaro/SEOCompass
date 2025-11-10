@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/atoms/Avatar';
 import { Badge } from '@/components/atoms/Badge';
 import { Button } from '@/components/atoms/Button';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
-import { useWorkspace } from '@/context/WorkspaceContext';
+import { useWorkspace } from '@/contexts/WorkspaceContext';
 
 export default function TeamMembersPage() {
   const { currentTeam, teamMembers, isLoadingMembers, refreshMembers } = useWorkspace();

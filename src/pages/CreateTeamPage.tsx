@@ -11,7 +11,7 @@ import { Label } from '@/components/atoms/Label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
 import { LocationAutocomplete } from '@/components/molecules/LocationAutocomplete';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
-import { useWorkspace } from '@/context/WorkspaceContext';
+import { useWorkspace } from '@/contexts/WorkspaceContext';
 
 const createTeamSchema = z.object({
   name: z.string().min(3, 'Team name must be at least 3 characters').max(50),

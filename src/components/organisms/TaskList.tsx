@@ -21,7 +21,7 @@ import {
 import { Button } from '@/components/atoms/Button';
 import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
 import { Task, taskService } from '@/services/taskService';
-import { useWorkspace } from '@/context/WorkspaceContext';
+import { useWorkspace } from '@/contexts/WorkspaceContext';
 
 interface TaskListProps {
   tasks: Task[];

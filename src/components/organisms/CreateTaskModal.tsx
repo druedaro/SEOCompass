@@ -30,7 +30,7 @@ import {
 } from '@/components/molecules/Select';
 import { DatePicker } from '@/components/molecules/DatePicker';
 import { taskService, CreateTaskInput, Task } from '@/services/taskService';
-import { useWorkspace } from '@/context/WorkspaceContext';
+import { useWorkspace } from '@/contexts/WorkspaceContext';
 
 const taskSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title is too long'),

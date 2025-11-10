@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { LocationAutocomplete } from '@/components/molecules/LocationAutocomplete';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
-import { useWorkspace } from '@/context/WorkspaceContext';
+import { useWorkspace } from '@/contexts/WorkspaceContext';
 
 const updateTeamSchema = z.object({
   name: z.string().min(3, 'Team name must be at least 3 characters').max(50),
