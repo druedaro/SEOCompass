@@ -54,8 +54,6 @@ export default function CreateTeamPage() {
     try {
       await createTeam({ ...data, location });
       navigate('/dashboard');
-    } catch (error) {
-      console.error('Error creating team:', error);
     } finally {
       setIsLoading(false);
     }

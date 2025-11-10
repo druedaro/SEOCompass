@@ -1,5 +1,5 @@
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
-import { featuresData } from '@/data/AppData';
+import { FEATURES_DATA } from '@/constants/landing';
 
 export function FeaturesSection() {
   return (
@@ -23,7 +23,7 @@ export function FeaturesSection() {
 
         {/* Bento Grid */}
         <div className="mx-auto grid max-w-5xl grid-cols-1 gap-4 md:grid-cols-3">
-          {featuresData.map((feature) => {
+          {FEATURES_DATA.map((feature) => {
             const Icon = feature.icon;
             return (
               <Card

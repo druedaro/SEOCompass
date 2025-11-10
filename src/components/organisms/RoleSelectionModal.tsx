@@ -19,13 +19,10 @@ export function RoleSelectionModal({ onSelectRole }: RoleSelectionModalProps) {
     setIsSubmitting(true);
     try {
       await onSelectRole(selectedRole, fullName.trim());
-    } catch (error) {
-      console.error('Error selecting role:', error);
+    } finally {
       setIsSubmitting(false);
     }
-  };
-
-  return (
+  };  return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
         <div className="text-center mb-6">

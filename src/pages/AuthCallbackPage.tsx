@@ -13,7 +13,6 @@ export function AuthCallbackPage() {
 
         if (sessionError) {
           setError('Error al verificar tu email. Por favor intenta de nuevo.');
-          console.error('Session error:', sessionError);
           return;
         }
 
@@ -22,8 +21,7 @@ export function AuthCallbackPage() {
         } else {
           setTimeout(() => navigate('/auth/login'), 2000);
         }
-      } catch (err) {
-        console.error('Callback error:', err);
+      } catch {
         setError('Error al procesar la confirmación. Por favor intenta iniciar sesión.');
         setTimeout(() => navigate('/auth/login'), 3000);
       }

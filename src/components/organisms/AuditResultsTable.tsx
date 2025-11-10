@@ -10,7 +10,8 @@ import {
 } from '@/components/atoms/Table';
 import { Card } from '@/components/atoms/Card';
 import { AlertCircle, AlertTriangle, Info, Plus } from 'lucide-react';
-import type { Recommendation } from '@/utils/recommendationsEngine';
+import type { Recommendation } from '@/features/seo/recommendationsEngine';
+import { CATEGORY_STYLES } from '@/constants/seo';
 
 interface AuditResultsTableProps {
   recommendations: Recommendation[];
@@ -52,16 +53,8 @@ function getSeverityBadge(severity: 'critical' | 'warning' | 'info') {
 }
 
 function getCategoryBadge(category: Recommendation['category']) {
-  const categoryStyles: Record<Recommendation['category'], string> = {
-    meta: 'bg-[#82ca9d] text-white border-[#82ca9d]',
-    content: 'bg-[#ffc658] text-gray-900 border-[#ffc658]',
-    technical: 'bg-[#ff7c7c] text-white border-[#ff7c7c]',
-    links: 'bg-[#a28dd8] text-white border-[#a28dd8]',
-    images: 'bg-pink-100 text-pink-800',
-  };
-
   return (
-    <Badge variant="outline" className={categoryStyles[category]}>
+    <Badge variant="outline" className={CATEGORY_STYLES[category]}>
       {category.charAt(0).toUpperCase() + category.slice(1)}
     </Badge>
   );
@@ -95,7 +88,6 @@ export function AuditResultsTable({
   overallScore,
   categoryScores,
   onAddTask,
-  urlLabel,
 }: AuditResultsTableProps) {
   const criticalIssues = recommendations.filter((r) => r.severity === 'critical');
   const warnings = recommendations.filter((r) => r.severity === 'warning');

@@ -24,8 +24,6 @@ export function ActionCenterPage() {
     try {
       const data = await taskService.getTasksByProject(currentProject.id);
       setTasks(data);
-    } catch (error) {
-      console.error('Error loading tasks:', error);
     } finally {
       setIsLoading(false);
     }

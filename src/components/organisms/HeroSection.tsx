@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/atoms/Button';
 import { useAuth } from '@/hooks/useAuth';
-import { heroData } from '@/data/AppData';
+import { HERO_DATA } from '@/constants/landing';
 
 export function HeroSection() {
   const { user } = useAuth();
@@ -33,7 +33,7 @@ export function HeroSection() {
         <div className="mx-auto max-w-3xl text-center">
           {/* Badge */}
           <div className="mb-6 inline-flex items-center rounded-full border px-4 py-1.5 text-sm font-medium backdrop-blur-sm">
-            {heroData.badge.text}
+            {HERO_DATA.badge.text}
           </div>
 
           {/* Large Heading */}
@@ -60,7 +60,7 @@ export function HeroSection() {
 
           {/* Features row (light) */}
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-4 text-sm text-slate-700">
-            {heroData.features.map((feature) => {
+            {HERO_DATA.features.map((feature) => {
               const Icon = feature.icon;
               return (
                 <div key={feature.label} className="flex flex-col items-center gap-2">

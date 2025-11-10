@@ -59,8 +59,6 @@ export default function TeamSettingsPage() {
     setIsLoading(true);
     try {
       await updateTeam(currentTeam.id, { ...data, location });
-    } catch (error) {
-      console.error('Error updating team:', error);
     } finally {
       setIsLoading(false);
     }
@@ -76,8 +74,6 @@ export default function TeamSettingsPage() {
     setIsLoading(true);
     try {
       await deleteTeam(currentTeam.id);
-    } catch (error) {
-      console.error('Error deleting team:', error);
     } finally {
       setIsLoading(false);
     }

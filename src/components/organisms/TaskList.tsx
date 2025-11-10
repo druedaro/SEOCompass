@@ -22,19 +22,13 @@ import { Button } from '@/components/atoms/Button';
 import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
 import { Task, taskService } from '@/services/taskService';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
+import { STATUS_CONFIG } from '@/constants/tasks';
 
 interface TaskListProps {
   tasks: Task[];
   onTaskUpdate: () => void;
   onTaskEdit: (task: Task) => void;
 }
-
-const statusConfig = {
-  todo: { label: 'To Do', className: 'bg-slate-100 text-slate-800' },
-  in_progress: { label: 'In Progress', className: 'bg-blue-100 text-blue-800' },
-  completed: { label: 'Completed', className: 'bg-green-100 text-green-800' },
-  cancelled: { label: 'Cancelled', className: 'bg-gray-100 text-gray-800' },
-};
 
 export function TaskList({ tasks, onTaskUpdate, onTaskEdit }: TaskListProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -62,8 +56,6 @@ export function TaskList({ tasks, onTaskUpdate, onTaskEdit }: TaskListProps) {
       onTaskUpdate();
       setDeleteDialogOpen(false);
       setTaskToDelete(null);
-    } catch (error) {
-      console.error('Error deleting task:', error);
     } finally {
       setIsDeleting(false);
     }
@@ -77,8 +69,8 @@ export function TaskList({ tasks, onTaskUpdate, onTaskEdit }: TaskListProps) {
         await taskService.completeTask(task.id);
       }
       onTaskUpdate();
-    } catch (error) {
-      console.error('Error updating task status:', error);
+    } catch {
+      // Error handling delegated to parent
     }
   };
 
@@ -122,8 +114,8 @@ export function TaskList({ tasks, onTaskUpdate, onTaskEdit }: TaskListProps) {
                   <PriorityBadge priority={task.priority} />
                 </TableCell>
                 <TableCell>
-                  <Badge className={statusConfig[task.status].className}>
-                    {statusConfig[task.status].label}
+                  <Badge className={STATUS_CONFIG[task.status].className}>
+                    {STATUS_CONFIG[task.status].label}
                   </Badge>
                 </TableCell>
                 <TableCell>

@@ -49,27 +49,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
             .single();
 
           if (insertError) {
-            console.error('Error creating profile:', insertError);
             setProfile(null);
           } else {
             setProfile(newProfile);
-            // Show role modal for OAuth users
             setShowRoleModal(true);
           }
         }
       } else if (error) {
-        console.error('Error fetching profile:', error);
         setProfile(null);
       } else {
         setProfile(profileData);
         
-        // Check if profile exists but has no role (OAuth user)
         if (profileData && !profileData.role) {
           setShowRoleModal(true);
         }
       }
-    } catch (error) {
-      console.error('Error fetching profile:', error);
+    } catch {
       setProfile(null);
     } finally {
       isFetchingProfileRef.current = false;
@@ -100,10 +95,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
           });
         }
         
-        // Set loading to false immediately - don't wait for profile
         setLoading(false);
-      } catch (error) {
-        console.error('Error getting initial session:', error);
+      } catch {
         setLoading(false);
       }
     };
@@ -165,7 +158,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       await fetchProfile(user.id);
       setShowRoleModal(false);
     } catch (error) {
-      console.error('Error updating profile:', error);
       throw error;
     }
   };

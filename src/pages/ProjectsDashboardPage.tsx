@@ -25,8 +25,7 @@ export function ProjectsDashboardPage() {
         name: 'My Team',
         description: 'Default team',
       });
-    } catch (error) {
-      console.error('Failed to create team:', error);
+    } catch {
       alert('Failed to create team. Please try again.');
     } finally {
       setIsCreatingTeam(false);
@@ -42,12 +41,16 @@ export function ProjectsDashboardPage() {
     setShowEditModal(true);
   };
 
-  const handleDeleteProject = async (project: Project) => {
-    if (window.confirm(`Are you sure you want to delete "${project.name}"?`)) {
+    const handleDeleteProject = async (project: Project) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${project.name}"? This action cannot be undone.`
+    );
+
+    if (confirmed) {
       try {
         await deleteProject(project.id);
-      } catch (error) {
-        console.error('Failed to delete project:', error);
+      } catch {
+        alert('Failed to delete project. Please try again.');
       }
     }
   };

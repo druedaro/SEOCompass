@@ -31,6 +31,7 @@ import {
 import { DatePicker } from '@/components/molecules/DatePicker';
 import { taskService, CreateTaskInput, Task } from '@/services/taskService';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
+import { PRIORITY_OPTIONS, STATUS_OPTIONS } from '@/constants/tasks';
 
 const taskSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title is too long'),
@@ -54,20 +55,6 @@ interface CreateTaskModalProps {
   initialDescription?: string;
   taskToEdit?: Task | null;
 }
-
-const priorityOptions = [
-  { value: 'low', label: 'Low' },
-  { value: 'medium', label: 'Medium' },
-  { value: 'high', label: 'High' },
-  { value: 'urgent', label: 'Urgent' },
-];
-
-const statusOptions = [
-  { value: 'todo', label: 'To Do' },
-  { value: 'in_progress', label: 'In Progress' },
-  { value: 'completed', label: 'Completed' },
-  { value: 'cancelled', label: 'Cancelled' },
-];
 
 export function CreateTaskModal({
   open,
@@ -154,8 +141,6 @@ export function CreateTaskModal({
         assigned_to: 'unassigned',
       });
       setSelectedDate(undefined);
-    } catch (error) {
-      console.error('Error saving task:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -221,7 +206,7 @@ export function CreateTaskModal({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {priorityOptions.map((option) => (
+                        {PRIORITY_OPTIONS.map((option) => (
                           <SelectItem key={option.value} value={option.value}>
                             {option.label}
                           </SelectItem>
@@ -246,7 +231,7 @@ export function CreateTaskModal({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {statusOptions.map((option) => (
+                        {STATUS_OPTIONS.map((option) => (
                           <SelectItem key={option.value} value={option.value}>
                             {option.label}
                           </SelectItem>

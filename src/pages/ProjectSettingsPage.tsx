@@ -63,8 +63,6 @@ export function ProjectSettingsPage() {
     try {
       setIsSubmitting(true);
       await updateProject(currentProject.id, data);
-    } catch (error) {
-      console.error('Failed to update project:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -83,8 +81,7 @@ export function ProjectSettingsPage() {
       setIsDeleting(true);
       await deleteProject(currentProject.id);
       navigate('/dashboard/projects');
-    } catch (error) {
-      console.error('Failed to delete project:', error);
+    } catch {
       setIsDeleting(false);
     }
   };

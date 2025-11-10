@@ -62,8 +62,6 @@ export function ProjectModal({ open, onClose, project, mode = 'create' }: Projec
 
       reset();
       onClose();
-    } catch (error) {
-      console.error('Failed to save project:', error);
     } finally {
       setIsSubmitting(false);
     }

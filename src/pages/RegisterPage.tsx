@@ -57,13 +57,11 @@ export function RegisterPage() {
         setIsLoading(false);
         setTimeout(() => navigate('/auth/login'), 3000);
       } else {
-        console.log('Auto-login successful, redirecting to dashboard');
         setTimeout(() => {
           navigate('/dashboard');
         }, 100);
       }
     } catch (err) {
-      console.error('Registration error:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to create account';
       
       if (errorMessage.includes('already registered')) {

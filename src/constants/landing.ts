@@ -6,14 +6,11 @@ import {
   FolderPlus,
   Search,
   AlertTriangle,
-  Github,
-  Twitter,
-  Linkedin,
-  Mail,
   type LucideIcon,
 } from 'lucide-react';
 
-export const heroData = {
+// Hero Section Data
+export const HERO_DATA = {
   badge: {
     text: '🚀 Now in Beta',
   },
@@ -37,6 +34,7 @@ export const heroData = {
   ],
 };
 
+// Features Section Data
 export interface Feature {
   icon: LucideIcon;
   title: string;
@@ -44,7 +42,7 @@ export interface Feature {
   className: string;
 }
 
-export const featuresData: Feature[] = [
+export const FEATURES_DATA: Feature[] = [
   {
     icon: FileSearch,
     title: 'Content Analyzer',
@@ -73,6 +71,7 @@ export const featuresData: Feature[] = [
   },
 ];
 
+// How It Works Section Data
 export interface Step {
   icon: LucideIcon;
   title: string;
@@ -80,7 +79,7 @@ export interface Step {
   number: string;
 }
 
-export const stepsData: Step[] = [
+export const STEPS_DATA: Step[] = [
   {
     icon: FolderPlus,
     title: 'Create Your Project',
@@ -105,49 +104,4 @@ export const stepsData: Step[] = [
     description: 'Monitor audit scores and task completion with real-time dashboards.',
     number: '04',
   },
-];
-
-export interface FooterLink {
-  name: string;
-  href: string;
-}
-
-export interface FooterSection {
-  product: FooterLink[];
-  resources: FooterLink[];
-  company: FooterLink[];
-}
-
-export const footerLinksData: FooterSection = {
-  product: [
-    { name: 'Features', href: '#features' },
-    { name: 'How it works', href: '#how-it-works' },
-    { name: 'Pricing', href: '#pricing' },
-    { name: 'Changelog', href: '#changelog' },
-  ],
-  resources: [
-    { name: 'Documentation', href: '#docs' },
-    { name: 'API Reference', href: '#api' },
-    { name: 'Blog', href: '#blog' },
-    { name: 'Support', href: '#support' },
-  ],
-  company: [
-    { name: 'About', href: '#about' },
-    { name: 'Careers', href: '#careers' },
-    { name: 'Privacy', href: '#privacy' },
-    { name: 'Terms', href: '#terms' },
-  ],
-};
-
-export interface SocialLink {
-  name: string;
-  icon: LucideIcon;
-  href: string;
-}
-
-export const socialLinksData: SocialLink[] = [
-  { name: 'GitHub', icon: Github, href: 'https://github.com' },
-  { name: 'Twitter', icon: Twitter, href: 'https://twitter.com' },
-  { name: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com' },
-  { name: 'Email', icon: Mail, href: 'mailto:contact@seocompass.com' },
 ];

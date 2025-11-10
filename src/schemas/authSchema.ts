@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ROLE_OPTIONS } from '@/constants/roles';
 
 export const loginSchema = z.object({
   email: z
@@ -44,8 +45,4 @@ export const registerSchema = z.object({
 
 export type RegisterFormData = z.infer<typeof registerSchema>;
 
-export const roleOptions = [
-  { value: 'tech_seo', label: 'Technical SEO' },
-  { value: 'content_seo', label: 'Content SEO' },
-  { value: 'developer', label: 'Developer' },
-] as const;
+export { ROLE_OPTIONS as roleOptions };

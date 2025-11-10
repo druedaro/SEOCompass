@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Plus, Trash2, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
@@ -13,106 +13,22 @@ import {
   TableRow,
 } from '@/components/atoms/Table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
-import {
-  getProjectUrls,
-  addProjectUrl,
-  deleteProjectUrl,
-  type ProjectUrl,
-} from '@/services/projectUrlsService';
-import { useToast } from '@/hooks/useToast';
+import { useProjectUrls } from '@/hooks/useProjectUrls';
 
 export default function ProjectUrlsManagementPage() {
   const { projectId } = useParams<{ projectId: string }>();
-  const [urls, setUrls] = useState<ProjectUrl[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isAdding, setIsAdding] = useState(false);
+  const { urls, isLoading, isAdding, handleAddUrl, handleDeleteUrl } = useProjectUrls(projectId);
   const [newUrl, setNewUrl] = useState('');
   const [newLabel, setNewLabel] = useState('');
-  const { toast } = useToast();
 
-  useEffect(() => {
-    if (projectId) {
-      loadUrls();
-    }
-  }, [projectId]);
-
-  const loadUrls = async () => {
-    if (!projectId) return;
-
-    setIsLoading(true);
-    try {
-      const data = await getProjectUrls(projectId);
-      setUrls(data);
-    } catch (error) {
-      const err = error as Error;
-      toast({
-        title: 'Error',
-        description: err.message,
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleAddUrl = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!projectId || !newUrl.trim()) return;
+    if (!newUrl.trim()) return;
 
-    if (urls.length >= 45) {
-      toast({
-        title: 'Limit Reached',
-        description: 'Maximum 45 URLs per project',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    setIsAdding(true);
-    try {
-      await addProjectUrl({
-        project_id: projectId,
-        url: newUrl.trim(),
-        label: newLabel.trim() || undefined,
-      });
-
-      toast({
-        title: 'URL Added',
-        description: 'URL successfully added to project',
-      });
-
+    const success = await handleAddUrl(newUrl, newLabel);
+    if (success) {
       setNewUrl('');
       setNewLabel('');
-      await loadUrls();
-    } catch (error) {
-      const err = error as Error;
-      toast({
-        title: 'Error',
-        description: err.message,
-        variant: 'destructive',
-      });
-    } finally {
-      setIsAdding(false);
-    }
-  };
-
-  const handleDeleteUrl = async (urlId: string) => {
-    if (!confirm('Are you sure you want to delete this URL?')) return;
-
-    try {
-      await deleteProjectUrl(urlId);
-      toast({
-        title: 'URL Deleted',
-        description: 'URL successfully removed from project',
-      });
-      await loadUrls();
-    } catch (error) {
-      const err = error as Error;
-      toast({
-        title: 'Error',
-        description: err.message,
-        variant: 'destructive',
-      });
     }
   };
 
@@ -141,7 +57,7 @@ export default function ProjectUrlsManagementPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleAddUrl} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="url">URL *</Label>

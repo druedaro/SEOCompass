@@ -1,4 +1,4 @@
-import { stepsData } from '@/data/AppData';
+import { STEPS_DATA } from '@/constants/landing';
 
 export function HowItWorksSection() {
   return (
@@ -26,7 +26,7 @@ export function HowItWorksSection() {
             <div className="absolute left-8 top-0 h-full w-0.5 bg-gradient-to-b from-fuchsia-400/50 via-violet-400/50 to-cyan-400/50 hidden md:block" />
 
             <div className="space-y-12">
-              {stepsData.map((step) => {
+              {STEPS_DATA.map((step) => {
                 const Icon = step.icon;
                 return (
                   <div key={step.number} className="relative flex gap-6 md:gap-8">

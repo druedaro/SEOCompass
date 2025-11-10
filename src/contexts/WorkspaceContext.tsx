@@ -74,13 +74,10 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         setCurrentTeam(data[0]);
       }
       
-      // If current team was deleted, update to first available team
       if (currentTeam && !data.find(t => t.id === currentTeam.id)) {
         setCurrentTeam(data.length > 0 ? data[0] : null);
       }
-    } catch (error) {
-      console.error('Error loading teams:', error);
-      // Silently fail - user might not have teams yet or tables might not be set up
+    } catch {
       setTeams([]);
       setCurrentTeam(null);
     } finally {
@@ -95,8 +92,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     try {
       const data = await teamService.getTeamMembers(currentTeam.id);
       setTeamMembers(data);
-    } catch (error) {
-      console.error('Error loading team members:', error);
+    } catch {
       setTeamMembers([]);
     } finally {
       setIsLoadingMembers(false);

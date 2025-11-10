@@ -1,5 +1,5 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ArrowLeft, Plus } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
@@ -7,48 +7,15 @@ import { AuditHistoryChart } from '@/components/organisms/AuditHistoryChart';
 import { AuditResultsTable } from '@/components/organisms/AuditResultsTable';
 import { CreateTaskModal } from '@/components/organisms/CreateTaskModal';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
-import { getProjectUrlById } from '@/services/projectUrlsService';
-import { getAuditHistory } from '@/services/contentScrapingService';
-import type { ProjectUrl } from '@/services/projectUrlsService';
-import type { AuditHistoryEntry } from '@/services/contentScrapingService';
-import type { Recommendation } from '@/utils/recommendationsEngine';
+import { useUrlDetails } from '@/hooks/useUrlDetails';
+import type { Recommendation } from '@/features/seo/recommendationsEngine';
 
 export function UrlDetailsPage() {
   const { projectId, urlId } = useParams<{ projectId: string; urlId: string }>();
   const navigate = useNavigate();
-  const [projectUrl, setProjectUrl] = useState<ProjectUrl | null>(null);
-  const [auditHistory, setAuditHistory] = useState<AuditHistoryEntry[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [latestAudit, setLatestAudit] = useState<AuditHistoryEntry | null>(null);
+  const { projectUrl, auditHistory, isLoading, latestAudit } = useUrlDetails(urlId);
   const [createTaskModalOpen, setCreateTaskModalOpen] = useState(false);
   const [selectedRecommendation, setSelectedRecommendation] = useState<Recommendation | null>(null);
-
-  useEffect(() => {
-    if (urlId) {
-      loadUrlDetails();
-    }
-  }, [urlId]);
-
-  const loadUrlDetails = async () => {
-    if (!urlId) return;
-
-    try {
-      setIsLoading(true);
-      const urlData = await getProjectUrlById(urlId);
-      setProjectUrl(urlData);
-
-      const history = await getAuditHistory(urlId);
-      setAuditHistory(history);
-      
-      if (history.length > 0) {
-        setLatestAudit(history[history.length - 1]);
-      }
-    } catch (error) {
-      console.error('Error loading URL details:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   if (isLoading) {
     return (

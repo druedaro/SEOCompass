@@ -58,8 +58,6 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
       setMapCenter(defaultCenter);
       setMarkerPosition(null);
       onOpenChange(false);
-    } catch (error) {
-      console.error('Error creating team:', error);
     } finally {
       setIsLoading(false);
     }

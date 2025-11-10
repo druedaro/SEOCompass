@@ -1,9 +1,9 @@
-import * as React from "react"
+import { ReactNode, useCallback } from "react"
 
 export type ToastProps = {
   variant?: 'default' | 'destructive'
-  title?: React.ReactNode
-  description?: React.ReactNode
+  title?: ReactNode
+  description?: ReactNode
 }
 
 /**
@@ -11,7 +11,7 @@ export type ToastProps = {
  * For now, uses console.log - can be replaced with a proper toast library later
  */
 export function useToast() {
-  const toast = React.useCallback((props: ToastProps) => {
+  const toast = useCallback((props: ToastProps) => {
     const prefix = props.variant === 'destructive' ? '❌' : '✓';
     console.log(`${prefix} ${props.title}${props.description ? `: ${props.description}` : ''}`);
     

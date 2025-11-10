@@ -14,6 +14,16 @@ export interface HTMLMetadata {
   viewport: string | null;
 }
 
+export interface ParsedMetadata {
+  title: string | null;
+  description: string | null;
+  canonicalUrl: string | null;
+  robots: string | null;
+  author: string | null;
+  language: string | null;
+  viewport: string | null;
+}
+
 export interface ParsedHeading {
   level: number;
   text: string;
