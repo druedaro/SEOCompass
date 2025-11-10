@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useProject } from '@/hooks/useProject';
 import { formatDistanceToNow } from 'date-fns';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/config/supabase';
 
 export function ProjectOverviewPage() {
   const { projectId } = useParams<{ projectId: string }>();

@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/config/supabase';
 import { getProjectUrlById } from './projectUrlsService';
 
 export interface ScrapedContent {

@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/config/supabase';
 
 export interface ProjectUrl {
   id: string;

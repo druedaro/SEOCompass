@@ -7,7 +7,7 @@ import { ProjectUrlsList } from '@/components/organisms/ProjectUrlsList';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { scrapeByProjectUrlId } from '@/services/contentScrapingService';
 import { getProjectUrls, type ProjectUrl } from '@/services/projectUrlsService';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/config/supabase';
 import { parseHTMLContent } from '@/utils/htmlParser';
 import { analyzeKeywords } from '@/utils/keywordAnalyzer';
 import {

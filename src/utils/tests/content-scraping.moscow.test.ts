@@ -9,7 +9,7 @@ import {
 // Mock supabase functions - must be hoisted
 const mockInvoke = vi.hoisted(() => vi.fn());
 
-vi.mock('@/lib/supabaseClient', () => ({
+vi.mock('@/config/supabase', () => ({
   supabase: {
     functions: {
       invoke: mockInvoke,
