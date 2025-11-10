@@ -1,4 +1,3 @@
-// Auth routes
 export const AUTH_PATHS = {
   LOGIN: '/auth/login',
   REGISTER: '/auth/register',
@@ -7,7 +6,6 @@ export const AUTH_PATHS = {
   CALLBACK: '/auth/callback',
 } as const;
 
-// App routes
 export const APP_PATHS = {
   DASHBOARD: '/dashboard',
   TEAMS: '/teams',
@@ -21,7 +19,6 @@ export const APP_PATHS = {
   ACTION_CENTER: '/projects/:projectId/actions',
 } as const;
 
-// Public routes
 export const PUBLIC_PATHS = {
   HOME: '/',
   WELCOME: '/welcome',
