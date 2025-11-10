@@ -25,7 +25,6 @@ export interface ScoreCalculationInput {
   hreflangValidation?: ValidationResult;
   robotsValidation?: ValidationResult;
   hasStructuredData?: boolean;
-  keywordOptimization?: number;
   internalLinks?: number;
   externalLinks?: number;
 }
@@ -34,16 +33,15 @@ export interface ScoreCalculationInput {
  * Weight constants for different SEO factors
  */
 const WEIGHTS = {
-  TITLE: 0.14,
-  DESCRIPTION: 0.10,
-  URL: 0.05,
-  H1: 0.10,
-  HEADING_HIERARCHY: 0.05,
-  IMAGES: 0.09,
-  CONTENT_LENGTH: 0.12,
-  CANONICAL: 0.05,
-  STRUCTURED_DATA: 0.05,
-  KEYWORD_OPTIMIZATION: 0.13,
+  TITLE: 0.16,
+  DESCRIPTION: 0.12,
+  URL: 0.06,
+  H1: 0.12,
+  HEADING_HIERARCHY: 0.06,
+  IMAGES: 0.10,
+  CONTENT_LENGTH: 0.15,
+  CANONICAL: 0.06,
+  STRUCTURED_DATA: 0.06,
   INTERNAL_LINKS: 0.05,
   EXTERNAL_LINKS: 0.04,
   LINKS: 0.05,
@@ -66,13 +64,11 @@ function calculateCategoryScores(input: ScoreCalculationInput): {
     input.descriptionValidation.score * 0.35 +
     input.urlValidation.score * 0.15;
 
-  // Content score (H1 + Headings + Content Length + Keywords)
-  const keywordScore = input.keywordOptimization ?? 70;
+  // Content score (H1 + Headings + Content Length)
   const contentScore =
-    input.h1Validation.score * 0.25 +
-    input.headingHierarchyValidation.score * 0.15 +
-    input.contentLengthValidation.score * 0.35 +
-    keywordScore * 0.25;
+    input.h1Validation.score * 0.30 +
+    input.headingHierarchyValidation.score * 0.20 +
+    input.contentLengthValidation.score * 0.50;
 
   // Technical score (Canonical + Structured Data + Images)
   const canonicalScore = input.canonicalValidation?.score ?? 85;
@@ -120,13 +116,7 @@ export function calculateSEOScore(input: ScoreCalculationInput): SEOScoreBreakdo
   if (input.hasStructuredData !== undefined) {
     totalScore += (input.hasStructuredData ? 100 : 0) * WEIGHTS.STRUCTURED_DATA;
   } else {
-    totalScore += 50 * WEIGHTS.STRUCTURED_DATA; // Neutral score
-  }
-
-  if (input.keywordOptimization !== undefined) {
-    totalScore += input.keywordOptimization * WEIGHTS.KEYWORD_OPTIMIZATION;
-  } else {
-    totalScore += 70 * WEIGHTS.KEYWORD_OPTIMIZATION; // Default
+    totalScore += 50 * WEIGHTS.STRUCTURED_DATA;
   }
 
   // Internal links score

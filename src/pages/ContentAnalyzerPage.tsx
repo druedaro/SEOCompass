@@ -9,7 +9,6 @@ import { scrapeByProjectUrlId } from '@/services/contentScrapingService';
 import { getProjectUrls, type ProjectUrl } from '@/services/projectUrlsService';
 import { supabase } from '@/config/supabase';
 import { parseHTMLContent } from '@/utils/htmlParser';
-import { analyzeKeywords } from '@/utils/keywordAnalyzer';
 import {
   validateTitle,
   validateDescription,
@@ -103,18 +102,6 @@ export default function ContentAnalyzerPage() {
 
       const robotsValidation = validateRobotsMeta(parsedContent.metadata.robots);
 
-      analyzeKeywords(
-        {
-          title: parsedContent.metadata.title,
-          description: parsedContent.metadata.description,
-          h1s,
-          bodyText: parsedContent.bodyText,
-          url: scrapedContent.finalUrl,
-        }
-      );
-
-      const keywordOptimization = 70; // Default score
-
       const scoreBreakdown = calculateSEOScore({
         titleValidation,
         descriptionValidation,
@@ -128,7 +115,6 @@ export default function ContentAnalyzerPage() {
         hreflangValidation,
         robotsValidation,
         hasStructuredData: parsedContent.hasStructuredData,
-        keywordOptimization,
         internalLinks,
         externalLinks,
       });

@@ -20,10 +20,11 @@ export interface Profile {
 export interface Team {
   id: string;
   name: string;
-  description?: string;
-  location: string;
+  description: string | null;
+  location: string | null;
   user_id: string;
   created_at: string;
+  updated_at: string;
 }
 
 export interface TeamMember {
@@ -46,25 +47,7 @@ export interface Project {
   updated_at: string;
 }
 
-// --- Module 1: Keyword Tracker ---
-export interface Keyword {
-  id: string;
-  project_id: string;
-  keyword: string;
-  search_volume: number;
-  difficulty: number;
-  created_at: string;
-}
-
-export interface KeywordRanking {
-  id: string;
-  keyword_id: string;
-  position: number;
-  url: string;
-  checked_at: string;
-}
-
-// --- Module 2: Content & On-Page Analyzer ---
+// --- Content & On-Page Analyzer ---
 export type AuditStatus = 'pending' | 'in_progress' | 'completed' | 'failed';
 
 export interface ContentAudit {
@@ -106,36 +89,7 @@ export interface AuditIssue {
   created_at: string;
 }
 
-// --- Module 3: Technical SEO Audit ---
-export interface TechnicalAudit {
-  id: string;
-  project_id: string;
-  url: string;
-  status: AuditStatus;
-  performance_score: number;
-  accessibility_score: number;
-  best_practices_score: number;
-  seo_score: number;
-  opportunities: Opportunity[];
-  diagnostics: Diagnostic[];
-  created_at: string;
-}
-
-export interface Opportunity {
-  id: string;
-  title: string;
-  description: string;
-  savings_ms: number;
-}
-
-export interface Diagnostic {
-  id: string;
-  title: string;
-  description: string;
-  severity: IssueSeverity;
-}
-
-// --- Module 4: Action Center ---
+// --- Action Center ---
 export type TaskStatus = 'todo' | 'in_progress' | 'review' | 'done';
 export type TaskPriority = 'low' | 'medium' | 'high' | 'critical';
 
@@ -149,7 +103,7 @@ export interface Task {
   assigned_to?: string;
   due_date?: string;
   linked_audit_id?: string;
-  linked_audit_type?: 'content' | 'technical';
+  linked_audit_type?: 'content';
   created_at: string;
   updated_at: string;
 }

@@ -7,7 +7,7 @@ import type { ValidationResult } from './validators';
 
 export interface Recommendation {
   id: string;
-  category: 'meta' | 'content' | 'technical' | 'links' | 'images' | 'keywords';
+  category: 'meta' | 'content' | 'technical' | 'links' | 'images';
   severity: 'critical' | 'warning' | 'info';
   title: string;
   description: string;
@@ -75,7 +75,7 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
     input.titleValidation,
     'meta',
     'Title Tag',
-    'Add a descriptive title (50-60 chars) with your target keyword.',
+    'Add a descriptive title (50-60 chars) with your main topic.',
     counter
   );
 

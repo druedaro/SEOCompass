@@ -1,12 +1,9 @@
 import {
-  BarChart3,
   FileSearch,
-  Wrench,
   CheckSquare,
   TrendingUp,
   Globe,
   FolderPlus,
-  Plus,
   Search,
   AlertTriangle,
   Github,
@@ -22,7 +19,7 @@ export const heroData = {
   },
   heading: 'The Complete SEO Platform for Modern Teams',
   description:
-    'Track keywords, analyze content, audit technical SEO, and manage tasks—all in one place. Built for Technical SEO specialists, Content experts, and Developers.',
+    'Analyze content, audit SEO issues, and manage tasks—all in one place. Built for Technical SEO specialists, Content experts, and Developers.',
   cta: {
     primary: {
       text: 'Get Started Free',
@@ -34,10 +31,9 @@ export const heroData = {
     },
   },
   features: [
-    { icon: BarChart3, label: 'Keyword Tracking' },
     { icon: FileSearch, label: 'Content Analysis' },
-    { icon: Wrench, label: 'Technical Audit' },
     { icon: CheckSquare, label: 'Action Center' },
+    { icon: TrendingUp, label: 'Real-time Analytics' },
   ],
 };
 
@@ -50,25 +46,11 @@ export interface Feature {
 
 export const featuresData: Feature[] = [
   {
-    icon: BarChart3,
-    title: 'Keyword Tracker',
-    description:
-      'Monitor your keyword rankings in real-time. Track search volume, difficulty, and visibility evolution with beautiful charts.',
-    className: 'md:col-span-2',
-  },
-  {
     icon: FileSearch,
     title: 'Content Analyzer',
     description:
       'Scrape URLs or sitemaps to detect 404s, redirects, duplicate content, missing meta tags, and more.',
-    className: 'md:col-span-1',
-  },
-  {
-    icon: Wrench,
-    title: 'Technical SEO Audit',
-    description:
-      'Run comprehensive technical audits powered by Google PageSpeed Insights. Get actionable recommendations.',
-    className: 'md:col-span-1',
+    className: 'md:col-span-2',
   },
   {
     icon: CheckSquare,
@@ -106,28 +88,22 @@ export const stepsData: Step[] = [
     number: '01',
   },
   {
-    icon: Plus,
-    title: 'Add Keywords',
-    description: 'Import keywords manually or from CSV. Track their rankings, search volume, and difficulty.',
-    number: '02',
-  },
-  {
     icon: Search,
     title: 'Analyze Content',
     description: 'Scrape URLs or sitemaps to detect SEO issues like 404s, missing meta tags, and duplicate content.',
-    number: '03',
+    number: '02',
   },
   {
     icon: AlertTriangle,
     title: 'Fix Issues',
     description: 'Get actionable recommendations. Create tasks in the Action Center and assign them to your team.',
-    number: '04',
+    number: '03',
   },
   {
     icon: TrendingUp,
     title: 'Track Progress',
-    description: 'Monitor keyword rankings, audit scores, and task completion with real-time dashboards.',
-    number: '05',
+    description: 'Monitor audit scores and task completion with real-time dashboards.',
+    number: '04',
   },
 ];
 

@@ -46,7 +46,7 @@ export function HeroSection() {
 
           {/* Description */}
           <p className="mb-8 text-lg text-slate-700 sm:text-xl max-w-2xl mx-auto font-medium">
-            Track keywords, analyze content, run technical audits and manage fixes — all in one place for teams that ship results.
+            Analyze content, audit SEO issues and manage fixes — all in one place for teams that ship results.
           </p>
 
           {/* Single Launch App CTA - DESTACADO */}

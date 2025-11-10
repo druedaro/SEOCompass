@@ -58,7 +58,6 @@ function getCategoryBadge(category: Recommendation['category']) {
     technical: 'bg-[#ff7c7c] text-white border-[#ff7c7c]',
     links: 'bg-[#a28dd8] text-white border-[#a28dd8]',
     images: 'bg-pink-100 text-pink-800',
-    keywords: 'bg-indigo-100 text-indigo-800',
   };
 
   return (

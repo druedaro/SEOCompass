@@ -3,14 +3,14 @@
  * Extracts meta tags, headings, images, links, and structured data
  */
 
-export interface ParsedMetadata {
+export interface HTMLMetadata {
   title: string | null;
   description: string | null;
-  keywords: string | null;
   canonicalUrl: string | null;
+  ogTitle: string | null;
+  ogDescription: string | null;
+  ogImage: string | null;
   robots: string | null;
-  author: string | null;
-  language: string | null;
   viewport: string | null;
 }
 
@@ -69,7 +69,6 @@ export function extractMetadata(doc: Document): ParsedMetadata {
   return {
     title: doc.querySelector('title')?.textContent || null,
     description: getMetaContent('meta[name="description"]'),
-    keywords: getMetaContent('meta[name="keywords"]'),
     canonicalUrl: doc.querySelector('link[rel="canonical"]')?.getAttribute('href') || null,
     robots: getMetaContent('meta[name="robots"]'),
     author: getMetaContent('meta[name="author"]'),
