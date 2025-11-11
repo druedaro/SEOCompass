@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LogOut, Settings } from 'lucide-react';
+import { LogOut, Settings} from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/atoms/Button';
 import { Avatar, AvatarFallback } from '@/components/atoms/Avatar';
@@ -30,15 +30,15 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="border-b bg-white shadow-sm">
+      <nav className="border-b bg-white/80 backdrop-blur-md shadow-sm">
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-6">
-              <Link to="/dashboard" className="flex items-center gap-2">
+              <Link to="/dashboard" className="flex items-center gap-2 group">
                 <div className="flex h-8 w-8 items-center justify-center">
                   <img src="/logo.svg" alt="SEO Compass" className="h-8 w-8" />
                 </div>
-                <span className="text-xl font-bold text-purple-600">SEO Compass</span>
+                <span className="text-xl font-bold bg-gradient-to-r from-fuchsia-600 to-[#ee208e] bg-clip-text text-transparent">SEO Compass</span>
               </Link>
 
               <TeamSelector onCreateTeam={() => setShowCreateTeamDialog(true)} />
