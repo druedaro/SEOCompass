@@ -63,8 +63,6 @@ export function useProjectUrls(projectId?: string) {
   };
 
   const handleDeleteUrl = async (urlId: string) => {
-    if (!confirm('Are you sure you want to delete this URL?')) return;
-
     try {
       await deleteProjectUrl(urlId);
       toast('URL Deleted - Successfully removed from project', { icon: '🗑️' });

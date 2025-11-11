@@ -9,6 +9,7 @@ import { Input } from '@/components/atoms/Input';
 import { Label } from '@/components/atoms/Label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
 import { LocationAutocomplete } from '@/components/molecules/LocationAutocomplete';
+import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
@@ -35,6 +36,7 @@ export default function TeamSettingsPage() {
   const { currentTeam, updateTeam, deleteTeam } = useWorkspace();
   const { isLoaded } = useGoogleMaps();
   const [isLoading, setIsLoading] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [location, setLocation] = useState(currentTeam?.location || '');
   const [mapCenter, setMapCenter] = useState(defaultCenter);
   const [markerPosition, setMarkerPosition] = useState<google.maps.LatLngLiteral | null>(null);
@@ -67,15 +69,12 @@ export default function TeamSettingsPage() {
   const handleDelete = async () => {
     if (!currentTeam) return;
 
-    if (!confirm(`Are you sure you want to delete "${currentTeam.name}"? This action cannot be undone.`)) {
-      return;
-    }
-
     setIsLoading(true);
     try {
       await deleteTeam(currentTeam.id);
     } finally {
       setIsLoading(false);
+      setShowDeleteDialog(false);
     }
   };
 
@@ -212,7 +211,7 @@ export default function TeamSettingsPage() {
           <CardContent>
             <Button
               variant="destructive"
-              onClick={handleDelete}
+              onClick={() => setShowDeleteDialog(true)}
               disabled={isLoading}
               className="w-full"
             >
@@ -222,6 +221,15 @@ export default function TeamSettingsPage() {
           </CardContent>
         </Card>
       </div>
+
+      <DeleteConfirmationDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        onConfirm={handleDelete}
+        title={`Delete "${currentTeam.name}"?`}
+        description="This will permanently delete the team and all its projects."
+        isLoading={isLoading}
+      />
       </div>
     </DashboardLayout>
   );

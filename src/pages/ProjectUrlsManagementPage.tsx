@@ -14,6 +14,7 @@ import {
 } from '@/components/atoms/Table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
+import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
 import { useProjectUrls } from '@/hooks/useProjectUrls';
 
 export default function ProjectUrlsManagementPage() {
@@ -22,6 +23,8 @@ export default function ProjectUrlsManagementPage() {
   const { urls, isLoading, isAdding, handleAddUrl, handleDeleteUrl } = useProjectUrls(projectId);
   const [newUrl, setNewUrl] = useState('');
   const [newLabel, setNewLabel] = useState('');
+  const [urlToDelete, setUrlToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +35,19 @@ export default function ProjectUrlsManagementPage() {
       setNewUrl('');
       setNewLabel('');
     }
+  };
+
+  const confirmDelete = async () => {
+    if (!urlToDelete) return;
+    
+    setIsDeleting(true);
+    await handleDeleteUrl(urlToDelete);
+    setIsDeleting(false);
+    setUrlToDelete(null);
+  };
+
+  const cancelDelete = () => {
+    setUrlToDelete(null);
   };
 
   if (isLoading) {
@@ -152,7 +168,7 @@ export default function ProjectUrlsManagementPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleDeleteUrl(url.id)}
+                        onClick={() => setUrlToDelete(url.id)}
                       >
                         <Trash2 className="h-4 w-4 text-red-600" />
                       </Button>
@@ -165,6 +181,15 @@ export default function ProjectUrlsManagementPage() {
         </CardContent>
       </Card>
     </div>
+
+    <DeleteConfirmationDialog
+      open={!!urlToDelete}
+      onOpenChange={cancelDelete}
+      onConfirm={confirmDelete}
+      title="Delete URL?"
+      description="This will permanently remove this URL from the project."
+      isLoading={isDeleting}
+    />
     </DashboardLayout>
   );
 }

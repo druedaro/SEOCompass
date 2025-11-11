@@ -4,6 +4,7 @@ import { Plus } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
 import { ProjectCard } from '@/components/molecules/ProjectCard';
 import { ProjectModal } from '@/components/organisms/ProjectModal';
+import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useProject } from '@/hooks/useProject';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
@@ -17,6 +18,8 @@ export function ProjectsDashboardPage() {
   const [selectedProject, setSelectedProject] = useState<Project | undefined>(undefined);
   const [showEditModal, setShowEditModal] = useState(false);
   const [isCreatingTeam, setIsCreatingTeam] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleCreateFirstTeam = async () => {
     setIsCreatingTeam(true);
@@ -41,18 +44,26 @@ export function ProjectsDashboardPage() {
     setShowEditModal(true);
   };
 
-    const handleDeleteProject = async (project: Project) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${project.name}"? This action cannot be undone.`
-    );
+  const handleDeleteProject = async (project: Project) => {
+    setProjectToDelete(project);
+  };
 
-    if (confirmed) {
-      try {
-        await deleteProject(project.id);
-      } catch {
-        alert('Failed to delete project. Please try again.');
-      }
+  const confirmDeleteProject = async () => {
+    if (!projectToDelete) return;
+
+    setIsDeleting(true);
+    try {
+      await deleteProject(projectToDelete.id);
+    } catch {
+      alert('Failed to delete project. Please try again.');
+    } finally {
+      setIsDeleting(false);
+      setProjectToDelete(null);
     }
+  };
+
+  const cancelDeleteProject = () => {
+    setProjectToDelete(null);
   };
 
   if (!currentTeam) {
@@ -140,6 +151,15 @@ export function ProjectsDashboardPage() {
           }}
           project={selectedProject}
           mode="edit"
+        />
+
+        <DeleteConfirmationDialog
+          open={!!projectToDelete}
+          onOpenChange={cancelDeleteProject}
+          onConfirm={confirmDeleteProject}
+          title={`Delete "${projectToDelete?.name}"?`}
+          description="This will permanently delete the project and all its data."
+          isLoading={isDeleting}
         />
       </div>
     </DashboardLayout>
