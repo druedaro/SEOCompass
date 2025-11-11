@@ -95,7 +95,6 @@ export function AuditResultsTable({
 
   return (
     <div className="space-y-6">
-      {/* Score Overview */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card className="p-4">
           <div className="text-sm font-medium text-muted-foreground mb-2">Overall Score</div>
@@ -126,7 +125,6 @@ export function AuditResultsTable({
         </Card>
       </div>
 
-      {/* Issues Summary */}
       <div className="flex gap-4">
         <Badge variant="destructive" className="px-4 py-2">
           {criticalIssues.length} Critical
@@ -139,7 +137,6 @@ export function AuditResultsTable({
         </Badge>
       </div>
 
-      {/* Recommendations Table */}
       <Card>
         <Table>
           <TableHeader>

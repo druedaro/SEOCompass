@@ -4,7 +4,6 @@ import { FEATURES_DATA } from '@/constants/landing';
 export function FeaturesSection() {
   return (
     <section className="relative py-20 sm:py-32 overflow-hidden">
-      {/* Gradient background that blends with hero */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-b from-cyan-50/50 via-white to-violet-50/30" />
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-violet-200/40 to-transparent rounded-full blur-3xl" />
@@ -21,7 +20,6 @@ export function FeaturesSection() {
           </p>
         </div>
 
-        {/* Grid balanceado 2x2 */}
         <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2">
           {FEATURES_DATA.map((feature) => {
             const Icon = feature.icon;

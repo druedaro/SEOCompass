@@ -13,7 +13,6 @@ export function Footer() {
 
   return (
     <footer className="relative border-t overflow-hidden">
-      {/* Subtle gradient background */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-violet-50 via-fuchsia-50 to-cyan-50" />
       
       <div className="container mx-auto px-4 py-10">
