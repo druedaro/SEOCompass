@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Plus, Trash2, ExternalLink } from 'lucide-react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Plus, Trash2, ExternalLink, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { Label } from '@/components/atoms/Label';
@@ -13,10 +13,12 @@ import {
   TableRow,
 } from '@/components/atoms/Table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
+import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useProjectUrls } from '@/hooks/useProjectUrls';
 
 export default function ProjectUrlsManagementPage() {
   const { projectId } = useParams<{ projectId: string }>();
+  const navigate = useNavigate();
   const { urls, isLoading, isAdding, handleAddUrl, handleDeleteUrl } = useProjectUrls(projectId);
   const [newUrl, setNewUrl] = useState('');
   const [newLabel, setNewLabel] = useState('');
@@ -34,16 +36,29 @@ export default function ProjectUrlsManagementPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto py-8 px-4">
-        <p>Loading URLs...</p>
-      </div>
+      <DashboardLayout>
+        <div className="container mx-auto py-8 px-4">
+          <p>Loading URLs...</p>
+        </div>
+      </DashboardLayout>
     );
   }
 
   return (
-    <div className="container mx-auto py-8 px-4 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Project URLs Management</h1>
+    <DashboardLayout>
+      <div className="container mx-auto py-8 px-4 space-y-6 min-h-[calc(100vh-12rem)]">
+        <div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(`/dashboard/projects/${projectId}`)}
+            className="mb-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Project Dashboard
+          </Button>
+          
+          <h1 className="text-3xl font-bold">Project URLs Management</h1>
         <p className="text-muted-foreground mt-2">
           Manage up to 45 URLs for content analysis tracking ({urls.length}/45 used)
         </p>
@@ -150,5 +165,6 @@ export default function ProjectUrlsManagementPage() {
         </CardContent>
       </Card>
     </div>
+    </DashboardLayout>
   );
 }

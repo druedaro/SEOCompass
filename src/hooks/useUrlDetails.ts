@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
 import { getProjectUrlById, type ProjectUrl } from '@/services/projectUrlsService';
 import { getAuditHistory, type AuditHistoryEntry } from '@/services/contentScrapingService';
-import { useToast } from '@/hooks/useToast';
+import { showErrorToast } from '@/lib/toast';
 
 export function useUrlDetails(urlId?: string) {
   const [projectUrl, setProjectUrl] = useState<ProjectUrl | null>(null);
   const [auditHistory, setAuditHistory] = useState<AuditHistoryEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [latestAudit, setLatestAudit] = useState<AuditHistoryEntry | null>(null);
-  const { toast } = useToast();
 
   useEffect(() => {
     if (urlId) {
@@ -32,11 +31,7 @@ export function useUrlDetails(urlId?: string) {
       }
     } catch (error) {
       const err = error as Error;
-      toast({
-        title: 'Error loading URL details',
-        description: err.message,
-        variant: 'destructive',
-      });
+      showErrorToast('Error loading URL details', err.message);
     } finally {
       setIsLoading(false);
     }

@@ -79,7 +79,7 @@ export function ProjectsDashboardPage() {
 
   return (
     <DashboardLayout>
-      <div className="container mx-auto py-8 px-4">
+      <div className="container mx-auto py-8 px-4 min-h-[calc(100vh-12rem)]">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold">Projects</h1>

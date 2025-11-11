@@ -5,13 +5,12 @@ import {
   deleteProjectUrl,
   type ProjectUrl,
 } from '@/services/projectUrlsService';
-import { useToast } from '@/hooks/useToast';
+import { showErrorToast, showSuccessToast, toast } from '@/lib/toast';
 
 export function useProjectUrls(projectId?: string) {
   const [urls, setUrls] = useState<ProjectUrl[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
-  const { toast } = useToast();
 
   useEffect(() => {
     if (projectId) {
@@ -28,11 +27,7 @@ export function useProjectUrls(projectId?: string) {
       setUrls(data);
     } catch (error) {
       const err = error as Error;
-      toast({
-        title: 'Error',
-        description: err.message,
-        variant: 'destructive',
-      });
+      showErrorToast('Error loading URLs', err.message);
     } finally {
       setIsLoading(false);
     }
@@ -42,11 +37,7 @@ export function useProjectUrls(projectId?: string) {
     if (!projectId || !url.trim()) return;
 
     if (urls.length >= 45) {
-      toast({
-        title: 'Limit Reached',
-        description: 'Maximum 45 URLs per project',
-        variant: 'destructive',
-      });
+      showErrorToast('Limit Reached', 'Maximum 45 URLs per project');
       return;
     }
 
@@ -58,20 +49,13 @@ export function useProjectUrls(projectId?: string) {
         label: label?.trim() || undefined,
       });
 
-      toast({
-        title: 'URL Added',
-        description: 'URL successfully added to project',
-      });
+      showSuccessToast('URL Added Successfully! Ready to analyze');
 
       await loadUrls();
       return true;
     } catch (error) {
       const err = error as Error;
-      toast({
-        title: 'Error',
-        description: err.message,
-        variant: 'destructive',
-      });
+      showErrorToast('Failed to add URL', err.message);
       return false;
     } finally {
       setIsAdding(false);
@@ -83,18 +67,11 @@ export function useProjectUrls(projectId?: string) {
 
     try {
       await deleteProjectUrl(urlId);
-      toast({
-        title: 'URL Deleted',
-        description: 'URL successfully removed from project',
-      });
+      toast('URL Deleted - Successfully removed from project', { icon: '🗑️' });
       await loadUrls();
     } catch (error) {
       const err = error as Error;
-      toast({
-        title: 'Error',
-        description: err.message,
-        variant: 'destructive',
-      });
+      showErrorToast('Failed to delete URL', err.message);
     }
   };
 

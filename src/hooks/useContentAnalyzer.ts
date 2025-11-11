@@ -18,14 +18,13 @@ import {
 } from '@/features/seo/validators';
 import { calculateSEOScore } from '@/features/seo/scoreCalculator';
 import { generateRecommendations } from '@/features/seo/recommendationsEngine';
-import { useToast } from '@/hooks/useToast';
+import { showErrorToast, showSuccessToast, showInfoToast } from '@/lib/toast';
 
 export function useContentAnalyzer(projectId?: string) {
   const [urls, setUrls] = useState<ProjectUrl[]>([]);
   const [isLoadingUrls, setIsLoadingUrls] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [currentAuditingUrlId, setCurrentAuditingUrlId] = useState<string | null>(null);
-  const { toast } = useToast();
 
   useEffect(() => {
     if (projectId) {
@@ -42,11 +41,7 @@ export function useContentAnalyzer(projectId?: string) {
       setUrls(data);
     } catch (error) {
       const err = error as Error;
-      toast({
-        title: 'Error loading URLs',
-        description: err.message,
-        variant: 'destructive',
-      });
+      showErrorToast('Error loading URLs', err.message);
     } finally {
       setIsLoadingUrls(false);
     }
@@ -57,10 +52,7 @@ export function useContentAnalyzer(projectId?: string) {
     setCurrentAuditingUrlId(projectUrlId);
 
     try {
-      toast({
-        title: 'Scraping page...',
-        description: 'Fetching content from the URL',
-      });
+      showInfoToast('Scraping page... Fetching content from the URL');
 
       const scrapedContent = await scrapeByProjectUrlId(projectUrlId);
       const parsedContent = parseHTMLContent(scrapedContent.html, scrapedContent.finalUrl);
@@ -148,17 +140,10 @@ export function useContentAnalyzer(projectId?: string) {
         }
       }
 
-      toast({
-        title: 'Analysis complete!',
-        description: `Overall SEO score: ${scoreBreakdown.overall}/100`,
-      });
+      showSuccessToast('Analysis complete!', `Overall SEO score: ${scoreBreakdown.overall}/100`);
     } catch (error) {
       const err = error as Error;
-      toast({
-        title: 'Analysis failed',
-        description: err.message,
-        variant: 'destructive',
-      });
+      showErrorToast('Analysis failed', err.message);
     } finally {
       setIsAnalyzing(false);
       setCurrentAuditingUrlId(null);
