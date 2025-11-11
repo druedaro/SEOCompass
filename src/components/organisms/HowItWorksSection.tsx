@@ -2,7 +2,7 @@ import { STEPS_DATA } from '@/constants/landing';
 
 export function HowItWorksSection() {
   return (
-    <section className="py-20 sm:py-32 bg-white">
+    <section className="relative py-20 sm:py-32 bg-gradient-to-br from-violet-50 via-fuchsia-50 to-cyan-50">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-2xl text-center mb-16">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">

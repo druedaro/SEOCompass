@@ -31,8 +31,8 @@ export function AuthCallbackPage() {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-100 via-fuchsia-100 to-cyan-100">
-      <div className="text-center bg-white p-8 rounded-lg shadow-xl max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="text-center bg-white p-8 rounded-lg shadow-lg max-w-md">
         {error ? (
           <>
             <div className="mb-4 text-red-500">
@@ -40,19 +40,19 @@ export function AuthCallbackPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold mb-4 text-slate-800">Error</h2>
-            <p className="text-slate-600">{error}</p>
-            <p className="text-sm text-slate-500 mt-4">Serás redirigido al login...</p>
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">Error</h2>
+            <p className="text-gray-600">{error}</p>
+            <p className="text-sm text-gray-500 mt-4">Serás redirigido al login...</p>
           </>
         ) : (
           <>
             <div className="mb-4">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-fuchsia-600 mx-auto"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
             </div>
-            <h2 className="text-2xl font-bold mb-4 bg-gradient-to-r from-fuchsia-600 to-violet-600 bg-clip-text text-transparent">
+            <h2 className="text-2xl font-bold mb-4 text-purple-600">
               Verificando tu email...
             </h2>
-            <p className="text-slate-600">
+            <p className="text-gray-600">
               Estamos confirmando tu cuenta. Serás redirigido en un momento.
             </p>
           </>

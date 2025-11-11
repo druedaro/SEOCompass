@@ -48,7 +48,7 @@ export const STATUS_CONFIG: Record<
   TaskStatus,
   { label: string; className: string }
 > = {
-  todo: { label: 'To Do', className: 'bg-slate-100 text-slate-800' },
+  todo: { label: 'To Do', className: 'bg-gray-100 text-gray-800' },
   in_progress: { label: 'In Progress', className: 'bg-blue-100 text-blue-800' },
   completed: { label: 'Completed', className: 'bg-green-100 text-green-800' },
   cancelled: { label: 'Cancelled', className: 'bg-gray-100 text-gray-800' },
