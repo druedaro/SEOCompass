@@ -69,7 +69,7 @@ export function ProjectsDashboardPage() {
   if (!currentTeam) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
+        <div className="flex items-center justify-center py-20">
           <div className="text-center max-w-md">
             <h2 className="text-2xl font-bold mb-2">No Team Available</h2>
             <p className="text-muted-foreground mb-6">
@@ -90,7 +90,7 @@ export function ProjectsDashboardPage() {
 
   return (
     <DashboardLayout>
-      <div className="container mx-auto py-8 px-4 min-h-[calc(100vh-12rem)]">
+      <div className="container mx-auto py-8 px-4">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold">Projects</h1>
