@@ -53,7 +53,7 @@ export function RegisterPage() {
       console.log('Registration result:', result);
       
       if (result.session === null) {
-        setError('¡Cuenta creada! Revisa tu email para confirmar tu cuenta antes de iniciar sesión.');
+        setError('Account created! Check your email to confirm your account before logging in.');
         setIsLoading(false);
         setTimeout(() => navigate('/auth/login'), 3000);
       } else {
@@ -65,7 +65,7 @@ export function RegisterPage() {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create account';
       
       if (errorMessage.includes('already registered')) {
-        setError('Este email ya está registrado. ¿Quieres iniciar sesión?');
+        setError('This email address is already registered. Would you like to log in?');
       } else {
         setError(errorMessage);
       }
@@ -90,7 +90,7 @@ export function RegisterPage() {
         <div className="text-center">
           <div className="flex justify-center mb-8">
             <div className="flex h-12 w-12 items-center justify-center">
-              <img src="/logo.svg" alt="SEO Compass" className="h-12 w-12" />
+              <a href="/"><img src="/logo.svg" alt="SEO Compass" className="h-12 w-12" /></a>
             </div>
           </div>
           <h1 className="text-3xl font-bold text-purple-600">Create an account</h1>
@@ -117,7 +117,7 @@ export function RegisterPage() {
                     <FormControl>
                       <Input
                         type="text"
-                        placeholder="John Doe"
+                        placeholder="David Rueda"
                         {...field}
                       />
                     </FormControl>
@@ -135,7 +135,7 @@ export function RegisterPage() {
                     <FormControl>
                       <Input
                         type="email"
-                        placeholder="you@example.com"
+                        placeholder="itacademy@gmail.com"
                         {...field}
                       />
                     </FormControl>

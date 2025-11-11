@@ -50,9 +50,9 @@ export function LoginPage() {
       const errorMessage = err instanceof Error ? err.message : 'Failed to sign in';
       
       if (errorMessage.includes('Invalid login credentials')) {
-        setError('Email o contraseña incorrectos. Si acabas de registrarte, verifica tu email para confirmar tu cuenta.');
+        setError('Incorrect email or password. If you have just registered, please check your email to confirm your account.');
       } else if (errorMessage.includes('Email not confirmed')) {
-        setError('Por favor confirma tu email antes de iniciar sesión. Revisa tu bandeja de entrada.');
+        setError('Please confirm your email before logging in. Check your inbox.');
       } else {
         setError(errorMessage);
       }
@@ -77,7 +77,7 @@ export function LoginPage() {
         <div className="text-center">
           <div className="flex justify-center mb-8">
             <div className="flex h-12 w-12 items-center justify-center">
-              <img src="/logo.svg" alt="SEO Compass" className="h-12 w-12" />
+              <a href="/"><img src="/logo.svg" alt="SEO Compass" className="h-12 w-12" /></a>
             </div>
           </div>
           <h1 className="text-3xl font-bold text-purple-600">Welcome back</h1>
@@ -104,7 +104,7 @@ export function LoginPage() {
                     <FormControl>
                       <Input
                         type="email"
-                        placeholder="you@example.com"
+                        placeholder="itacademy@gmail.com"
                         {...field}
                       />
                     </FormControl>

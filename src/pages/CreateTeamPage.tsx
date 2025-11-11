@@ -27,7 +27,7 @@ const mapContainerStyle = {
 };
 
 const defaultCenter = {
-  lat: 37.7749, // San Francisco
+  lat: 37.7749, // San Francisco (default)
   lng: -122.4194,
 };
 
