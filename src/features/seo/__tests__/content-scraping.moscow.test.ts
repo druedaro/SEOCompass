@@ -6,7 +6,6 @@ import {
   createQueryBuilder,
 } from '@/utils/tests/__mocks__/supabaseMock';
 
-// Mock supabase functions - must be hoisted
 const mockInvoke = vi.hoisted(() => vi.fn());
 
 vi.mock('@/config/supabase', () => ({
@@ -18,7 +17,6 @@ vi.mock('@/config/supabase', () => ({
   },
 }));
 
-// Import after mock is set up
 const { scrapeUrl, checkUrlStatus, getAuditHistory } = 
   await import('@/services/contentScrapingService');
 
@@ -28,7 +26,6 @@ describe('Content Scraping Service - Moscow Method Tests', () => {
     mockInvoke.mockClear();
   });
 
-  // 5 tests total - Core scraping operations
   it('should scrape URL successfully', async () => {
     const mockScrapedData = {
       html: '<html><body>Test Content</body></html>',

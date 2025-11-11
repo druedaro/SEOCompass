@@ -51,19 +51,16 @@ function calculateCategoryScores(input: ScoreCalculationInput): {
   technical: number;
   onPage: number;
 } {
-  // Meta score (Title + Description + URL)
   const metaScore =
     input.titleValidation.score * 0.5 +
     input.descriptionValidation.score * 0.35 +
     input.urlValidation.score * 0.15;
 
-  // Content score (H1 + Headings + Content Length)
   const contentScore =
     input.h1Validation.score * 0.30 +
     input.headingHierarchyValidation.score * 0.20 +
     input.contentLengthValidation.score * 0.50;
 
-  // Technical score (Canonical + Structured Data + Images)
   const canonicalScore = input.canonicalValidation?.score ?? 85;
   const structuredDataScore = input.hasStructuredData ? 100 : 0;
   const technicalScore =
@@ -71,7 +68,6 @@ function calculateCategoryScores(input: ScoreCalculationInput): {
     structuredDataScore * 0.3 +
     input.imagesValidation.score * 0.4;
 
-  // On-Page score (Internal + External Links)
   const internalLinksScore = Math.min(100, (input.internalLinks ?? 0) * 10);
   const externalLinksScore = Math.min(100, (input.externalLinks ?? 0) * 20);
   const onPageScore = internalLinksScore * 0.6 + externalLinksScore * 0.4;
@@ -90,7 +86,6 @@ function calculateCategoryScores(input: ScoreCalculationInput): {
 export function calculateSEOScore(input: ScoreCalculationInput): SEOScoreBreakdown {
   let totalScore = 0;
 
-  // Add weighted scores
   totalScore += input.titleValidation.score * WEIGHTS.TITLE;
   totalScore += input.descriptionValidation.score * WEIGHTS.DESCRIPTION;
   totalScore += input.urlValidation.score * WEIGHTS.URL;
@@ -99,11 +94,10 @@ export function calculateSEOScore(input: ScoreCalculationInput): SEOScoreBreakdo
   totalScore += input.imagesValidation.score * WEIGHTS.IMAGES;
   totalScore += input.contentLengthValidation.score * WEIGHTS.CONTENT_LENGTH;
 
-  // Optional factors
   if (input.canonicalValidation) {
     totalScore += input.canonicalValidation.score * WEIGHTS.CANONICAL;
   } else {
-    totalScore += 85 * WEIGHTS.CANONICAL; // Default reasonable score
+    totalScore += 85 * WEIGHTS.CANONICAL;
   }
 
   if (input.hasStructuredData !== undefined) {
@@ -112,22 +106,18 @@ export function calculateSEOScore(input: ScoreCalculationInput): SEOScoreBreakdo
     totalScore += 50 * WEIGHTS.STRUCTURED_DATA;
   }
 
-  // Internal links score
   const internalLinksScore = Math.min(100, (input.internalLinks ?? 0) * 10);
   totalScore += internalLinksScore * WEIGHTS.INTERNAL_LINKS;
 
-  // External links score
   const externalLinksScore = Math.min(100, (input.externalLinks ?? 0) * 20);
   totalScore += externalLinksScore * WEIGHTS.EXTERNAL_LINKS;
 
-  // Links validation
   if (input.linksValidation) {
     totalScore += input.linksValidation.score * WEIGHTS.LINKS;
   } else {
     totalScore += 70 * WEIGHTS.LINKS;
   }
 
-  // Hreflang validation
   if (input.hreflangValidation) {
     totalScore += input.hreflangValidation.score * WEIGHTS.HREFLANG;
   } else {
@@ -141,7 +131,6 @@ export function calculateSEOScore(input: ScoreCalculationInput): SEOScoreBreakdo
     totalScore += 100 * WEIGHTS.ROBOTS;
   }
 
-  // Calculate category scores
   const categoryScores = calculateCategoryScores(input);
 
   return {

@@ -161,10 +161,8 @@ export function extractLinks(doc: Document, baseUrl: string): ParsedLink[] {
  * Extract body text content (excluding scripts, styles, etc.)
  */
 export function extractBodyText(doc: Document): string {
-  // Clone the body to avoid modifying the original
   const body = doc.body.cloneNode(true) as HTMLElement;
 
-  // Remove scripts, styles, and other non-content elements
   body.querySelectorAll('script, style, noscript, iframe').forEach((el) => el.remove());
 
   return body.textContent?.trim() || '';
@@ -186,7 +184,6 @@ export function detectStructuredData(doc: Document): {
 } {
   const types: string[] = [];
 
-  // Check for JSON-LD
   const jsonLdScripts = doc.querySelectorAll('script[type="application/ld+json"]');
   jsonLdScripts.forEach((script) => {
     try {
@@ -195,11 +192,9 @@ export function detectStructuredData(doc: Document): {
         types.push(data['@type']);
       }
     } catch (e) {
-      // Invalid JSON-LD
     }
   });
 
-  // Check for microdata
   const microdataElements = doc.querySelectorAll('[itemtype]');
   microdataElements.forEach((element) => {
     const itemtype = element.getAttribute('itemtype');

@@ -12,13 +12,8 @@ import {
 
 describe('Authentication Service - Moscow Method Tests', () => {
   beforeEach(() => {
-    // Reset all mocks before each test
     resetSupabaseMocks();
   });
-
-  // ==========================================
-  // 10 tests total - Core authentication flows
-  // ==========================================
   
   describe('MUST HAVE: Core Authentication', () => {
     it('should register a new user with email and password', async () => {
@@ -37,19 +32,16 @@ describe('Authentication Service - Moscow Method Tests', () => {
         createSuccessResponse({ user: mockUser, session: mockSession })
       );
 
-      // Mock the profile check (returns null = profile doesn't exist)
       const profileCheckBuilder = createQueryBuilder();
       profileCheckBuilder.single.mockResolvedValue(
         createSuccessResponse(null)
       );
       
-      // Mock the profile insert
       const profileInsertBuilder = createQueryBuilder();
       profileInsertBuilder.single.mockResolvedValue(
         createSuccessResponse({ user_id: '123', email: registerData.email, role: registerData.role })
       );
       
-      // First call is for checking, second is for inserting
       mockSupabaseFrom
         .mockReturnValueOnce(profileCheckBuilder)
         .mockReturnValueOnce(profileInsertBuilder);

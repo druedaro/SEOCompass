@@ -16,7 +16,6 @@ interface ScrapingBeeResponse {
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
@@ -28,13 +27,11 @@ serve(async (req) => {
       throw new Error('URL is required');
     }
 
-    // Get ScrapingBee API key from environment
     const scrapingBeeApiKey = Deno.env.get('SCRAPINGBEE_API_KEY');
     if (!scrapingBeeApiKey) {
       throw new Error('ScrapingBee API key not configured');
     }
 
-    // Build ScrapingBee API URL
     const scrapingBeeUrl = new URL('https://app.scrapingbee.com/api/v1/');
     scrapingBeeUrl.searchParams.set('api_key', scrapingBeeApiKey);
     scrapingBeeUrl.searchParams.set('url', url);
@@ -44,14 +41,12 @@ serve(async (req) => {
       scrapingBeeUrl.searchParams.set('extract_rules', JSON.stringify(extract_rules));
     }
 
-    // Make request to ScrapingBee
     const response = await fetch(scrapingBeeUrl.toString());
 
     if (!response.ok) {
       throw new Error(`ScrapingBee API error: ${response.status} ${response.statusText}`);
     }
 
-    // If return_html is true, return raw HTML
     if (return_html) {
       const html = await response.text();
       const finalUrl = response.headers.get('spb-final-url') || url;

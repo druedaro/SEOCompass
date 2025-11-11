@@ -13,7 +13,6 @@ describe('Team Service - Moscow Method Tests', () => {
     resetSupabaseMocks();
   });
 
-  // 5 tests total - Core team operations
   it('should create a new team successfully', async () => {
     const mockUser = { id: 'user-123', email: 'test@example.com' };
     const mockTeam = {

@@ -13,7 +13,6 @@ describe('Task Service - Moscow Method Tests', () => {
     resetSupabaseMocks();
   });
 
-  // 5 tests total - Core task operations
   it('should create a new task successfully', async () => {
     const mockTask = {
       id: 'task-123',

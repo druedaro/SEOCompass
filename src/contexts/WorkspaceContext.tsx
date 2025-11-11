@@ -4,22 +4,18 @@ import type { Team, TeamMember } from '@/types/domain';
 import { useAuth } from '@/hooks/useAuth';
 
 interface WorkspaceContextType {
-  // Current team
   currentTeam: Team | null;
   setCurrentTeam: (team: Team | null) => void;
   
-  // Teams
   teams: Team[];
   isLoadingTeams: boolean;
   refreshTeams: () => Promise<void>;
   
-  // Team members
   teamMembers: TeamMember[];
   isLoadingMembers: boolean;
   refreshMembers: () => Promise<void>;
-  currentUserMember: TeamMember | null; // Current user's membership in current team
+  currentUserMember: TeamMember | null;
   
-  // Actions
   createTeam: (data: { name: string; description?: string; location?: string }) => Promise<Team>;
   updateTeam: (teamId: string, data: { name?: string; description?: string; location?: string }) => Promise<Team>;
   deleteTeam: (teamId: string) => Promise<void>;
@@ -37,22 +33,18 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [isLoadingTeams, setIsLoadingTeams] = useState(false);
   const [isLoadingMembers, setIsLoadingMembers] = useState(false);
 
-  // Calculate current user's membership in current team
   const currentUserMember = teamMembers.find(member => member.user_id === user?.id) || null;
 
-  // Load teams when user is authenticated
   useEffect(() => {
     if (user) {
       refreshTeams();
     } else {
-      // Clear data when user logs out
       setTeams([]);
       setCurrentTeam(null);
       setTeamMembers([]);
     }
   }, [user]);
 
-  // Load team members when current team changes
   useEffect(() => {
     if (currentTeam) {
       refreshMembers();
@@ -62,14 +54,13 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   }, [currentTeam]);
 
   const refreshTeams = async () => {
-    if (!user) return; // Don't try to load teams if user is not authenticated
+    if (!user) return; 
     
     setIsLoadingTeams(true);
     try {
       const data = await teamService.getUserTeams();
       setTeams(data);
       
-      // If no current team and teams exist, set first team as current
       if (!currentTeam && data.length > 0) {
         setCurrentTeam(data[0]);
       }

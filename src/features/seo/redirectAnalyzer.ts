@@ -47,7 +47,6 @@ export async function checkLink(url: string): Promise<LinkCheckResult> {
     let finalUrl = url;
     let status: LinkCheckResult['status'];
 
-    // Check for redirect
     if (isRedirect(statusCode)) {
       const location = response.headers.get('location');
       finalUrl = location || url;
@@ -88,7 +87,6 @@ export async function checkMultipleLinks(
   const results: LinkCheckResult[] = [];
   const uniqueUrls = [...new Set(urls)];
 
-  // Process URLs in batches
   for (let i = 0; i < uniqueUrls.length; i += maxConcurrent) {
     const batch = uniqueUrls.slice(i, i + maxConcurrent);
     const batchResults = await Promise.all(batch.map((url) => checkLink(url)));

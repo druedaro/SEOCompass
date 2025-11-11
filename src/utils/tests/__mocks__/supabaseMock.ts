@@ -1,9 +1,5 @@
 import { vi } from 'vitest';
 
-/**
- * Mock Supabase Client
- * Centralized mock for all tests to avoid duplication and ensure consistency
- */
 export const mockSupabaseAuth = {
   signUp: vi.fn(),
   signInWithPassword: vi.fn(),
@@ -15,7 +11,6 @@ export const mockSupabaseAuth = {
   updateUser: vi.fn(),
 };
 
-// Create a chainable query builder mock
 export const createQueryBuilder = () => {
   const builder: any = {
     select: vi.fn(),
@@ -30,7 +25,6 @@ export const createQueryBuilder = () => {
     limit: vi.fn(),
   };
   
-  // Make methods chainable
   builder.select.mockReturnValue(builder);
   builder.insert.mockReturnValue(builder);
   builder.update.mockReturnValue(builder);
@@ -43,7 +37,6 @@ export const createQueryBuilder = () => {
   return builder;
 };
 
-// Mock Supabase from() query builder
 export const mockSupabaseFrom = vi.fn(() => createQueryBuilder());
 
 export const mockSupabaseClient = {
@@ -51,9 +44,6 @@ export const mockSupabaseClient = {
   from: mockSupabaseFrom,
 };
 
-/**
- * Helper to reset all mocks between tests
- */
 export const resetSupabaseMocks = () => {
   Object.values(mockSupabaseAuth).forEach((fn) => {
     if (vi.isMockFunction(fn)) {
@@ -63,17 +53,11 @@ export const resetSupabaseMocks = () => {
   mockSupabaseFrom.mockClear();
 };
 
-/**
- * Helper to create success responses
- */
 export const createSuccessResponse = <T>(data: T) => ({
   data,
   error: null,
 });
 
-/**
- * Helper to create error responses
- */
 export const createErrorResponse = (message: string, code?: string) => ({
   data: null,
   error: {

@@ -12,7 +12,6 @@ describe('Project Service - Moscow Method Tests', () => {
     resetSupabaseMocks();
   });
 
-  // 5 tests total - Core project operations
   it('should create a new project successfully', async () => {
     const mockProject = {
       id: 'project-123',

@@ -70,7 +70,6 @@ export function TaskList({ tasks, onTaskUpdate, onTaskEdit }: TaskListProps) {
       }
       onTaskUpdate();
     } catch {
-      // Error handling delegated to parent
     }
   };
 
