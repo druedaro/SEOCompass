@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { projectService } from '@/services/projectService';
+import { projectService } from './projectService';
 import {
   mockSupabaseFrom,
   resetSupabaseMocks,
   createSuccessResponse,
   createQueryBuilder,
-} from './__mocks__/supabaseMock';
+} from '@/__mocks__/supabase';
 
 describe('Project Service - Moscow Method Tests', () => {
   beforeEach(() => {

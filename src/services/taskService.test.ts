@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { taskService } from '@/services/taskService';
-import type { CreateTaskInput, UpdateTaskInput } from '@/services/taskService';
+import { taskService } from './taskService';
+import type { CreateTaskInput, UpdateTaskInput } from './taskService';
 import {
   mockSupabaseFrom,
   resetSupabaseMocks,
   createSuccessResponse,
   createQueryBuilder,
-} from './__mocks__/supabaseMock';
+} from '@/__mocks__/supabase';
 
 describe('Task Service - Moscow Method Tests', () => {
   beforeEach(() => {

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { authService } from '@/services/authService';
+import { authService } from './authService';
 import type { LoginFormData, RegisterFormData } from '@/schemas/authSchema';
 import {
   mockSupabaseAuth,
@@ -8,7 +8,7 @@ import {
   createSuccessResponse,
   createErrorResponse,
   createQueryBuilder,
-} from './__mocks__/supabaseMock';
+} from '@/__mocks__/supabase';
 
 describe('Authentication Service - Moscow Method Tests', () => {
   beforeEach(() => {

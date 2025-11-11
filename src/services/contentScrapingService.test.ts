@@ -4,7 +4,7 @@ import {
   resetSupabaseMocks,
   createSuccessResponse,
   createQueryBuilder,
-} from '@/utils/tests/__mocks__/supabaseMock';
+} from '@/__mocks__/supabase';
 
 const mockInvoke = vi.hoisted(() => vi.fn());
 
