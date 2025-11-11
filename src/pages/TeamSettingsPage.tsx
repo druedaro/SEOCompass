@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Save, Trash2 } from 'lucide-react';
 import { GoogleMap, Marker } from '@react-google-maps/api';
 import { Button } from '@/components/atoms/Button';
@@ -13,14 +12,7 @@ import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmat
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
-
-const updateTeamSchema = z.object({
-  name: z.string().min(3, 'Team name must be at least 3 characters').max(50),
-  description: z.string().max(200).optional(),
-  location: z.string().max(100).optional(),
-});
-
-type UpdateTeamFormData = z.infer<typeof updateTeamSchema>;
+import { updateTeamSchema, UpdateTeamFormData } from '@/schemas/teamSchema';
 
 const mapContainerStyle = {
   width: '100%',

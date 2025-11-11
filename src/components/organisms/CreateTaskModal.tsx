@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import {
   Dialog,
   DialogContent,
@@ -32,18 +31,7 @@ import { DatePicker } from '@/components/molecules/DatePicker';
 import { taskService, CreateTaskInput, Task } from '@/services/taskService';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { PRIORITY_OPTIONS, STATUS_OPTIONS } from '@/constants/tasks';
-
-const taskSchema = z.object({
-  title: z.string().min(1, 'Title is required').max(200, 'Title is too long'),
-  description: z.string().optional(),
-  priority: z.enum(['low', 'medium', 'high', 'urgent']).default('medium'),
-  status: z.enum(['todo', 'in_progress', 'completed', 'cancelled']).default('todo'),
-  due_date: z.string().optional(),
-  audit_reference: z.string().optional(),
-  assigned_to: z.string().optional(),
-});
-
-type TaskFormData = z.infer<typeof taskSchema>;
+import { taskSchema, TaskFormData } from '@/schemas/taskSchema';
 
 interface CreateTaskModalProps {
   open: boolean;

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { ArrowLeft } from 'lucide-react';
 import { GoogleMap, Marker } from '@react-google-maps/api';
 import { Button } from '@/components/atoms/Button';
@@ -12,14 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { LocationAutocomplete } from '@/components/molecules/LocationAutocomplete';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
-
-const createTeamSchema = z.object({
-  name: z.string().min(3, 'Team name must be at least 3 characters').max(50),
-  description: z.string().max(200).optional(),
-  location: z.string().max(100).optional(),
-});
-
-type CreateTeamFormData = z.infer<typeof createTeamSchema>;
+import { createTeamSchema, CreateTeamFormData } from '@/schemas/teamSchema';
 
 const mapContainerStyle = {
   width: '100%',

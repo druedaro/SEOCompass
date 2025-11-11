@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { ArrowLeft, Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { Textarea } from '@/components/atoms/Textarea';
@@ -12,13 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
 import { useProject } from '@/hooks/useProject';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
-
-const projectSchema = z.object({
-  name: z.string().min(1, 'Project name is required').max(100, 'Name is too long'),
-  description: z.string().max(500, 'Description is too long').optional(),
-});
-
-type ProjectFormData = z.infer<typeof projectSchema>;
+import { projectSchema, ProjectFormData } from '@/schemas/projectSchema';
 
 export function ProjectSettingsPage() {
   const { projectId } = useParams<{ projectId: string }>();
