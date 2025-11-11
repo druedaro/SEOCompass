@@ -42,9 +42,7 @@ const WEIGHTS = {
   ROBOTS: 0.01,
 };
 
-/**
- * Calculate category scores
- */
+
 function calculateCategoryScores(input: ScoreCalculationInput): {
   meta: number;
   content: number;
@@ -80,9 +78,7 @@ function calculateCategoryScores(input: ScoreCalculationInput): {
   };
 }
 
-/**
- * Calculate overall SEO score
- */
+
 export function calculateSEOScore(input: ScoreCalculationInput): SEOScoreBreakdown {
   let totalScore = 0;
 
@@ -124,7 +120,7 @@ export function calculateSEOScore(input: ScoreCalculationInput): SEOScoreBreakdo
     totalScore += 80 * WEIGHTS.HREFLANG;
   }
 
-  // Robots meta validation
+
   if (input.robotsValidation) {
     totalScore += input.robotsValidation.score * WEIGHTS.ROBOTS;
   } else {

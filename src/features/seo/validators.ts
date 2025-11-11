@@ -1,6 +1,3 @@
-/**
- * SEO Validators - Compact
- */
 
 export interface ValidationResult {
   isValid: boolean;
@@ -251,9 +248,7 @@ export function validateLinks(links: { internal: number; external: number; broke
   return { isValid: issues.length === 0, issues, warnings, score: Math.max(0, score) };
 }
 
-/**
- * Validate hreflang tags for international SEO
- */
+
 export function validateHreflang(hreflangTags: Array<{ hreflang: string; href: string }>): ValidationResult {
   const issues: string[] = [];
   const warnings: string[] = [];
@@ -281,9 +276,7 @@ export function validateHreflang(hreflangTags: Array<{ hreflang: string; href: s
   return { isValid: issues.length === 0, issues, warnings, score: Math.max(0, score) };
 }
 
-/**
- * Validate robots meta tag
- */
+
 export function validateRobotsMeta(robotsMeta: string | null): ValidationResult {
   const issues: string[] = [];
   const warnings: string[] = [];

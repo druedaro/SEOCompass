@@ -1,8 +1,3 @@
-/**
- * HTML Parser Utilities for SEO Content Analysis
- * Extracts meta tags, headings, images, links, and structured data
- */
-
 export interface HTMLMetadata {
   title: string | null;
   description: string | null;
@@ -59,17 +54,11 @@ export interface ParsedContent {
   structuredDataTypes: string[];
 }
 
-/**
- * Parse HTML string into a DOM document
- */
 function parseHTML(html: string): Document {
   const parser = new DOMParser();
   return parser.parseFromString(html, 'text/html');
 }
 
-/**
- * Extract metadata from HTML document
- */
 export function extractMetadata(doc: Document): ParsedMetadata {
   const getMetaContent = (selector: string): string | null => {
     const element = doc.querySelector(selector);
@@ -87,9 +76,7 @@ export function extractMetadata(doc: Document): ParsedMetadata {
   };
 }
 
-/**
- * Extract all headings (H1-H6) from HTML document
- */
+
 export function extractHeadings(doc: Document): ParsedHeading[] {
   const headings: ParsedHeading[] = [];
   const headingElements = doc.querySelectorAll('h1, h2, h3, h4, h5, h6');
@@ -107,9 +94,7 @@ export function extractHeadings(doc: Document): ParsedHeading[] {
   return headings;
 }
 
-/**
- * Extract all images from HTML document
- */
+
 export function extractImages(doc: Document): ParsedImage[] {
   const images: ParsedImage[] = [];
   const imageElements = doc.querySelectorAll('img');
@@ -130,9 +115,6 @@ export function extractImages(doc: Document): ParsedImage[] {
   return images;
 }
 
-/**
- * Extract all links from HTML document
- */
 export function extractLinks(doc: Document, baseUrl: string): ParsedLink[] {
   const links: ParsedLink[] = [];
   const linkElements = doc.querySelectorAll('a[href]');
@@ -157,9 +139,6 @@ export function extractLinks(doc: Document, baseUrl: string): ParsedLink[] {
   return links;
 }
 
-/**
- * Extract body text content (excluding scripts, styles, etc.)
- */
 export function extractBodyText(doc: Document): string {
   const body = doc.body.cloneNode(true) as HTMLElement;
 
@@ -168,16 +147,11 @@ export function extractBodyText(doc: Document): string {
   return body.textContent?.trim() || '';
 }
 
-/**
- * Count words in a text string
- */
 export function countWords(text: string): number {
   return text.split(/\s+/).filter((word) => word.length > 0).length;
 }
 
-/**
- * Check for structured data (JSON-LD, microdata, etc.)
- */
+
 export function detectStructuredData(doc: Document): {
   hasStructuredData: boolean;
   types: string[];
@@ -209,9 +183,7 @@ export function detectStructuredData(doc: Document): {
   };
 }
 
-/**
- * Extract hreflang tags
- */
+
 export function extractHreflangTags(doc: Document): Array<{ hreflang: string; href: string }> {
   const hreflangTags: Array<{ hreflang: string; href: string }> = [];
   const linkElements = doc.querySelectorAll('link[rel="alternate"][hreflang]');
@@ -227,9 +199,7 @@ export function extractHreflangTags(doc: Document): Array<{ hreflang: string; hr
   return hreflangTags;
 }
 
-/**
- * Parse complete HTML and extract all relevant SEO data
- */
+
 export function parseHTMLContent(html: string, baseUrl: string): ParsedContent {
   const doc = parseHTML(html);
   const bodyText = extractBodyText(doc);
