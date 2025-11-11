@@ -37,7 +37,6 @@ export interface Feature {
   icon: LucideIcon;
   title: string;
   description: string;
-  className: string;
 }
 
 export const FEATURES_DATA: Feature[] = [
@@ -46,26 +45,22 @@ export const FEATURES_DATA: Feature[] = [
     title: 'Content Analyzer',
     description:
       'Scrape URLs or sitemaps to detect 404s, redirects, duplicate content, missing meta tags, and more.',
-    className: 'md:col-span-2',
   },
   {
     icon: CheckSquare,
     title: 'Action Center',
     description:
       'Manage SEO tasks with Kanban boards and list views. Link tasks to audits and track progress with your team.',
-    className: 'md:col-span-2',
   },
   {
     icon: TrendingUp,
     title: 'Real-time Analytics',
     description: 'Get instant insights with live data updates and performance metrics.',
-    className: 'md:col-span-1',
   },
   {
     icon: Globe,
     title: 'Multi-language Support',
     description: 'Analyze hreflang tags and optimize for international SEO.',
-    className: 'md:col-span-1',
   },
 ];
 

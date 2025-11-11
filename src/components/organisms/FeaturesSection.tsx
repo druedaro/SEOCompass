@@ -21,14 +21,14 @@ export function FeaturesSection() {
           </p>
         </div>
 
-        {/* Bento Grid */}
-        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-4 md:grid-cols-3">
+        {/* Grid balanceado 2x2 */}
+        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2">
           {FEATURES_DATA.map((feature) => {
             const Icon = feature.icon;
             return (
               <Card
                 key={feature.title}
-                className={`${feature.className} group hover:border-fuchsia-400 hover:shadow-xl hover:shadow-fuchsia-200/50 transition-all duration-300 backdrop-blur-sm bg-white/90`}
+                className="group hover:border-fuchsia-400 hover:shadow-xl hover:shadow-fuchsia-200/50 transition-all duration-300 backdrop-blur-sm bg-white/90"
               >
                 <CardHeader>
                   <div className="mb-2 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-fuchsia-100 to-violet-100 group-hover:from-fuchsia-200 group-hover:to-violet-200 transition-all shadow-md">

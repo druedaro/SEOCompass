@@ -58,19 +58,21 @@ export function HeroSection() {
             </Button>
           </div>
 
-          {/* Features row (light) */}
-          <div className="grid grid-cols-2 gap-6 sm:grid-cols-4 text-sm text-slate-700">
-            {HERO_DATA.features.map((feature) => {
-              const Icon = feature.icon;
-              return (
-                <div key={feature.label} className="flex flex-col items-center gap-2">
-                  <div className="rounded-lg bg-gradient-to-br from-fuchsia-100 to-violet-100 p-3 shadow-lg">
-                    <Icon className="h-6 w-6 text-fuchsia-600" />
+          {/* Features row (light) - Centered 3 columns */}
+          <div className="flex justify-center">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-3 text-sm text-slate-700 max-w-2xl">
+              {HERO_DATA.features.map((feature) => {
+                const Icon = feature.icon;
+                return (
+                  <div key={feature.label} className="flex flex-col items-center gap-2">
+                    <div className="rounded-lg bg-gradient-to-br from-fuchsia-100 to-violet-100 p-3 shadow-lg">
+                      <Icon className="h-6 w-6 text-fuchsia-600" />
+                    </div>
+                    <span className="font-semibold">{feature.label}</span>
                   </div>
-                  <span className="font-semibold">{feature.label}</span>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
