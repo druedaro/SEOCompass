@@ -1,4 +1,5 @@
 import type { ValidationResult } from './validators';
+import { SEO_RECOMMENDATIONS } from '@/constants/seo';
 
 export interface Recommendation {
   id: string;
@@ -41,9 +42,9 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
       id: `rec-${counter++}`,
       category: 'technical',
       severity: 'critical',
-      title: '404 Error - Page Not Found',
-      description: 'This page returns a 404 error.',
-      action: 'Fix the URL or restore the page content immediately.',
+      title: SEO_RECOMMENDATIONS.ERROR_404.title,
+      description: SEO_RECOMMENDATIONS.ERROR_404.description,
+      action: SEO_RECOMMENDATIONS.ERROR_404.action,
       priority: 10,
     });
   }
@@ -53,9 +54,9 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
       id: `rec-${counter++}`,
       category: 'technical',
       severity: 'critical',
-      title: 'Server Error (5xx)',
-      description: 'This page is returning a server error.',
-      action: 'Check server configuration and logs.',
+      title: SEO_RECOMMENDATIONS.ERROR_5XX.title,
+      description: SEO_RECOMMENDATIONS.ERROR_5XX.description,
+      action: SEO_RECOMMENDATIONS.ERROR_5XX.action,
       priority: 10,
     });
   }
@@ -64,8 +65,8 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
     recommendations,
     input.titleValidation,
     'meta',
-    'Title Tag',
-    'Add a descriptive title (50-60 chars) with your main topic.',
+    SEO_RECOMMENDATIONS.TITLE.title,
+    SEO_RECOMMENDATIONS.TITLE.action,
     counter
   );
 
@@ -73,8 +74,8 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
     recommendations,
     input.descriptionValidation,
     'meta',
-    'Meta Description',
-    'Write a compelling description (150-160 chars) summarizing the page.',
+    SEO_RECOMMENDATIONS.DESCRIPTION.title,
+    SEO_RECOMMENDATIONS.DESCRIPTION.action,
     counter
   );
 
@@ -82,8 +83,8 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
     recommendations,
     input.urlValidation,
     'technical',
-    'URL Structure',
-    'Use lowercase, hyphens, and remove special characters/stop words.',
+    SEO_RECOMMENDATIONS.URL.title,
+    SEO_RECOMMENDATIONS.URL.action,
     counter
   );
 
@@ -91,10 +92,10 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
     recommendations,
     input.h1Validation,
     'content',
-    'H1 Heading',
+    SEO_RECOMMENDATIONS.H1_SINGLE.title,
     input.h1s && input.h1s.length > 1
-      ? 'Use only one H1 heading per page.'
-      : 'Add a single H1 heading describing the page topic.',
+      ? SEO_RECOMMENDATIONS.H1_MULTIPLE.action
+      : SEO_RECOMMENDATIONS.H1_SINGLE.action,
     counter
   );
 
@@ -102,8 +103,8 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
     recommendations,
     input.headingHierarchyValidation,
     'content',
-    'Heading Hierarchy',
-    'Follow proper heading order (H1 → H2 → H3) without skipping levels.',
+    SEO_RECOMMENDATIONS.HEADING_HIERARCHY.title,
+    SEO_RECOMMENDATIONS.HEADING_HIERARCHY.action,
     counter
   );
 
@@ -111,8 +112,8 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
     recommendations,
     input.contentLengthValidation,
     'content',
-    'Content Length',
-    `Expand content to at least 300 words (current: ${input.wordCount || 0}).`,
+    SEO_RECOMMENDATIONS.CONTENT_LENGTH.title,
+    SEO_RECOMMENDATIONS.CONTENT_LENGTH.action(input.wordCount || 0),
     counter
   );
 
@@ -121,8 +122,8 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
       recommendations,
       input.canonicalValidation,
       'technical',
-      'Canonical Tag',
-      'Add or fix canonical tag to avoid duplicate content issues.',
+      SEO_RECOMMENDATIONS.CANONICAL.title,
+      SEO_RECOMMENDATIONS.CANONICAL.action,
       counter
     );
   } else {
@@ -130,9 +131,9 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
       id: `rec-${counter++}`,
       category: 'technical',
       severity: 'critical',
-      title: 'Missing Canonical Tag',
-      description: 'No canonical URL specified.',
-      action: 'Add a canonical tag to this page.',
+      title: SEO_RECOMMENDATIONS.CANONICAL_MISSING.title,
+      description: SEO_RECOMMENDATIONS.CANONICAL_MISSING.description,
+      action: SEO_RECOMMENDATIONS.CANONICAL_MISSING.action,
       priority: 10,
     });
   }
@@ -142,8 +143,8 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
       recommendations,
       input.robotsValidation,
       'technical',
-      'Robots Meta Tag',
-      'Review robots meta tag settings.',
+      SEO_RECOMMENDATIONS.ROBOTS.title,
+      SEO_RECOMMENDATIONS.ROBOTS.action,
       counter
     );
   }
@@ -154,9 +155,9 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
       id: `rec-${counter++}`,
       category: 'images',
       severity: 'warning',
-      title: 'Missing Image Alt Text',
+      title: SEO_RECOMMENDATIONS.IMAGES_ALT.title,
       description: missingAlt,
-      action: 'Add descriptive alt text to all images for SEO and accessibility.',
+      action: SEO_RECOMMENDATIONS.IMAGES_ALT.action,
       priority: 6,
     });
   } else if (input.imagesValidation.isValid) {
@@ -164,9 +165,9 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
       id: `rec-${counter++}`,
       category: 'images',
       severity: 'info',
-      title: 'Images OK',
-      description: `All images have alt text (Score: ${input.imagesValidation.score}/100).`,
-      action: 'No action needed.',
+      title: SEO_RECOMMENDATIONS.IMAGES_OK.title,
+      description: SEO_RECOMMENDATIONS.IMAGES_OK.description(input.imagesValidation.score),
+      action: SEO_RECOMMENDATIONS.IMAGES_OK.action,
       priority: 1,
     });
   }
@@ -176,9 +177,9 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
       id: `rec-${counter++}`,
       category: 'technical',
       severity: 'warning',
-      title: 'No Structured Data',
-      description: 'Page lacks structured data (Schema.org).',
-      action: 'Add JSON-LD structured data matching your content type.',
+      title: SEO_RECOMMENDATIONS.STRUCTURED_DATA_MISSING.title,
+      description: SEO_RECOMMENDATIONS.STRUCTURED_DATA_MISSING.description,
+      action: SEO_RECOMMENDATIONS.STRUCTURED_DATA_MISSING.action,
       priority: 5,
     });
   } else {
@@ -186,9 +187,9 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
       id: `rec-${counter++}`,
       category: 'technical',
       severity: 'info',
-      title: 'Structured Data Present',
-      description: 'Page has structured data configured.',
-      action: 'No action needed.',
+      title: SEO_RECOMMENDATIONS.STRUCTURED_DATA_OK.title,
+      description: SEO_RECOMMENDATIONS.STRUCTURED_DATA_OK.description,
+      action: SEO_RECOMMENDATIONS.STRUCTURED_DATA_OK.action,
       priority: 1,
     });
   }
@@ -199,9 +200,9 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
         id: `rec-${counter++}`,
         category: 'links',
         severity: 'warning',
-        title: 'Few Internal Links',
-        description: `Only ${input.internalLinks} internal links found.`,
-        action: 'Add more internal links to related content on your site.',
+        title: SEO_RECOMMENDATIONS.INTERNAL_LINKS_FEW.title,
+        description: SEO_RECOMMENDATIONS.INTERNAL_LINKS_FEW.description(input.internalLinks),
+        action: SEO_RECOMMENDATIONS.INTERNAL_LINKS_FEW.action,
         priority: 4,
       });
     } else {
@@ -209,9 +210,9 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
         id: `rec-${counter++}`,
         category: 'links',
         severity: 'info',
-        title: 'Internal Links OK',
-        description: `${input.internalLinks} internal links found.`,
-        action: 'Good internal linking structure.',
+        title: SEO_RECOMMENDATIONS.INTERNAL_LINKS_OK.title,
+        description: SEO_RECOMMENDATIONS.INTERNAL_LINKS_OK.description(input.internalLinks),
+        action: SEO_RECOMMENDATIONS.INTERNAL_LINKS_OK.action,
         priority: 1,
       });
     }
@@ -223,9 +224,9 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
         id: `rec-${counter++}`,
         category: 'links',
         severity: 'info',
-        title: 'No External Links',
-        description: 'No external links detected.',
-        action: 'Consider linking to authoritative external sources.',
+        title: SEO_RECOMMENDATIONS.EXTERNAL_LINKS_NONE.title,
+        description: SEO_RECOMMENDATIONS.EXTERNAL_LINKS_NONE.description,
+        action: SEO_RECOMMENDATIONS.EXTERNAL_LINKS_NONE.action,
         priority: 2,
       });
     } else {
@@ -233,9 +234,9 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
         id: `rec-${counter++}`,
         category: 'links',
         severity: 'info',
-        title: 'External Links Present',
-        description: `${input.externalLinks} external links found.`,
-        action: 'Good use of external references.',
+        title: SEO_RECOMMENDATIONS.EXTERNAL_LINKS_OK.title,
+        description: SEO_RECOMMENDATIONS.EXTERNAL_LINKS_OK.description(input.externalLinks),
+        action: SEO_RECOMMENDATIONS.EXTERNAL_LINKS_OK.action,
         priority: 1,
       });
     }
@@ -286,8 +287,8 @@ function addIssueRecommendations(
       category,
       severity: 'info',
       title: `${title} OK`,
-      description: `${title} is properly configured (Score: ${validation.score}/100).`,
-      action: 'No action needed.',
+      description: SEO_RECOMMENDATIONS.GENERIC_OK.description(title, validation.score),
+      action: SEO_RECOMMENDATIONS.GENERIC_OK.action,
       priority: 1,
     });
   }
