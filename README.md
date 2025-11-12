@@ -45,87 +45,56 @@ A collaborative web platform designed for small SEO teams and freelancers to man
 
 ## Features
 
-### 🔐 User System & Teams (Workspace)
-- ✅ User authentication (register/login)
-- ✅ Team creation and member invitation via email
-- ✅ Team-based data ownership (not individual users)
+### 🔐 Authentication & User System
+- ✅ User registration and login with email/password
+- ✅ Google OAuth authentication
+- ✅ Password reset functionality
+- ✅ Protected routes and session management
+- ✅ Role-based user profiles (Tech SEO, Content SEO, Link Building, Client)
+
+### 👥 Team Workspace
+- ✅ Team creation with name, description, and location
+- ✅ Team member management
+- ✅ Team-based data ownership (all data belongs to teams, not individual users)
 - ✅ Shared access for all team members
-- ✅ Real-time collaboration
+- ✅ Team settings and configuration
 
 ### 📁 Project Management
 - ✅ Multi-project support per team
-- ✅ Each project represents a website domain
+- ✅ Each project represents a website/domain
 - ✅ Centralized dashboard with overview of all projects
-- ✅ Project-based data organization
+- ✅ Project CRUD operations (Create, Read, Update, Delete)
+- ✅ Project settings and configuration
+- ✅ Project-specific URL management
 
+### 🔍 Module 1: Content & On-Page Analyzer
+**URL Analysis:**
+- ✅ Single URL analysis or bulk URL import
+- ✅ Web scraping with ScrapingBee integration
+- ✅ SEO score calculation (0-100)
+- ✅ Content analysis:
+  - Title tag optimization
+  - Meta description analysis
+  - H1 heading validation
+  - Image alt text detection
+  - Word count
+  - Canonical URL verification
+  - Hreflang tags detection
+  - Structured data (JSON-LD) detection
+- ✅ Actionable recommendations engine
+- ✅ Historical audit tracking with charts
+- ✅ Audit results table with filtering and sorting
 
-### 📊 Module 1: Keyword Tracker
-- ✅ Add and monitor keywords per project
-- ✅ ScrapingBee integration for SERP data extraction
-- ✅ Data table: current position, change, best position, ranking URL
-- ✅ Visibility evolution charts
-- ✅ Historical tracking
-- ✅ Automatic ranking updates
-
-### ✍️ Module 2: Content & On-Page Analyzer
-**On-Page Auditor & Scraper:**
-- ✅ Input a single URL, multiple URLs, or an entire sitemap for bulk analysis
-- ✅ ScrapingBee for reliable web scraping
-- ✅ Keyword presence analysis in:
-  - Title tags
-  - H1 headings
-  - Meta descriptions
-  - Alt text
-  - Content body
-  - And more
-- ✅ Detect and report:
-  - 404 errors (broken links)
-  - Redirect chains and loops
-  - Missing anchor text
-  - Duplicate meta descriptions
-  - Duplicate titles
-  - Missing or incorrect canonical tags
-  - Missing or incorrect hreflang tags
-- ✅ Optimization score and checklist
-- ✅ Actionable recommendations
-
-### 🔧 Module 3: Technical SEO Audit
-- ✅ Google PageSpeed Insights (Lighthouse) integration
-- ✅ URL analysis with detailed metrics
-- ✅ 4 main scores visualization:
-  - Performance
-  - SEO
-  - Accessibility
-  - Best Practices
-- ✅ Core Web Vitals display:
-  - LCP (Largest Contentful Paint)
-  - CLS (Cumulative Layout Shift)
-  - INP (Interaction to Next Paint)
-- ✅ Improvement opportunities list
-- ✅ Detailed diagnostics
-
-### 📁 Project Management
-- ✅ Multi-project support per team
-- ✅ Each project represents a website domain
-- ✅ Centralized dashboard with overview of all projects
-- ✅ Project-based data organization
-- ✅ Schedule automatic updates for modules (user-defined interval per project, like a cron job)
-
-### ✅ Module 4: Action Center (Collaborative To-Do)
-**Manual Task Management:**
-- ✅ Create, edit, and delete tasks
-- ✅ Assign tasks to team members
-- ✅ Set due dates and priorities
-- ✅ Add descriptions and notes
-- ✅ Task categorization
-- ✅ Link tasks to audit results
-
-**Visualization:**
-- ✅ List view with filters and sorting
-- ✅ Kanban board (Pending, In Progress, Completed)
-- ✅ Real-time updates across team members
-- ✅ Progress tracking
-- ✅ Task history and activity log
+### ✅ Module 2: Action Center (Task Management)
+- ✅ Task CRUD operations (Create, Read, Update, Delete)
+- ✅ Task assignment to team members
+- ✅ Priority levels (Low, Medium, High, Urgent)
+- ✅ Status tracking (To Do, In Progress, Completed, Cancelled)
+- ✅ Due date management
+- ✅ Task descriptions and notes
+- ✅ Link tasks to specific audit results
+- ✅ Task filtering and sorting
+- ✅ Visual task list with priority badges
 
 ---
 
@@ -147,9 +116,19 @@ A collaborative web platform designed for small SEO teams and freelancers to man
 ![React Hook Form](https://img.shields.io/badge/React_Hook_Form-7.64-EC5990?style=flat&logo=reacthookform&logoColor=white)
 ![Zod](https://img.shields.io/badge/Zod-4.1-3E67B1?style=flat&logo=zod&logoColor=white)
 
-### Data Visualization
+### UI Components & Libraries
+![shadcn/ui](https://img.shields.io/badge/shadcn/ui-Latest-000000?style=flat&logo=shadcnui&logoColor=white)
+![Radix UI](https://img.shields.io/badge/Radix_UI-1.1-161618?style=flat&logo=radixui&logoColor=white)
+![Lucide React](https://img.shields.io/badge/Lucide-0.552-F56565?style=flat)
+![React Hot Toast](https://img.shields.io/badge/React_Hot_Toast-2.6-FF6B6B?style=flat)
+![class-variance-authority](https://img.shields.io/badge/CVA-0.7-6366F1?style=flat)
+![clsx](https://img.shields.io/badge/clsx-2.1-3B82F6?style=flat)
+![tailwind-merge](https://img.shields.io/badge/tailwind--merge-3.3-06B6D4?style=flat)
+
+### Data Visualization & Date
 ![Recharts](https://img.shields.io/badge/Recharts-2.14-22B5BF?style=flat)
-![React DnD](https://img.shields.io/badge/React_DnD-16.0-000000?style=flat)
+![date-fns](https://img.shields.io/badge/date--fns-4.1-770C56?style=flat)
+![React Day Picker](https://img.shields.io/badge/React_Day_Picker-9.11-E74C3C?style=flat)
 
 ### Testing & Quality
 ![Vitest](https://img.shields.io/badge/Vitest-3.2-6E9F18?style=flat&logo=vitest&logoColor=white)
@@ -242,12 +221,14 @@ npm run type-check   # TypeScript type checking
 
 ## Testing
 
-**30 Core Tests (Moscow Method):**
-- ✅ 10 Auth tests (login, register, OAuth, errors)
+**25 Core Tests (Moscow Method):**
+- ✅ 10 Auth tests (Must: 7, Should: 1, Could: 2)
 - ✅ 5 Project tests (CRUD operations)
 - ✅ 5 Task tests (CRUD operations)
 - ✅ 5 Team tests (CRUD operations)
 - ✅ 5 Content Scraping tests (SEO analysis)
+
+All tests located in `src/services/*.test.ts` using Vitest + Testing Library.
 
 ---
 
@@ -255,93 +236,155 @@ npm run type-check   # TypeScript type checking
 
 ```
 src/
-├── App.tsx
-├── main.tsx
-├── index.css
-├── setupTests.ts
+├── App.tsx                 
+├── main.tsx                  
+├── index.css                  
+├── vite-env.d.ts             
+├── __mocks__/                 
+│   └── supabase.ts            
 │
-├── auth/
-│   ├── AuthContext.tsx    
+├── auth/                   
+│   ├── AuthContext.tsx       
 │   └── AuthProvider.tsx     
 │
-├── components/
-│   ├── atoms/              
-│   ├── molecules/          
-│   └── organisms/     
+├── components/              
+│   ├── atoms/                
+│   │   ├── AlertDialog.tsx
+│   │   ├── Avatar.tsx
+│   │   ├── Badge.tsx
+│   │   ├── Button.tsx
+│   │   ├── Calendar.tsx
+│   │   ├── Card.tsx
+│   │   ├── Dialog.tsx
+│   │   ├── Input.tsx
+│   │   ├── Label.tsx
+│   │   ├── Popover.tsx
+│   │   ├── Select.tsx
+│   │   ├── Table.tsx
+│   │   └── Textarea.tsx
+│   │
+│   ├── molecules/            
+│   │   ├── DatePicker.tsx
+│   │   ├── DeleteConfirmationDialog.tsx
+│   │   ├── DropdownMenu.tsx
+│   │   ├── EmptyState.tsx
+│   │   ├── Form.tsx
+│   │   ├── LocationAutocomplete.tsx
+│   │   ├── PriorityBadge.tsx
+│   │   └── ProjectCard.tsx
+│   │
+│   └── organisms/             
+│       ├── AuditHistoryChart.tsx
+│       ├── AuditResultsTable.tsx
+│       ├── CreateTaskModal.tsx
+│       ├── CreateTeamDialog.tsx
+│       ├── DashboardLayout.tsx
+│       ├── FeaturesSection.tsx
+│       ├── Footer.tsx
+│       ├── HeroSection.tsx
+│       ├── HowItWorksSection.tsx
+│       ├── Navbar.tsx
+│       ├── ProjectModal.tsx
+│       ├── ProjectUrlsList.tsx
+│       ├── RoleSelectionModal.tsx
+│       ├── TaskList.tsx
+│       └── TeamSelector.tsx
 │
-├── constants/             
-│   ├── landing.ts        
-│   ├── navigation.ts       
-│   ├── roles.ts       
-│   ├── seo.ts              
-│   └── tasks.ts        
+├── config/                 
+│   └── supabase.ts           
 │
-├── contexts/              
-│   ├── AuthContext.tsx
-│   ├── ProjectContext.tsx
-│   └── WorkspaceContext.tsx
+├── constants/                
+│   ├── landing.ts           
+│   ├── navigation.ts        
+│   ├── roles.ts          
+│   ├── seo.ts             
+│   └── tasks.ts              
 │
-├── features/               
-│   └── seo/             
-│       ├── htmlParser.ts
-│       ├── validators.ts
+├── contexts/                  
+│   ├── ProjectContext.tsx     
+│   └── WorkspaceContext.tsx   
+│
+├── features/         
+│   └── seo/                 
+│       ├── htmlParser.ts   
+│       ├── validators.ts     
 │       ├── scoreCalculator.ts
-│       ├── recommendationsEngine.ts
-│       ├── redirectAnalyzer.ts
-│       └── __tests__/
+│       └── recommendationsEngine.ts 
 │
-├── config/
-│   └── supabase.ts        
+├── hooks/                     
+│   ├── useAuth.ts            
+│   ├── useContentAnalyzer.ts 
+│   ├── useGoogleMaps.ts      
+│   ├── useProject.ts          
+│   ├── useProjectUrls.ts     
+│   └── useUrlDetails.ts      
 │
-├── hooks/               
-│   ├── useContentAnalyzer.ts
-│   ├── useProjectUrls.ts
-│   └── useUrlDetails.ts
+├── lib/                        
+│   ├── toast.tsx              
+│   └── utils.ts             
 │
-├── lib/
-│   └── utils.ts         
+├── pages/                     
+│   ├── WelcomePage.tsx      
+│   ├── LoginPage.tsx          
+│   ├── RegisterPage.tsx      
+│   ├── AuthCallbackPage.tsx 
+│   ├── CreateTeamPage.tsx   
+│   ├── TeamMembersPage.tsx 
+│   ├── TeamSettingsPage.tsx
+│   ├── ProjectsDashboardPage.tsx 
+│   ├── ProjectOverviewPage.tsx   
+│   ├── ProjectSettingsPage.tsx  
+│   ├── ProjectUrlsManagementPage.tsx 
+│   ├── ContentAnalyzerPage.tsx  
+│   ├── UrlDetailsPage.tsx       
+│   └── ActionCenterPage.tsx     
 │
-├── pages/                 
+├── routes/                    
+│   ├── paths.ts              
+│   └── ProtectedRoute.tsx    
 │
-├── routes/
-│   ├── paths.ts            
-│   └── ProtectedRoute.tsx  
+├── schemas/                 
+│   ├── authSchema.ts        
+│   ├── projectSchema.ts   
+│   ├── taskSchema.ts      
+│   └── teamSchema.ts        
 │
-├── schemas/
-│   └── authSchema.ts      
+├── services/                
+│   ├── authService.ts      
+│   ├── authService.test.ts  
+│   ├── projectService.ts     
+│   ├── projectService.test.ts 
+│   ├── teamService.ts        
+│   ├── teamService.test.ts    
+│   ├── taskService.ts        
+│   ├── taskService.test.ts   
+│   ├── projectUrlsService.ts  
+│   ├── contentScrapingService.ts
+│   └── contentScrapingService.test.ts 
 │
-├── services/             
-│   ├── authService.ts
-│   ├── projectService.ts
-│   ├── taskService.ts
-│   └── teamService.ts
+├── test/              ¡
+│   └── setup.ts         
 │
-├── types/                 
-│   └── domain.ts
-│
-└── utils/
-    └── tests/
-        ├── auth.moscow.test.ts
-        ├── content-scraping.moscow.test.ts
-        ├── project.moscow.test.ts
-        ├── task.moscow.test.ts
-        ├── team.moscow.test.ts
-        └── __mocks__/
+└── types/                     
+    └── domain.ts            
 ```
 
 ### Architecture Highlights
 
-**Feature-Based Organization:**
-- `constants/` → All static data centralized
-- `features/seo/` → SEO domain logic isolated
-- `services/` → API layer (Supabase calls)
-- `hooks/` → Custom React hooks for state logic
+**Clean Architecture Principles:**
+- **Atomic Design:** Components organized by complexity (atoms → molecules → organisms)
+- **Feature Isolation:** `features/seo/` contains all SEO-related business logic
+- **Service Layer:** `services/` handles all API calls to Supabase
+- **Custom Hooks:** `hooks/` encapsulates stateful logic and side effects
+- **Type Safety:** Full TypeScript coverage with strict mode
+- **Test Co-location:** Tests live next to their implementation files
 
-**Benefits:**
-- ✅ Scalable: Easy to add new features
-- ✅ Maintainable: Clear separation of concerns
-- ✅ Testable: Co-located tests with features
-- ✅ Type-safe: Full TypeScript coverage
+**Key Patterns:**
+- ✅ **Separation of Concerns:** Clear boundaries between UI, business logic, and data
+- ✅ **Dependency Injection:** Services can be easily mocked for testing
+- ✅ **Single Responsibility:** Each module has one clear purpose
+- ✅ **DRY Principle:** Shared constants and utilities prevent duplication
+- ✅ **Scalability:** Easy to add new features without affecting existing code
 
 ---
 
@@ -370,9 +413,12 @@ src/
 - ✅ Error handling with user-friendly messages
 - ✅ Semantic HTML
 
-### Testing
-- ✅ 5 Auth tests (Moscow Method)
-- ✅ 15 App tests (Moscow Method)
+### Testing Strategy
+- ✅ **Moscow Method:** Tests prioritized by importance (Must/Should/Could)
+- ✅ **Unit Tests:** All service layer methods tested
+- ✅ **Mocking:** Supabase client fully mocked for isolated testing
+- ✅ **Coverage:** 25 comprehensive tests across 5 service modules
+- ✅ **CI/CD Ready:** Fast test execution with Vitest
 
 ---
 
