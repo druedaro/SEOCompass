@@ -21,8 +21,6 @@ export function AuditHistoryChart({ projectUrlId, urlLabel }: AuditHistoryChartP
     try {
       const data = await getAuditHistory(projectUrlId);
       setHistory(data);
-    } catch (error) {
-      console.error('Failed to load audit history:', error);
     } finally {
       setIsLoading(false);
     }

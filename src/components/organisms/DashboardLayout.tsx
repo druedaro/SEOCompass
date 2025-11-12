@@ -2,8 +2,8 @@ import { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
-import { LayoutDashboard, Users, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { DASHBOARD_NAVIGATION } from '@/constants/navigation';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -11,27 +11,8 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const location = useLocation();
-
-  // Hide sidebar when inside a specific project (after /dashboard/projects/:projectId)
+  
   const isInsideProject = /^\/dashboard\/projects\/[^/]+/.test(location.pathname);
-
-  const navigation = [
-    {
-      name: 'Projects',
-      href: '/dashboard/projects',
-      icon: LayoutDashboard,
-    },
-    {
-      name: 'Team Members',
-      href: '/dashboard/team/members',
-      icon: Users,
-    },
-    {
-      name: 'Team Settings',
-      href: '/dashboard/team/settings',
-      icon: Settings,
-    },
-  ];
 
   const isActive = (href: string) => {
     return location.pathname === href || location.pathname.startsWith(href + '/');
@@ -42,11 +23,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <Navbar />
       
       <div className="flex flex-1">
-        {/* Sidebar - only show when NOT inside a project */}
         {!isInsideProject && (
           <aside className="w-64 border-r bg-muted/10 min-h-[calc(100vh-4rem)] p-4">
-            <nav className="space-y-2">
-              {navigation.map((item) => {
+            <nav className="space-y-1 px-3 py-4">
+              {DASHBOARD_NAVIGATION.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.href);
                 
@@ -70,7 +50,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           </aside>
         )}
 
-        {/* Main content */}
         <main className="flex-1">
           {children}
         </main>

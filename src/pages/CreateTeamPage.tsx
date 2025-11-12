@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { ArrowLeft } from 'lucide-react';
 import { GoogleMap, Marker } from '@react-google-maps/api';
 import { Button } from '@/components/atoms/Button';
@@ -11,15 +10,8 @@ import { Label } from '@/components/atoms/Label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
 import { LocationAutocomplete } from '@/components/molecules/LocationAutocomplete';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
-import { useWorkspace } from '@/context/WorkspaceContext';
-
-const createTeamSchema = z.object({
-  name: z.string().min(3, 'Team name must be at least 3 characters').max(50),
-  description: z.string().max(200).optional(),
-  location: z.string().max(100).optional(),
-});
-
-type CreateTeamFormData = z.infer<typeof createTeamSchema>;
+import { useWorkspace } from '@/contexts/WorkspaceContext';
+import { createTeamSchema, CreateTeamFormData } from '@/schemas/teamSchema';
 
 const mapContainerStyle = {
   width: '100%',
@@ -27,7 +19,7 @@ const mapContainerStyle = {
 };
 
 const defaultCenter = {
-  lat: 37.7749, // San Francisco
+  lat: 37.7749, // San Francisco (default)
   lng: -122.4194,
 };
 
@@ -54,8 +46,6 @@ export default function CreateTeamPage() {
     try {
       await createTeam({ ...data, location });
       navigate('/dashboard');
-    } catch (error) {
-      console.error('Error creating team:', error);
     } finally {
       setIsLoading(false);
     }
@@ -132,7 +122,6 @@ export default function CreateTeamPage() {
               disabled={isLoading}
             />
 
-            {/* Google Map */}
             {isLoaded && (
               <div className="space-y-2">
                 <Label>Map Preview</Label>

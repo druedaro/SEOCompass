@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import {
   Dialog,
   DialogContent,
@@ -9,21 +8,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/organisms/Dialog';
+} from '@/components/atoms/Dialog';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { Textarea } from '@/components/atoms/Textarea';
 import { Label } from '@/components/atoms/Label';
 import { useProject } from '@/hooks/useProject';
 import type { Project } from '@/types/domain';
-
-const projectSchema = z.object({
-  name: z.string().min(1, 'Project name is required').max(100, 'Name is too long'),
-  domain: z.string().max(100, 'Domain is too long').optional(),
-  description: z.string().max(500, 'Description is too long').optional(),
-});
-
-type ProjectFormData = z.infer<typeof projectSchema>;
+import { projectSchema, ProjectFormData } from '@/schemas/projectSchema';
 
 interface ProjectModalProps {
   open: boolean;
@@ -62,8 +54,6 @@ export function ProjectModal({ open, onClose, project, mode = 'create' }: Projec
 
       reset();
       onClose();
-    } catch (error) {
-      console.error('Failed to save project:', error);
     } finally {
       setIsSubmitting(false);
     }

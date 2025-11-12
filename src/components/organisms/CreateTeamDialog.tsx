@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { GoogleMap, Marker } from '@react-google-maps/api';
 import {
   Dialog,
@@ -10,20 +9,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/organisms/Dialog';
+} from '@/components/atoms/Dialog';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { Label } from '@/components/atoms/Label';
 import { LocationAutocomplete } from '@/components/molecules/LocationAutocomplete';
-import { useWorkspace } from '@/context/WorkspaceContext';
+import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
-
-const createTeamSchema = z.object({
-  name: z.string().min(3, 'Team name must be at least 3 characters').max(50),
-  description: z.string().max(200).optional(),
-});
-
-type CreateTeamFormData = z.infer<typeof createTeamSchema>;
+import { createTeamSchema, CreateTeamFormData } from '@/schemas/teamSchema';
 
 interface CreateTeamDialogProps {
   open: boolean;
@@ -58,8 +51,6 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
       setMapCenter(defaultCenter);
       setMarkerPosition(null);
       onOpenChange(false);
-    } catch (error) {
-      console.error('Error creating team:', error);
     } finally {
       setIsLoading(false);
     }

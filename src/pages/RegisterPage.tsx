@@ -52,25 +52,20 @@ export function RegisterPage() {
       const result = await authService.signUp(data);
       console.log('Registration result:', result);
       
-      // Si requiere confirmación de email
       if (result.session === null) {
-        setError('¡Cuenta creada! Revisa tu email para confirmar tu cuenta antes de iniciar sesión.');
+        setError('Account created! Check your email to confirm your account before logging in.');
         setIsLoading(false);
-        // Redirigir al login después de 3 segundos
         setTimeout(() => navigate('/auth/login'), 3000);
       } else {
-        // Login automático exitoso - esperar un poco para el AuthProvider
-        console.log('Auto-login successful, redirecting to dashboard');
         setTimeout(() => {
           navigate('/dashboard');
         }, 100);
       }
     } catch (err) {
-      console.error('Registration error:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to create account';
       
       if (errorMessage.includes('already registered')) {
-        setError('Este email ya está registrado. ¿Quieres iniciar sesión?');
+        setError('This email address is already registered. Would you like to log in?');
       } else {
         setError(errorMessage);
       }
@@ -90,29 +85,21 @@ export function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Vibrant background matching welcome page */}
-      <div className="absolute inset-0 -z-20">
-        <div className="absolute inset-0 bg-gradient-to-br from-violet-100 via-fuchsia-100 to-cyan-100" />
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-bl from-fuchsia-300/50 to-transparent rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-cyan-300/50 to-transparent rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-      </div>
-      <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#8882_1px,transparent_1px),linear-gradient(to_bottom,#8882_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
-      
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <div className="flex justify-center mb-8">
             <div className="flex h-12 w-12 items-center justify-center">
-              <img src="/logo.svg" alt="SEO Compass" className="h-12 w-12" />
+              <a href="/"><img src="/logo.svg" alt="SEO Compass" className="h-12 w-12" /></a>
             </div>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-fuchsia-600 to-violet-600 bg-clip-text text-transparent">Create an account</h1>
-          <p className="text-slate-600 font-medium mt-2">
+          <h1 className="text-3xl font-bold text-purple-600">Create an account</h1>
+          <p className="text-gray-600 mt-2">
             Join SEO Compass and optimize your websites
           </p>
         </div>
 
-        <div className="bg-white/90 backdrop-blur-sm border border-fuchsia-100 rounded-lg p-6 shadow-xl shadow-fuchsia-200/20">
+        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-lg">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               {error && (
@@ -130,7 +117,7 @@ export function RegisterPage() {
                     <FormControl>
                       <Input
                         type="text"
-                        placeholder="John Doe"
+                        placeholder="David Rueda"
                         {...field}
                       />
                     </FormControl>
@@ -148,7 +135,7 @@ export function RegisterPage() {
                     <FormControl>
                       <Input
                         type="email"
-                        placeholder="you@example.com"
+                        placeholder="itacademy@gmail.com"
                         {...field}
                       />
                     </FormControl>
@@ -311,9 +298,9 @@ export function RegisterPage() {
           </Button>
         </div>
 
-        <p className="text-center text-sm text-slate-600">
+        <p className="text-center text-sm text-gray-600">
           Already have an account?{' '}
-          <Link to="/auth/login" className="text-fuchsia-600 hover:text-fuchsia-700 font-semibold hover:underline">
+          <Link to="/auth/login" className="text-purple-600 hover:text-purple-700 font-semibold hover:underline">
             Sign in
           </Link>
         </p>

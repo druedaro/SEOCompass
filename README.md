@@ -242,9 +242,12 @@ npm run type-check   # TypeScript type checking
 
 ## Testing
 
-**20 Core Tests (Moscow Method):**
-- ✅ 5 Auth tests (Moscow Method)
-- ✅ 15 App tests (Moscow Method)
+**30 Core Tests (Moscow Method):**
+- ✅ 10 Auth tests (login, register, OAuth, errors)
+- ✅ 5 Project tests (CRUD operations)
+- ✅ 5 Task tests (CRUD operations)
+- ✅ 5 Team tests (CRUD operations)
+- ✅ 5 Content Scraping tests (SEO analysis)
 
 ---
 
@@ -257,54 +260,88 @@ src/
 ├── index.css
 ├── setupTests.ts
 │
-├── api/
-│   └── apiClient.ts          
-│
 ├── auth/
 │   ├── AuthContext.tsx    
 │   └── AuthProvider.tsx     
 │
 ├── components/
-│   ├── atoms/               
-│   │   ├── Button.tsx       
-│   │   ├── FormInput.tsx
-│   │   └── Input.tsx      
+│   ├── atoms/              
 │   ├── molecules/          
-│   ├── organisms/           
-│   │   ├── Footer.tsx
-│   │   └── Navbar.tsx
-│   └── templates/          
+│   └── organisms/     
+│
+├── constants/             
+│   ├── landing.ts        
+│   ├── navigation.ts       
+│   ├── roles.ts       
+│   ├── seo.ts              
+│   └── tasks.ts        
+│
+├── contexts/              
+│   ├── AuthContext.tsx
+│   ├── ProjectContext.tsx
+│   └── WorkspaceContext.tsx
+│
+├── features/               
+│   └── seo/             
+│       ├── htmlParser.ts
+│       ├── validators.ts
+│       ├── scoreCalculator.ts
+│       ├── recommendationsEngine.ts
+│       ├── redirectAnalyzer.ts
+│       └── __tests__/
 │
 ├── config/
-│   ├── supabase.ts        
-│   └── tmdb.ts             
+│   └── supabase.ts        
 │
 ├── hooks/               
+│   ├── useContentAnalyzer.ts
+│   ├── useProjectUrls.ts
+│   └── useUrlDetails.ts
+│
+├── lib/
+│   └── utils.ts         
 │
 ├── pages/                 
-│  
 │
 ├── routes/
 │   ├── paths.ts            
 │   └── ProtectedRoute.tsx  
 │
 ├── schemas/
-│   └── authSchema.ts       
+│   └── authSchema.ts      
 │
 ├── services/             
+│   ├── authService.ts
+│   ├── projectService.ts
+│   ├── taskService.ts
+│   └── teamService.ts
 │
 ├── types/                 
-│   ├── domain.ts          
-│   └── common.ts           
+│   └── domain.ts
 │
 └── utils/
-    ├── formatters.ts       
     └── tests/
-        ├── app.moscow.test.ts
         ├── auth.moscow.test.ts
+        ├── content-scraping.moscow.test.ts
+        ├── project.moscow.test.ts
+        ├── task.moscow.test.ts
+        ├── team.moscow.test.ts
         └── __mocks__/
-            └── apiMocks.ts
 ```
+
+### Architecture Highlights
+
+**Feature-Based Organization:**
+- `constants/` → All static data centralized
+- `features/seo/` → SEO domain logic isolated
+- `services/` → API layer (Supabase calls)
+- `hooks/` → Custom React hooks for state logic
+
+**Benefits:**
+- ✅ Scalable: Easy to add new features
+- ✅ Maintainable: Clear separation of concerns
+- ✅ Testable: Co-located tests with features
+- ✅ Type-safe: Full TypeScript coverage
 
 ---
 

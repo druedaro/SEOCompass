@@ -18,7 +18,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [showRoleModal, setShowRoleModal] = useState(false);
   const isFetchingProfileRef = useRef(false);
 
-  // Fetch user profile
   const fetchProfile = useCallback(async (userId: string) => {
     if (isFetchingProfileRef.current) {
       return;
@@ -27,14 +26,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       isFetchingProfileRef.current = true;
       
-      // First, try to get the profile (use maybeSingle to avoid 406 error)
       const { data: profileData, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('user_id', userId)
         .maybeSingle();
 
-      // If profile doesn't exist (OAuth user), create it
       if (!profileData && !error) {
         const { data: { user } } = await supabase.auth.getUser();
         
@@ -49,43 +46,29 @@ export function AuthProvider({ children }: AuthProviderProps) {
             .single();
 
           if (insertError) {
-            console.error('Error creating profile:', insertError);
             setProfile(null);
           } else {
             setProfile(newProfile);
-            // Show role modal for OAuth users
             setShowRoleModal(true);
           }
         }
       } else if (error) {
-        console.error('Error fetching profile:', error);
         setProfile(null);
       } else {
         setProfile(profileData);
         
-        // Check if profile exists but has no role (OAuth user)
         if (profileData && !profileData.role) {
           setShowRoleModal(true);
         }
       }
-    } catch (error) {
-      console.error('Error fetching profile:', error);
+    } catch {
       setProfile(null);
     } finally {
       isFetchingProfileRef.current = false;
     }
   }, []);
 
-  // Refresh profile
-  const refreshProfile = async () => {
-    if (user) {
-      await fetchProfile(user.id);
-    }
-  };
-
-  // Initialize auth state
   useEffect(() => {
-    // Get initial session first
     const initAuth = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
@@ -94,27 +77,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          // Don't await - load profile in background
-          fetchProfile(session.user.id).catch(() => {
-            // Profile fetch failed, but user can continue
-          });
+          fetchProfile(session.user.id).catch(() => {});
         }
         
-        // Set loading to false immediately - don't wait for profile
         setLoading(false);
-      } catch (error) {
-        console.error('Error getting initial session:', error);
+      } catch {
         setLoading(false);
       }
     };
     
     initAuth();
     
-    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      // Skip INITIAL_SESSION event since we already handled it above
       if (event === 'INITIAL_SESSION') {
         return;
       }
@@ -123,10 +99,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(session?.user ?? null);
       
       if (session?.user && event === 'SIGNED_IN') {
-        // Don't await - load profile in background
-        fetchProfile(session.user.id).catch(() => {
-          // Profile fetch failed, but user can continue
-        });
+        fetchProfile(session.user.id).catch(() => {});
       } else if (!session?.user) {
         setProfile(null);
       }
@@ -137,7 +110,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     };
   }, [fetchProfile]);
 
-  // Sign out handler
   const handleSignOut = async () => {
     await authService.signOut();
     setUser(null);
@@ -145,12 +117,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setProfile(null);
   };
 
-  // Handle role selection for OAuth users
   const handleRoleSelection = async (role: UserRole, fullName: string) => {
     if (!user) return;
     
     try {
-      // Update both role and full_name
       const { error } = await supabase
         .from('profiles')
         .update({ 
@@ -161,11 +131,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       if (error) throw error;
 
-      // Refresh profile to get updated data
       await fetchProfile(user.id);
       setShowRoleModal(false);
     } catch (error) {
-      console.error('Error updating profile:', error);
       throw error;
     }
   };
@@ -176,7 +144,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     profile,
     loading,
     signOut: handleSignOut,
-    refreshProfile,
   };
 
   return (

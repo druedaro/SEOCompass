@@ -3,21 +3,15 @@ import { useState, useEffect } from 'react';
 import { ArrowLeft, Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { Textarea } from '@/components/atoms/Textarea';
 import { Label } from '@/components/atoms/Label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
+import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
 import { useProject } from '@/hooks/useProject';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
-
-const projectSchema = z.object({
-  name: z.string().min(1, 'Project name is required').max(100, 'Name is too long'),
-  description: z.string().max(500, 'Description is too long').optional(),
-});
-
-type ProjectFormData = z.infer<typeof projectSchema>;
+import { projectSchema, ProjectFormData } from '@/schemas/projectSchema';
 
 export function ProjectSettingsPage() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -25,6 +19,7 @@ export function ProjectSettingsPage() {
   const { projects, currentProject, setCurrentProject, updateProject, deleteProject } = useProject();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   useEffect(() => {
     if (projectId) {
@@ -48,7 +43,6 @@ export function ProjectSettingsPage() {
     },
   });
 
-  // Update form when currentProject changes
   useEffect(() => {
     if (currentProject) {
       reset({
@@ -64,8 +58,6 @@ export function ProjectSettingsPage() {
     try {
       setIsSubmitting(true);
       await updateProject(currentProject.id, data);
-    } catch (error) {
-      console.error('Failed to update project:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -74,19 +66,13 @@ export function ProjectSettingsPage() {
   const handleDelete = async () => {
     if (!currentProject) return;
 
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${currentProject.name}"? This action cannot be undone.`
-    );
-
-    if (!confirmed) return;
-
     try {
       setIsDeleting(true);
       await deleteProject(currentProject.id);
       navigate('/dashboard/projects');
-    } catch (error) {
-      console.error('Failed to delete project:', error);
+    } catch {
       setIsDeleting(false);
+      setShowDeleteDialog(false);
     }
   };
 
@@ -111,7 +97,6 @@ export function ProjectSettingsPage() {
   return (
     <DashboardLayout>
       <div className="container mx-auto py-8 px-4 max-w-3xl">
-      {/* Header */}
       <div className="mb-8">
         <Button
           variant="ghost"
@@ -129,7 +114,6 @@ export function ProjectSettingsPage() {
         </p>
       </div>
 
-      {/* General Settings */}
       <Card className="mb-6">
         <CardHeader>
           <CardTitle>General Information</CardTitle>
@@ -171,7 +155,6 @@ export function ProjectSettingsPage() {
         </CardContent>
       </Card>
 
-      {/* Danger Zone */}
       <Card className="border-destructive">
         <CardHeader>
           <CardTitle className="text-destructive">Danger Zone</CardTitle>
@@ -189,7 +172,7 @@ export function ProjectSettingsPage() {
             </div>
             <Button
               variant="destructive"
-              onClick={handleDelete}
+              onClick={() => setShowDeleteDialog(true)}
               disabled={isDeleting}
             >
               <Trash2 className="h-4 w-4 mr-2" />
@@ -198,6 +181,15 @@ export function ProjectSettingsPage() {
           </div>
         </CardContent>
       </Card>
+
+      <DeleteConfirmationDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        onConfirm={handleDelete}
+        title={`Delete "${currentProject.name}"?`}
+        description="This will permanently delete the project and all its data. This action cannot be undone."
+        isLoading={isDeleting}
+      />
     </div>
     </DashboardLayout>
   );

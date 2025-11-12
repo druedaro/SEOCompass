@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LogOut, Settings, User } from 'lucide-react';
+import { LogOut, Settings} from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/atoms/Button';
 import { Avatar, AvatarFallback } from '@/components/atoms/Avatar';

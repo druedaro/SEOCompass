@@ -41,9 +41,6 @@ export interface UpdateTaskInput {
 }
 
 export const taskService = {
-  /**
-   * Get all tasks for a project
-   */
   async getTasksByProject(projectId: string): Promise<Task[]> {
     const { data, error } = await supabase
       .from('tasks')
@@ -51,17 +48,10 @@ export const taskService = {
       .eq('project_id', projectId)
       .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('Error fetching tasks:', error);
-      throw error;
-    }
-
+    if (error) throw error;
     return data || [];
   },
 
-  /**
-   * Get a single task by ID
-   */
   async getTaskById(taskId: string): Promise<Task | null> {
     const { data, error } = await supabase
       .from('tasks')
@@ -69,17 +59,10 @@ export const taskService = {
       .eq('id', taskId)
       .single();
 
-    if (error) {
-      console.error('Error fetching task:', error);
-      throw error;
-    }
-
+    if (error) throw error;
     return data;
   },
 
-  /**
-   * Create a new task
-   */
   async createTask(input: CreateTaskInput): Promise<Task> {
     const taskData: any = {
       title: input.title,
@@ -89,18 +72,9 @@ export const taskService = {
       project_id: input.project_id,
     };
 
-    // Add optional fields only if they exist
-    if (input.due_date) {
-      taskData.due_date = input.due_date;
-    }
-
-    if (input.audit_reference) {
-      taskData.audit_reference = input.audit_reference;
-    }
-
-    if (input.assigned_to) {
-      taskData.assigned_to = input.assigned_to;
-    }
+    if (input.due_date) taskData.due_date = input.due_date;
+    if (input.audit_reference) taskData.audit_reference = input.audit_reference;
+    if (input.assigned_to) taskData.assigned_to = input.assigned_to;
 
     const { data, error } = await supabase
       .from('tasks')
@@ -108,19 +82,11 @@ export const taskService = {
       .select()
       .single();
 
-    if (error) {
-      console.error('Error creating task:', error);
-      throw error;
-    }
-
+    if (error) throw error;
     return data;
   },
 
-  /**
-   * Update a task
-   */
   async updateTask(taskId: string, input: UpdateTaskInput): Promise<Task> {
-    // Convert undefined assigned_to to null for proper database update
     const updateData: any = { ...input };
     if ('assigned_to' in input && input.assigned_to === undefined) {
       updateData.assigned_to = null;
@@ -133,81 +99,19 @@ export const taskService = {
       .select()
       .single();
 
-    if (error) {
-      console.error('Error updating task:', error);
-      throw error;
-    }
-
+    if (error) throw error;
     return data;
   },
 
-  /**
-   * Delete a task
-   */
   async deleteTask(taskId: string): Promise<void> {
     const { error } = await supabase.from('tasks').delete().eq('id', taskId);
-
-    if (error) {
-      console.error('Error deleting task:', error);
-      throw error;
-    }
+    if (error) throw error;
   },
 
-  /**
-   * Get tasks by status
-   */
-  async getTasksByStatus(
-    projectId: string,
-    status: TaskStatus
-  ): Promise<Task[]> {
-    const { data, error } = await supabase
-      .from('tasks')
-      .select('*')
-      .eq('project_id', projectId)
-      .eq('status', status)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching tasks by status:', error);
-      throw error;
-    }
-
-    return data || [];
-  },
-
-  /**
-   * Get overdue tasks
-   */
-  async getOverdueTasks(projectId: string): Promise<Task[]> {
-    const now = new Date().toISOString();
-
-    const { data, error } = await supabase
-      .from('tasks')
-      .select('*')
-      .eq('project_id', projectId)
-      .neq('status', 'completed')
-      .neq('status', 'cancelled')
-      .lt('due_date', now)
-      .order('due_date', { ascending: true });
-
-    if (error) {
-      console.error('Error fetching overdue tasks:', error);
-      throw error;
-    }
-
-    return data || [];
-  },
-
-  /**
-   * Mark task as completed
-   */
   async completeTask(taskId: string): Promise<Task> {
     return this.updateTask(taskId, { status: 'completed' });
   },
 
-  /**
-   * Mark task as in progress
-   */
   async startTask(taskId: string): Promise<Task> {
     return this.updateTask(taskId, { status: 'in_progress' });
   },

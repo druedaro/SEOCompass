@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Save, Trash2 } from 'lucide-react';
 import { GoogleMap, Marker } from '@react-google-maps/api';
 import { Button } from '@/components/atoms/Button';
@@ -9,17 +8,11 @@ import { Input } from '@/components/atoms/Input';
 import { Label } from '@/components/atoms/Label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
 import { LocationAutocomplete } from '@/components/molecules/LocationAutocomplete';
+import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
-import { useWorkspace } from '@/context/WorkspaceContext';
-
-const updateTeamSchema = z.object({
-  name: z.string().min(3, 'Team name must be at least 3 characters').max(50),
-  description: z.string().max(200).optional(),
-  location: z.string().max(100).optional(),
-});
-
-type UpdateTeamFormData = z.infer<typeof updateTeamSchema>;
+import { useWorkspace } from '@/contexts/WorkspaceContext';
+import { updateTeamSchema, UpdateTeamFormData } from '@/schemas/teamSchema';
 
 const mapContainerStyle = {
   width: '100%',
@@ -35,6 +28,7 @@ export default function TeamSettingsPage() {
   const { currentTeam, updateTeam, deleteTeam } = useWorkspace();
   const { isLoaded } = useGoogleMaps();
   const [isLoading, setIsLoading] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [location, setLocation] = useState(currentTeam?.location || '');
   const [mapCenter, setMapCenter] = useState(defaultCenter);
   const [markerPosition, setMarkerPosition] = useState<google.maps.LatLngLiteral | null>(null);
@@ -59,8 +53,6 @@ export default function TeamSettingsPage() {
     setIsLoading(true);
     try {
       await updateTeam(currentTeam.id, { ...data, location });
-    } catch (error) {
-      console.error('Error updating team:', error);
     } finally {
       setIsLoading(false);
     }
@@ -69,17 +61,12 @@ export default function TeamSettingsPage() {
   const handleDelete = async () => {
     if (!currentTeam) return;
 
-    if (!confirm(`Are you sure you want to delete "${currentTeam.name}"? This action cannot be undone.`)) {
-      return;
-    }
-
     setIsLoading(true);
     try {
       await deleteTeam(currentTeam.id);
-    } catch (error) {
-      console.error('Error deleting team:', error);
     } finally {
       setIsLoading(false);
+      setShowDeleteDialog(false);
     }
   };
 
@@ -99,10 +86,8 @@ export default function TeamSettingsPage() {
     }
   };
 
-  // Load team location coordinates when component mounts or team changes
   useEffect(() => {
     if (currentTeam?.location && isLoaded) {
-      // Use Geocoding API to convert address to coordinates
       const geocoder = new google.maps.Geocoder();
       geocoder.geocode({ address: currentTeam.location }, (results, status) => {
         if (status === 'OK' && results && results[0]) {
@@ -175,7 +160,6 @@ export default function TeamSettingsPage() {
                 disabled={isLoading}
               />
 
-              {/* Google Map */}
               {isLoaded && (
                 <div className="space-y-2">
                   <Label>Map Preview</Label>
@@ -219,7 +203,7 @@ export default function TeamSettingsPage() {
           <CardContent>
             <Button
               variant="destructive"
-              onClick={handleDelete}
+              onClick={() => setShowDeleteDialog(true)}
               disabled={isLoading}
               className="w-full"
             >
@@ -229,6 +213,15 @@ export default function TeamSettingsPage() {
           </CardContent>
         </Card>
       </div>
+
+      <DeleteConfirmationDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        onConfirm={handleDelete}
+        title={`Delete "${currentTeam.name}"?`}
+        description="This will permanently delete the team and all its projects."
+        isLoading={isLoading}
+      />
       </div>
     </DashboardLayout>
   );

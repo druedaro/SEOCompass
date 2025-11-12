@@ -7,10 +7,8 @@ export function AuthCallbackPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Handle the email confirmation callback
     const handleCallback = async () => {
       try {
-        // Get the current session after email confirmation
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
         if (sessionError) {
@@ -20,10 +18,8 @@ export function AuthCallbackPage() {
         }
 
         if (session) {
-          // Email confirmed successfully, redirect to dashboard
           setTimeout(() => navigate('/dashboard'), 1000);
         } else {
-          // No session found, redirect to login
           setTimeout(() => navigate('/auth/login'), 2000);
         }
       } catch (err) {
@@ -48,7 +44,7 @@ export function AuthCallbackPage() {
             </div>
             <h2 className="text-2xl font-bold mb-4 text-slate-800">Error</h2>
             <p className="text-slate-600">{error}</p>
-            <p className="text-sm text-slate-500 mt-4">Serás redirigido al login...</p>
+            <p className="text-sm text-slate-500 mt-4">You will be redirected to login...</p>
           </>
         ) : (
           <>
@@ -56,10 +52,10 @@ export function AuthCallbackPage() {
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-fuchsia-600 mx-auto"></div>
             </div>
             <h2 className="text-2xl font-bold mb-4 bg-gradient-to-r from-fuchsia-600 to-violet-600 bg-clip-text text-transparent">
-              Verificando tu email...
+              Confirming your email...
             </h2>
             <p className="text-slate-600">
-              Estamos confirmando tu cuenta. Serás redirigido en un momento.
+              We are confirming your account. You will be redirected shortly.
             </p>
           </>
         )}

@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect, ReactNode } from 'react';
 import { projectService } from '@/services/projectService';
 import type { Project } from '@/types/domain';
-import { useWorkspace } from '@/context/WorkspaceContext';
+import { useWorkspace } from '@/contexts/WorkspaceContext';
 
 interface ProjectContextType {
   projects: Project[];
@@ -12,7 +12,6 @@ interface ProjectContextType {
   createProject: (name: string, description?: string, domain?: string) => Promise<Project>;
   updateProject: (projectId: string, updates: { name?: string; description?: string; domain?: string }) => Promise<Project>;
   deleteProject: (projectId: string) => Promise<void>;
-  refreshProjects: () => Promise<void>;
 }
 
 export const ProjectContext = createContext<ProjectContextType | null>(null);
@@ -24,7 +23,6 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Load projects function
   const loadProjects = async (teamId: string) => {
     try {
       setIsLoading(true);
@@ -32,20 +30,17 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
       const data = await projectService.getProjectsByTeam(teamId);
       setProjects(data);
       
-      // If we have a current project, refresh it
       if (currentProject) {
         const updatedProject = data.find(p => p.id === currentProject.id);
         setCurrentProject(updatedProject || null);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load projects');
-      console.error('Error loading projects:', err);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Load projects when team changes
   useEffect(() => {
     if (currentTeam) {
       loadProjects(currentTeam.id);
@@ -53,10 +48,8 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
       setProjects([]);
       setCurrentProject(null);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTeam]);
 
-  // Subscribe to real-time updates
   useEffect(() => {
     if (!currentTeam) return;
 
@@ -97,7 +90,6 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
         description,
         domain
       );
-      // Real-time subscription will handle adding to list
       return newProject;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create project';
@@ -113,7 +105,6 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     try {
       setError(null);
       const updatedProject = await projectService.updateProject(projectId, updates);
-      // Real-time subscription will handle updating the list
       return updatedProject;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update project';
@@ -126,17 +117,10 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     try {
       setError(null);
       await projectService.deleteProject(projectId);
-      // Real-time subscription will handle removing from list
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to delete project';
       setError(errorMessage);
       throw err;
-    }
-  };
-
-  const refreshProjects = async () => {
-    if (currentTeam) {
-      await loadProjects(currentTeam.id);
     }
   };
 
@@ -149,7 +133,6 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     createProject,
     updateProject,
     deleteProject,
-    refreshProjects,
   };
 
   return (

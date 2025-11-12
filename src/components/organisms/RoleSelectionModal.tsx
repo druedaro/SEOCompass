@@ -19,14 +19,11 @@ export function RoleSelectionModal({ onSelectRole }: RoleSelectionModalProps) {
     setIsSubmitting(true);
     try {
       await onSelectRole(selectedRole, fullName.trim());
-    } catch (error) {
-      console.error('Error selecting role:', error);
+    } finally {
       setIsSubmitting(false);
     }
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+  };  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
         <div className="text-center mb-6">
           <div className="flex justify-center mb-4">
@@ -34,16 +31,16 @@ export function RoleSelectionModal({ onSelectRole }: RoleSelectionModalProps) {
               <img src="/logo.svg" alt="SEO Compass" className="h-12 w-12" />
             </div>
           </div>
-          <h2 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-fuchsia-600 to-violet-600 bg-clip-text text-transparent">
+          <h2 className="text-2xl font-bold text-purple-600">
             Welcome to SEO Compass!
           </h2>
-          <p className="text-slate-600 mt-2">
+          <p className="text-gray-600 mt-2">
             Please complete your profile to continue
           </p>
         </div>
 
         <div className="mb-4">
-          <label htmlFor="fullName" className="block text-sm font-medium text-slate-700 mb-2">
+          <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
             Full Name
           </label>
           <Input
@@ -64,12 +61,12 @@ export function RoleSelectionModal({ onSelectRole }: RoleSelectionModalProps) {
               onClick={() => setSelectedRole(role.value as UserRole)}
               className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
                 selectedRole === role.value
-                  ? 'border-fuchsia-600 bg-fuchsia-50'
-                  : 'border-gray-200 hover:border-fuchsia-300 bg-white'
+                  ? 'border-purple-600 bg-purple-50'
+                  : 'border-gray-200 hover:border-purple-300 bg-white'
               }`}
             >
-              <div className="font-semibold text-slate-900">{role.label}</div>
-              <div className="text-sm text-slate-600 mt-1">
+              <div className="font-semibold text-gray-900">{role.label}</div>
+              <div className="text-sm text-gray-600 mt-1">
                 {role.value === 'tech_seo' && 'Focus on technical SEO aspects and website optimization'}
                 {role.value === 'content_seo' && 'Create and optimize content for search engines'}
                 {role.value === 'developer' && 'Build and maintain SEO-friendly websites'}
@@ -86,7 +83,7 @@ export function RoleSelectionModal({ onSelectRole }: RoleSelectionModalProps) {
           {isSubmitting ? 'Saving...' : 'Continue'}
         </Button>
 
-        <p className="text-xs text-center text-slate-500 mt-4">
+        <p className="text-xs text-center text-gray-500 mt-4">
           You can't change your role later!
         </p>
       </div>

@@ -4,9 +4,10 @@ import { Plus } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
 import { ProjectCard } from '@/components/molecules/ProjectCard';
 import { ProjectModal } from '@/components/organisms/ProjectModal';
+import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useProject } from '@/hooks/useProject';
-import { useWorkspace } from '@/context/WorkspaceContext';
+import { useWorkspace } from '@/contexts/WorkspaceContext';
 import type { Project } from '@/types/domain';
 
 export function ProjectsDashboardPage() {
@@ -17,6 +18,8 @@ export function ProjectsDashboardPage() {
   const [selectedProject, setSelectedProject] = useState<Project | undefined>(undefined);
   const [showEditModal, setShowEditModal] = useState(false);
   const [isCreatingTeam, setIsCreatingTeam] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleCreateFirstTeam = async () => {
     setIsCreatingTeam(true);
@@ -25,8 +28,7 @@ export function ProjectsDashboardPage() {
         name: 'My Team',
         description: 'Default team',
       });
-    } catch (error) {
-      console.error('Failed to create team:', error);
+    } catch {
       alert('Failed to create team. Please try again.');
     } finally {
       setIsCreatingTeam(false);
@@ -43,19 +45,31 @@ export function ProjectsDashboardPage() {
   };
 
   const handleDeleteProject = async (project: Project) => {
-    if (window.confirm(`Are you sure you want to delete "${project.name}"?`)) {
-      try {
-        await deleteProject(project.id);
-      } catch (error) {
-        console.error('Failed to delete project:', error);
-      }
+    setProjectToDelete(project);
+  };
+
+  const confirmDeleteProject = async () => {
+    if (!projectToDelete) return;
+
+    setIsDeleting(true);
+    try {
+      await deleteProject(projectToDelete.id);
+    } catch {
+      alert('Failed to delete project. Please try again.');
+    } finally {
+      setIsDeleting(false);
+      setProjectToDelete(null);
     }
+  };
+
+  const cancelDeleteProject = () => {
+    setProjectToDelete(null);
   };
 
   if (!currentTeam) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
+        <div className="flex items-center justify-center py-20">
           <div className="text-center max-w-md">
             <h2 className="text-2xl font-bold mb-2">No Team Available</h2>
             <p className="text-muted-foreground mb-6">
@@ -123,14 +137,12 @@ export function ProjectsDashboardPage() {
           </div>
         )}
 
-        {/* Create Project Modal */}
         <ProjectModal
           open={showCreateModal}
           onClose={() => setShowCreateModal(false)}
           mode="create"
         />
 
-        {/* Edit Project Modal */}
         <ProjectModal
           open={showEditModal}
           onClose={() => {
@@ -139,6 +151,15 @@ export function ProjectsDashboardPage() {
           }}
           project={selectedProject}
           mode="edit"
+        />
+
+        <DeleteConfirmationDialog
+          open={!!projectToDelete}
+          onOpenChange={cancelDeleteProject}
+          onConfirm={confirmDeleteProject}
+          title={`Delete "${projectToDelete?.name}"?`}
+          description="This will permanently delete the project and all its data."
+          isLoading={isDeleting}
         />
       </div>
     </DashboardLayout>

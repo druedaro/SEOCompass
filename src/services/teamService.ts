@@ -13,34 +13,20 @@ export interface UpdateTeamData {
   location?: string;
 }
 
-/**
- * Team Service - Handles all team-related operations
- */
 export const teamService = {
-  /**
-   * Get all teams for the current user
-   */
   async getUserTeams(): Promise<Team[]> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    // Get teams where user is owner or member
     const { data, error } = await supabase
       .from('teams')
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (error) {
-      console.warn('Error fetching teams:', error);
-      return [];
-    }
-
+    if (error) return [];
     return data as Team[];
   },
 
-  /**
-   * Get team by ID
-   */
   async getTeamById(teamId: string): Promise<Team> {
     const { data, error } = await supabase
       .from('teams')
@@ -52,9 +38,6 @@ export const teamService = {
     return data;
   },
 
-  /**
-   * Create a new team
-   */
   async createTeam(teamData: CreateTeamData): Promise<Team> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
@@ -72,9 +55,6 @@ export const teamService = {
     return data;
   },
 
-  /**
-   * Update team details
-   */
   async updateTeam(teamId: string, teamData: UpdateTeamData): Promise<Team> {
     const { data, error } = await supabase
       .from('teams')
@@ -87,9 +67,6 @@ export const teamService = {
     return data;
   },
 
-  /**
-   * Delete team
-   */
   async deleteTeam(teamId: string): Promise<void> {
     const { error } = await supabase
       .from('teams')
@@ -99,9 +76,6 @@ export const teamService = {
     if (error) throw error;
   },
 
-  /**
-   * Get team members
-   */
   async getTeamMembers(teamId: string): Promise<TeamMember[]> {
     const { data, error } = await supabase
       .from('team_members')
@@ -109,12 +83,8 @@ export const teamService = {
       .eq('team_id', teamId)
       .order('joined_at', { ascending: true });
 
-    if (error) {
-      console.error('Error fetching team members:', error);
-      throw error;
-    }
+    if (error) throw error;
     
-    // Fetch profile data separately for each member
     if (data && data.length > 0) {
       const membersWithProfiles = await Promise.all(
         data.map(async (member) => {
@@ -135,83 +105,5 @@ export const teamService = {
     }
     
     return data as TeamMember[];
-  },
-
-  /**
-   * Update team member role
-   */
-  async updateMemberRole(
-    teamId: string,
-    userId: string,
-    role: 'tech_seo' | 'content_seo' | 'developer'
-  ): Promise<TeamMember> {
-    const { data, error } = await supabase
-      .from('team_members')
-      .update({ role })
-      .eq('team_id', teamId)
-      .eq('user_id', userId)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
-  },
-
-  /**
-   * Remove team member
-   */
-  async removeMember(teamId: string, userId: string): Promise<void> {
-    const { error } = await supabase
-      .from('team_members')
-      .delete()
-      .eq('team_id', teamId)
-      .eq('user_id', userId);
-
-    if (error) throw error;
-  },
-
-  /**
-   * Check if user is team admin
-   */
-  async isTeamAdmin(teamId: string): Promise<boolean> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return false;
-
-    const { data, error } = await supabase
-      .from('team_members')
-      .select('role')
-      .eq('team_id', teamId)
-      .eq('user_id', user.id)
-      .single();
-
-    if (error || !data) return false;
-    return data.role === 'admin';
-  },
-
-  /**
-   * Leave team
-   */
-  async leaveTeam(teamId: string): Promise<void> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Not authenticated');
-
-    // Check if user is the owner
-    const { data: team } = await supabase
-      .from('teams')
-      .select('owner_id')
-      .eq('id', teamId)
-      .single();
-
-    if (team?.owner_id === user.id) {
-      throw new Error('Team owner cannot leave. Transfer ownership or delete the team.');
-    }
-
-    const { error } = await supabase
-      .from('team_members')
-      .delete()
-      .eq('team_id', teamId)
-      .eq('user_id', user.id);
-
-    if (error) throw error;
   },
 };

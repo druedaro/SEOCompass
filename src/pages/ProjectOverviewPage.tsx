@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useProject } from '@/hooks/useProject';
 import { formatDistanceToNow } from 'date-fns';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/config/supabase';
 
 export function ProjectOverviewPage() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -77,7 +77,6 @@ export function ProjectOverviewPage() {
   return (
     <DashboardLayout>
       <div className="container mx-auto py-8 px-4">
-      {/* Header */}
       <div className="mb-8">
         <Button
           variant="ghost"
@@ -116,7 +115,6 @@ export function ProjectOverviewPage() {
         </div>
       </div>
 
-      {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <Card className="opacity-50 pointer-events-none">
           <CardHeader className="pb-3">
@@ -155,7 +153,6 @@ export function ProjectOverviewPage() {
         </Card>
       </div>
 
-      {/* Modules */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="opacity-50 cursor-not-allowed">
           <CardHeader>

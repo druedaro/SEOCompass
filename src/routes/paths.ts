@@ -1,13 +1,9 @@
-// Auth routes
 export const AUTH_PATHS = {
   LOGIN: '/auth/login',
   REGISTER: '/auth/register',
-  FORGOT_PASSWORD: '/auth/forgot-password',
-  RESET_PASSWORD: '/auth/reset-password',
   CALLBACK: '/auth/callback',
 } as const;
 
-// App routes
 export const APP_PATHS = {
   DASHBOARD: '/dashboard',
   TEAMS: '/teams',
@@ -15,13 +11,14 @@ export const APP_PATHS = {
   TEAM_SETTINGS: '/teams/:teamId/settings',
   PROJECTS: '/projects',
   PROJECT_DETAIL: '/projects/:projectId',
-  KEYWORD_TRACKER: '/projects/:projectId/keywords',
+  PROJECT_OVERVIEW: '/projects/:projectId',
   CONTENT_ANALYZER: '/projects/:projectId/content',
-  TECHNICAL_AUDIT: '/projects/:projectId/technical',
+  PROJECT_URLS_MANAGEMENT: '/projects/:projectId/urls',
+  URL_DETAILS: '/projects/:projectId/urls/:urlId',
   ACTION_CENTER: '/projects/:projectId/actions',
+  PROJECT_SETTINGS: '/projects/:projectId/settings',
 } as const;
 
-// Public routes
 export const PUBLIC_PATHS = {
   HOME: '/',
   WELCOME: '/welcome',

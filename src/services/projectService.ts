@@ -2,9 +2,6 @@ import { supabase } from '@/config/supabase';
 import type { Project } from '@/types/domain';
 
 export const projectService = {
-  /**
-   * Get all projects for a specific team
-   */
   async getProjectsByTeam(teamId: string): Promise<Project[]> {
     const { data, error } = await supabase
       .from('projects')
@@ -16,9 +13,6 @@ export const projectService = {
     return data || [];
   },
 
-  /**
-   * Get a single project by ID
-   */
   async getProjectById(projectId: string): Promise<Project | null> {
     const { data, error } = await supabase
       .from('projects')
@@ -30,9 +24,6 @@ export const projectService = {
     return data;
   },
 
-  /**
-   * Create a new project
-   */
   async createProject(
     teamId: string,
     name: string,
@@ -54,9 +45,6 @@ export const projectService = {
     return data;
   },
 
-  /**
-   * Update an existing project
-   */
   async updateProject(
     projectId: string,
     updates: { name?: string; description?: string; domain?: string }
@@ -72,9 +60,6 @@ export const projectService = {
     return data;
   },
 
-  /**
-   * Delete a project
-   */
   async deleteProject(projectId: string): Promise<void> {
     const { error } = await supabase
       .from('projects')
@@ -84,9 +69,6 @@ export const projectService = {
     if (error) throw error;
   },
 
-  /**
-   * Subscribe to real-time changes for team projects
-   */
   subscribeToProjects(
     teamId: string,
     callback: (payload: { eventType: string; new: any; old: any }) => void

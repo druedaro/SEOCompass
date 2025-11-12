@@ -23,7 +23,7 @@ export function Footer() {
               <img src="/logo.svg" alt="SEO Compass" className="h-10 w-10" />
             </div>
             <div>
-              <div className="font-bold text-xl bg-gradient-to-r from-fuchsia-600 to-violet-600 bg-clip-text text-transparent">SEO Compass</div>
+              <span className="text-xl font-bold bg-gradient-to-r from-fuchsia-600 to-[#ee208e] bg-clip-text text-transparent">SEO Compass</span>
               <div className="text-sm text-slate-600 font-medium">The complete SEO platform for Technical SEO specialists, Content experts, and Developers.</div>
             </div>
           </div>
