@@ -96,14 +96,14 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 
   const createTeam = async (data: { name: string; description?: string; location?: string }) => {
     const newTeam = await teamService.createTeam(data);
-    await refreshTeams();
+    setTeams((prev) => [newTeam, ...prev]);
     setCurrentTeam(newTeam);
     return newTeam;
   };
 
   const updateTeam = async (teamId: string, data: { name?: string; description?: string; location?: string }) => {
     const updatedTeam = await teamService.updateTeam(teamId, data);
-    await refreshTeams();
+    setTeams((prev) => prev.map((t) => (t.id === teamId ? updatedTeam : t)));
     if (currentTeam?.id === teamId) {
       setCurrentTeam(updatedTeam);
     }
@@ -112,16 +112,17 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 
   const deleteTeam = async (teamId: string) => {
     await teamService.deleteTeam(teamId);
-    await refreshTeams();
+    setTeams((prev) => prev.filter((t) => t.id !== teamId));
     if (currentTeam?.id === teamId) {
-      setCurrentTeam(teams.length > 1 ? teams.find(t => t.id !== teamId) || null : null);
+      const remainingTeams = teams.filter((t) => t.id !== teamId);
+      setCurrentTeam(remainingTeams.length > 0 ? remainingTeams[0] : null);
     }
   };
 
   const removeTeamMember = async (memberId: string) => {
     if (!currentTeam) throw new Error('No team selected');
     await teamService.removeTeamMember(currentTeam.id, memberId);
-    await refreshMembers();
+    setTeamMembers((prev) => prev.filter((m) => m.id !== memberId));
   };
 
   const isTeamOwner = async (): Promise<boolean> => {

@@ -94,23 +94,4 @@ export const projectService = {
 
     if (error) throw error;
   },
-
-  subscribeToProjects(
-    teamId: string,
-    callback: (payload: { eventType: string; new: any; old: any }) => void
-  ) {
-    return supabase
-      .channel(`projects:team_id=eq.${teamId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'projects',
-          filter: `team_id=eq.${teamId}`,
-        },
-        callback
-      )
-      .subscribe();
-  },
 };

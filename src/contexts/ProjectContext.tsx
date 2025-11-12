@@ -50,35 +50,6 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     }
   }, [currentTeam]);
 
-  useEffect(() => {
-    if (!currentTeam) return;
-
-    const subscription = projectService.subscribeToProjects(
-      currentTeam.id,
-      (payload) => {
-        if (payload.eventType === 'INSERT') {
-          setProjects((prev) => [payload.new, ...prev]);
-        } else if (payload.eventType === 'UPDATE') {
-          setProjects((prev) =>
-            prev.map((p) => (p.id === payload.new.id ? payload.new : p))
-          );
-          if (currentProject?.id === payload.new.id) {
-            setCurrentProject(payload.new);
-          }
-        } else if (payload.eventType === 'DELETE') {
-          setProjects((prev) => prev.filter((p) => p.id !== payload.old.id));
-          if (currentProject?.id === payload.old.id) {
-            setCurrentProject(null);
-          }
-        }
-      }
-    );
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [currentTeam, currentProject]);
-
   const createProject = async (name: string, description?: string, domain?: string): Promise<Project> => {
     if (!currentTeam) throw new Error('No team selected');
 
@@ -90,6 +61,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
         description,
         domain
       );
+      setProjects((prev) => [newProject, ...prev]);
       return newProject;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create project';
@@ -105,6 +77,12 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     try {
       setError(null);
       const updatedProject = await projectService.updateProject(projectId, updates);
+      setProjects((prev) =>
+        prev.map((p) => (p.id === projectId ? updatedProject : p))
+      );
+      if (currentProject?.id === projectId) {
+        setCurrentProject(updatedProject);
+      }
       return updatedProject;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update project';
