@@ -94,18 +94,3 @@ export async function getProjectUrlById(urlId: string): Promise<ProjectUrl | nul
 
   return data;
 }
-
-export async function canAddMoreUrls(projectId: string): Promise<boolean> {
-  const urls = await getProjectUrls(projectId);
-  return urls.length < 45;
-}
-
-export async function getProjectUrlCount(projectId: string): Promise<number> {
-  const { count, error } = await supabase
-    .from('project_urls')
-    .select('*', { count: 'exact', head: true })
-    .eq('project_id', projectId);
-
-  if (error) throw new Error(`Failed to count project URLs: ${error.message}`);
-  return count || 0;
-}

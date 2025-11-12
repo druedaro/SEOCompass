@@ -68,12 +68,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, []);
 
-  const refreshProfile = async () => {
-    if (user) {
-      await fetchProfile(user.id);
-    }
-  };
-
   useEffect(() => {
     const initAuth = async () => {
       try {
@@ -150,7 +144,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     profile,
     loading,
     signOut: handleSignOut,
-    refreshProfile,
   };
 
   return (

@@ -59,7 +59,7 @@ function parseHTML(html: string): Document {
   return parser.parseFromString(html, 'text/html');
 }
 
-export function extractMetadata(doc: Document): ParsedMetadata {
+function extractMetadata(doc: Document): ParsedMetadata {
   const getMetaContent = (selector: string): string | null => {
     const element = doc.querySelector(selector);
     return element?.getAttribute('content') || null;
@@ -77,7 +77,7 @@ export function extractMetadata(doc: Document): ParsedMetadata {
 }
 
 
-export function extractHeadings(doc: Document): ParsedHeading[] {
+function extractHeadings(doc: Document): ParsedHeading[] {
   const headings: ParsedHeading[] = [];
   const headingElements = doc.querySelectorAll('h1, h2, h3, h4, h5, h6');
 
@@ -95,7 +95,7 @@ export function extractHeadings(doc: Document): ParsedHeading[] {
 }
 
 
-export function extractImages(doc: Document): ParsedImage[] {
+function extractImages(doc: Document): ParsedImage[] {
   const images: ParsedImage[] = [];
   const imageElements = doc.querySelectorAll('img');
 
@@ -115,7 +115,7 @@ export function extractImages(doc: Document): ParsedImage[] {
   return images;
 }
 
-export function extractLinks(doc: Document, baseUrl: string): ParsedLink[] {
+function extractLinks(doc: Document, baseUrl: string): ParsedLink[] {
   const links: ParsedLink[] = [];
   const linkElements = doc.querySelectorAll('a[href]');
 
@@ -139,7 +139,7 @@ export function extractLinks(doc: Document, baseUrl: string): ParsedLink[] {
   return links;
 }
 
-export function extractBodyText(doc: Document): string {
+function extractBodyText(doc: Document): string {
   const body = doc.body.cloneNode(true) as HTMLElement;
 
   body.querySelectorAll('script, style, noscript, iframe').forEach((el) => el.remove());
@@ -147,12 +147,12 @@ export function extractBodyText(doc: Document): string {
   return body.textContent?.trim() || '';
 }
 
-export function countWords(text: string): number {
+function countWords(text: string): number {
   return text.split(/\s+/).filter((word) => word.length > 0).length;
 }
 
 
-export function detectStructuredData(doc: Document): {
+function detectStructuredData(doc: Document): {
   hasStructuredData: boolean;
   types: string[];
 } {
@@ -184,7 +184,7 @@ export function detectStructuredData(doc: Document): {
 }
 
 
-export function extractHreflangTags(doc: Document): Array<{ hreflang: string; href: string }> {
+function extractHreflangTags(doc: Document): Array<{ hreflang: string; href: string }> {
   const hreflangTags: Array<{ hreflang: string; href: string }> = [];
   const linkElements = doc.querySelectorAll('link[rel="alternate"][hreflang]');
 

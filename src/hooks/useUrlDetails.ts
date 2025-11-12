@@ -42,6 +42,5 @@ export function useUrlDetails(urlId?: string) {
     auditHistory,
     isLoading,
     latestAudit,
-    loadUrlDetails,
   };
 }

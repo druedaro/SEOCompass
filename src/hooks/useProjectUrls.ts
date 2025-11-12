@@ -79,6 +79,5 @@ export function useProjectUrls(projectId?: string) {
     isAdding,
     handleAddUrl,
     handleDeleteUrl,
-    loadUrls,
   };
 }

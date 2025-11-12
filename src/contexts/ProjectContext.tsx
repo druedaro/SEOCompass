@@ -12,7 +12,6 @@ interface ProjectContextType {
   createProject: (name: string, description?: string, domain?: string) => Promise<Project>;
   updateProject: (projectId: string, updates: { name?: string; description?: string; domain?: string }) => Promise<Project>;
   deleteProject: (projectId: string) => Promise<void>;
-  refreshProjects: () => Promise<void>;
 }
 
 export const ProjectContext = createContext<ProjectContextType | null>(null);
@@ -125,12 +124,6 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const refreshProjects = async () => {
-    if (currentTeam) {
-      await loadProjects(currentTeam.id);
-    }
-  };
-
   const value: ProjectContextType = {
     projects,
     currentProject,
@@ -140,7 +133,6 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     createProject,
     updateProject,
     deleteProject,
-    refreshProjects,
   };
 
   return (

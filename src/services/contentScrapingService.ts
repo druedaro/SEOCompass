@@ -56,25 +56,6 @@ export async function scrapeUrl(
   };
 }
 
-export async function scrapeMultipleUrls(
-  urls: string[],
-  options: ScrapeOptions = {}
-): Promise<Array<{ url: string; success: boolean; data?: ScrapedContent; error?: string }>> {
-  const results = [];
-
-  for (const url of urls) {
-    try {
-      const data = await scrapeUrl(url, options);
-      results.push({ url, success: true, data });
-    } catch (err) {
-      const error = err as Error;
-      results.push({ url, success: false, error: error.message });
-    }
-  }
-
-  return results;
-}
-
 export async function checkUrlStatus(url: string): Promise<{
   accessible: boolean;
   statusCode: number;

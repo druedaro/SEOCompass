@@ -156,6 +156,5 @@ export function useContentAnalyzer(projectId?: string) {
     isAnalyzing,
     currentAuditingUrlId,
     analyzePageByUrlId,
-    loadProjectUrls,
   };
 }

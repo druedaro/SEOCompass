@@ -108,37 +108,6 @@ export const taskService = {
     if (error) throw error;
   },
 
-  async getTasksByStatus(
-    projectId: string,
-    status: TaskStatus
-  ): Promise<Task[]> {
-    const { data, error } = await supabase
-      .from('tasks')
-      .select('*')
-      .eq('project_id', projectId)
-      .eq('status', status)
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-    return data || [];
-  },
-
-  async getOverdueTasks(projectId: string): Promise<Task[]> {
-    const now = new Date().toISOString();
-
-    const { data, error } = await supabase
-      .from('tasks')
-      .select('*')
-      .eq('project_id', projectId)
-      .neq('status', 'completed')
-      .neq('status', 'cancelled')
-      .lt('due_date', now)
-      .order('due_date', { ascending: true });
-
-    if (error) throw error;
-    return data || [];
-  },
-
   async completeTask(taskId: string): Promise<Task> {
     return this.updateTask(taskId, { status: 'completed' });
   },

@@ -89,25 +89,6 @@ export const authService = {
     return data.user;
   },
 
-  async getUserProfile(userId: string) {
-    const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error('Profile fetch timeout')), 10000);
-    });
-    
-    const queryPromise = supabase
-      .from('profiles')
-      .select('*')
-      .eq('user_id', userId)
-      .single();
-    
-    const result = await Promise.race([queryPromise, timeoutPromise]);
-    
-    if ('error' in result && result.error) throw result.error;
-    if ('data' in result) return result.data;
-    
-    throw new Error('Unexpected response from database');
-  },
-
   async resetPassword(email: string) {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth/reset-password`,
@@ -120,15 +101,6 @@ export const authService = {
     const { error } = await supabase.auth.updateUser({
       password: newPassword,
     });
-
-    if (error) throw error;
-  },
-
-  async updateUserRole(userId: string, role: UserRole) {
-    const { error } = await supabase
-      .from('profiles')
-      .update({ role })
-      .eq('user_id', userId);
 
     if (error) throw error;
   },

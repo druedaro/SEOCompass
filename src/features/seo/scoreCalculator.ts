@@ -42,7 +42,6 @@ const WEIGHTS = {
   ROBOTS: 0.01,
 };
 
-
 function calculateCategoryScores(input: ScoreCalculationInput): {
   meta: number;
   content: number;
