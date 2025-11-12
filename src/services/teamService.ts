@@ -13,6 +13,22 @@ export interface UpdateTeamData {
   location?: string;
 }
 
+async function checkTeamOwnership(teamId: string): Promise<void> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { data: team } = await supabase
+    .from('teams')
+    .select('user_id')
+    .eq('id', teamId)
+    .single();
+
+  if (!team) throw new Error('Team not found');
+  if (team.user_id !== user.id) {
+    throw new Error('Only the team owner can perform this action');
+  }
+}
+
 export const teamService = {
   async getUserTeams(): Promise<Team[]> {
     const { data: { user } } = await supabase.auth.getUser();
@@ -68,6 +84,8 @@ export const teamService = {
   },
 
   async deleteTeam(teamId: string): Promise<void> {
+    await checkTeamOwnership(teamId);
+
     const { error } = await supabase
       .from('teams')
       .delete()
@@ -105,5 +123,30 @@ export const teamService = {
     }
     
     return data as TeamMember[];
+  },
+
+  async removeTeamMember(teamId: string, memberId: string): Promise<void> {
+    await checkTeamOwnership(teamId);
+
+    const { error } = await supabase
+      .from('team_members')
+      .delete()
+      .eq('id', memberId)
+      .eq('team_id', teamId);
+
+    if (error) throw error;
+  },
+
+  async isTeamOwner(teamId: string): Promise<boolean> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return false;
+
+    const { data: team } = await supabase
+      .from('teams')
+      .select('user_id')
+      .eq('id', teamId)
+      .single();
+
+    return team?.user_id === user.id;
   },
 };

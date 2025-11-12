@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { projectService } from './projectService';
 import {
+  mockSupabaseAuth,
   mockSupabaseFrom,
   resetSupabaseMocks,
   createSuccessResponse,
@@ -111,13 +112,38 @@ describe('Project Service - Moscow Method Tests', () => {
   });
 
   it('should delete project successfully', async () => {
+    mockSupabaseAuth.getUser.mockResolvedValue(
+      createSuccessResponse({ user: { id: 'user-123' } })
+    );
+
+    const selectProjectBuilder = createQueryBuilder();
+    selectProjectBuilder.select.mockReturnValueOnce(selectProjectBuilder);
+    selectProjectBuilder.eq.mockReturnValueOnce(selectProjectBuilder);
+    selectProjectBuilder.single.mockResolvedValueOnce(
+      createSuccessResponse({ team_id: 'team-123' })
+    );
+
+    const selectTeamBuilder = createQueryBuilder();
+    selectTeamBuilder.select.mockReturnValueOnce(selectTeamBuilder);
+    selectTeamBuilder.eq.mockReturnValueOnce(selectTeamBuilder);
+    selectTeamBuilder.single.mockResolvedValueOnce(
+      createSuccessResponse({ user_id: 'user-123' })
+    );
+
     const deleteBuilder = createQueryBuilder();
     deleteBuilder.delete.mockReturnValueOnce(deleteBuilder);
     deleteBuilder.eq.mockResolvedValueOnce(createSuccessResponse(null));
-    mockSupabaseFrom.mockReturnValueOnce(deleteBuilder);
+    
+    mockSupabaseFrom
+      .mockReturnValueOnce(selectProjectBuilder)
+      .mockReturnValueOnce(selectTeamBuilder)
+      .mockReturnValueOnce(deleteBuilder);
 
     await projectService.deleteProject('project-123');
 
+    expect(mockSupabaseAuth.getUser).toHaveBeenCalled();
+    expect(selectProjectBuilder.select).toHaveBeenCalledWith('team_id');
+    expect(selectTeamBuilder.select).toHaveBeenCalledWith('user_id');
     expect(deleteBuilder.delete).toHaveBeenCalled();
   });
 });

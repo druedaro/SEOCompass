@@ -5,11 +5,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ProjectUrlsList } from '@/components/organisms/ProjectUrlsList';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useContentAnalyzer } from '@/hooks/useContentAnalyzer';
+import { useProjectUrls } from '@/hooks/useProjectUrls';
 
 export default function ContentAnalyzerPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
-  const { urls, isLoadingUrls, isAnalyzing, currentAuditingUrlId, analyzePageByUrlId } = useContentAnalyzer(projectId);
+  const { urls, isLoading: isLoadingUrls } = useProjectUrls(projectId);
+  const { isAnalyzing, currentAuditingUrlId, analyzePageByUrlId } = useContentAnalyzer(projectId);
 
   if (isLoadingUrls) {
     return (

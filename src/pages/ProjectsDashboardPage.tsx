@@ -12,7 +12,7 @@ import type { Project } from '@/types/domain';
 
 export function ProjectsDashboardPage() {
   const navigate = useNavigate();
-  const { currentTeam, createTeam } = useWorkspace();
+  const { currentTeam, createTeam, isOwner } = useWorkspace();
   const { projects, isLoading, deleteProject } = useProject();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | undefined>(undefined);
@@ -131,7 +131,7 @@ export function ProjectsDashboardPage() {
                 project={project}
                 onSelect={() => handleSelectProject(project)}
                 onEdit={() => handleEditProject(project)}
-                onDelete={() => handleDeleteProject(project)}
+                onDelete={isOwner ? () => handleDeleteProject(project) : undefined}
               />
             ))}
           </div>

@@ -19,6 +19,9 @@ interface WorkspaceContextType {
   createTeam: (data: { name: string; description?: string; location?: string }) => Promise<Team>;
   updateTeam: (teamId: string, data: { name?: string; description?: string; location?: string }) => Promise<Team>;
   deleteTeam: (teamId: string) => Promise<void>;
+  removeTeamMember: (memberId: string) => Promise<void>;
+  isTeamOwner: () => Promise<boolean>;
+  isOwner: boolean;
   switchTeam: (teamId: string) => Promise<void>;
 }
 
@@ -34,6 +37,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [isLoadingMembers, setIsLoadingMembers] = useState(false);
 
   const currentUserMember = teamMembers.find(member => member.user_id === user?.id) || null;
+  const isOwner = currentTeam?.user_id === user?.id;
 
   useEffect(() => {
     if (user) {
@@ -114,6 +118,17 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const removeTeamMember = async (memberId: string) => {
+    if (!currentTeam) throw new Error('No team selected');
+    await teamService.removeTeamMember(currentTeam.id, memberId);
+    await refreshMembers();
+  };
+
+  const isTeamOwner = async (): Promise<boolean> => {
+    if (!currentTeam) return false;
+    return await teamService.isTeamOwner(currentTeam.id);
+  };
+
   const switchTeam = async (teamId: string) => {
     const team = teams.find(t => t.id === teamId);
     if (team) {
@@ -134,6 +149,9 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     createTeam,
     updateTeam,
     deleteTeam,
+    removeTeamMember,
+    isTeamOwner,
+    isOwner,
     switchTeam,
   };
 

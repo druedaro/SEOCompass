@@ -12,12 +12,6 @@ export function useProjectUrls(projectId?: string) {
   const [isLoading, setIsLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
 
-  useEffect(() => {
-    if (projectId) {
-      loadUrls();
-    }
-  }, [projectId]);
-
   const loadUrls = async () => {
     if (!projectId) return;
 
@@ -32,6 +26,11 @@ export function useProjectUrls(projectId?: string) {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadUrls();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId]);
 
   const handleAddUrl = async (url: string, label?: string) => {
     if (!projectId || !url.trim()) return;

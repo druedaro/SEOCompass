@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { scrapeByProjectUrlId } from '@/services/contentScrapingService';
-import { getProjectUrls, type ProjectUrl } from '@/services/projectUrlsService';
 import { supabase } from '@/config/supabase';
 import { parseHTMLContent } from '@/features/seo/htmlParser';
 import {
@@ -21,31 +20,8 @@ import { generateRecommendations } from '@/features/seo/recommendationsEngine';
 import { showErrorToast, showSuccessToast, showInfoToast } from '@/lib/toast';
 
 export function useContentAnalyzer(projectId?: string) {
-  const [urls, setUrls] = useState<ProjectUrl[]>([]);
-  const [isLoadingUrls, setIsLoadingUrls] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [currentAuditingUrlId, setCurrentAuditingUrlId] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (projectId) {
-      loadProjectUrls();
-    }
-  }, [projectId]);
-
-  const loadProjectUrls = async () => {
-    if (!projectId) return;
-
-    setIsLoadingUrls(true);
-    try {
-      const data = await getProjectUrls(projectId);
-      setUrls(data);
-    } catch (error) {
-      const err = error as Error;
-      showErrorToast('Error loading URLs', err.message);
-    } finally {
-      setIsLoadingUrls(false);
-    }
-  };
 
   const analyzePageByUrlId = async (projectUrlId: string) => {
     setIsAnalyzing(true);
@@ -151,8 +127,6 @@ export function useContentAnalyzer(projectId?: string) {
   };
 
   return {
-    urls,
-    isLoadingUrls,
     isAnalyzing,
     currentAuditingUrlId,
     analyzePageByUrlId,

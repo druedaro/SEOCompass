@@ -25,7 +25,7 @@ const defaultCenter = {
 };
 
 export default function TeamSettingsPage() {
-  const { currentTeam, updateTeam, deleteTeam } = useWorkspace();
+  const { currentTeam, updateTeam, deleteTeam, isOwner } = useWorkspace();
   const { isLoaded } = useGoogleMaps();
   const [isLoading, setIsLoading] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -193,25 +193,27 @@ export default function TeamSettingsPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-destructive">
-          <CardHeader>
-            <CardTitle className="text-destructive">Danger Zone</CardTitle>
-            <CardDescription>
-              Irreversible and destructive actions
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button
-              variant="destructive"
-              onClick={() => setShowDeleteDialog(true)}
-              disabled={isLoading}
-              className="w-full"
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete Team
-            </Button>
-          </CardContent>
-        </Card>
+        {isOwner && (
+          <Card className="border-destructive">
+            <CardHeader>
+              <CardTitle className="text-destructive">Danger Zone</CardTitle>
+              <CardDescription>
+                Irreversible and destructive actions
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button
+                variant="destructive"
+                onClick={() => setShowDeleteDialog(true)}
+                disabled={isLoading}
+                className="w-full"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Team
+              </Button>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       <DeleteConfirmationDialog

@@ -131,13 +131,29 @@ describe('Team Service - Moscow Method Tests', () => {
   });
 
   it('should delete team successfully', async () => {
+    mockSupabaseAuth.getUser.mockResolvedValue(
+      createSuccessResponse({ user: { id: 'user-123' } })
+    );
+
+    const selectBuilder = createQueryBuilder();
+    selectBuilder.select.mockReturnValueOnce(selectBuilder);
+    selectBuilder.eq.mockReturnValueOnce(selectBuilder);
+    selectBuilder.single.mockResolvedValueOnce(
+      createSuccessResponse({ user_id: 'user-123' })
+    );
+
     const deleteBuilder = createQueryBuilder();
     deleteBuilder.delete.mockReturnValueOnce(deleteBuilder);
     deleteBuilder.eq.mockResolvedValueOnce(createSuccessResponse(null));
-    mockSupabaseFrom.mockReturnValueOnce(deleteBuilder);
+    
+    mockSupabaseFrom
+      .mockReturnValueOnce(selectBuilder)
+      .mockReturnValueOnce(deleteBuilder);
 
     await teamService.deleteTeam('team-123');
 
+    expect(mockSupabaseAuth.getUser).toHaveBeenCalled();
+    expect(selectBuilder.select).toHaveBeenCalledWith('user_id');
     expect(deleteBuilder.delete).toHaveBeenCalled();
   });
 });
