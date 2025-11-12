@@ -1,7 +1,7 @@
 import { MapPin, RefreshCw, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/atoms/Avatar';
+import { Avatar } from '@/components/atoms/Avatar';
 import { Badge } from '@/components/atoms/Badge';
 import { Button } from '@/components/atoms/Button';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
@@ -119,7 +119,6 @@ export default function TeamMembersPage() {
               <div className="space-y-4">
                 {teamMembers.map((member) => {
                   const userName = member.profile?.full_name || member.profile?.email || member.user_id;
-                  const userAvatar = member.profile?.avatar_url;
                   const userEmail = member.profile?.email;
                   const isCurrentUser = member.user_id === user?.id;
                   const isMemberOwner = member.user_id === currentTeam.user_id;
@@ -132,10 +131,7 @@ export default function TeamMembersPage() {
                     >
                       <div className="flex items-center gap-3">
                         <Avatar>
-                          {userAvatar && <AvatarImage src={userAvatar} alt={userName} />}
-                          <AvatarFallback>
-                            {getInitials(userName)}
-                          </AvatarFallback>
+                          {getInitials(userName)}
                         </Avatar>
                         <div>
                           <div className="font-medium">
