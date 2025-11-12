@@ -90,8 +90,8 @@ export function ProjectsDashboardPage() {
 
   return (
     <DashboardLayout>
-      <div className="container mx-auto py-8 px-4">
-        <div className="flex items-center justify-between mb-8">
+      <div className="container mx-auto py-6 px-4 pb-4">
+        <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold">Projects</h1>
             <p className="text-muted-foreground mt-1">
@@ -106,7 +106,7 @@ export function ProjectsDashboardPage() {
 
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
+            {[1, 2, 3].map((i) => ( 
               <div key={i} className="h-48 bg-muted animate-pulse rounded-lg" />
             ))}
           </div>

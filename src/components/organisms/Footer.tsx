@@ -12,13 +12,12 @@ export function Footer() {
   };
 
   return (
-    <footer className="relative border-t overflow-hidden">
-      {/* Subtle gradient background */}
+    <footer className="relative border-t overflow-hidden mt-auto">
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-violet-50 via-fuchsia-50 to-cyan-50" />
       
-      <div className="container mx-auto px-4 py-10">
-        <div className="flex flex-col items-center gap-6">
-          <div className="flex items-center gap-3 mb-4">
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex items-center gap-3 mb-2">
             <div className="flex h-10 w-10 items-center justify-center">
               <img src="/logo.svg" alt="SEO Compass" className="h-10 w-10" />
             </div>
@@ -28,7 +27,7 @@ export function Footer() {
             </div>
           </div>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
             {user ? (
               <>
                 <span className="text-sm font-semibold text-slate-600">{user.email}</span>

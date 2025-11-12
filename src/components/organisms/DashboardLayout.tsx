@@ -24,7 +24,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       
       <div className="flex flex-1">
         {!isInsideProject && (
-          <aside className="w-64 border-r bg-muted/10 min-h-[calc(100vh-4rem)] p-4">
+          <aside className="w-64 border-r bg-muted/10 p-4">
             <nav className="space-y-1 px-3 py-4">
               {DASHBOARD_NAVIGATION.map((item) => {
                 const Icon = item.icon;

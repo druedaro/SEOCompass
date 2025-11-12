@@ -117,6 +117,11 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     try {
       setError(null);
       await projectService.deleteProject(projectId);
+      
+      setProjects((prev) => prev.filter((p) => p.id !== projectId));
+      if (currentProject?.id === projectId) {
+        setCurrentProject(null);
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to delete project';
       setError(errorMessage);
