@@ -21,7 +21,7 @@ serve(async (req) => {
   }
 
   try {
-    const { url, extract_rules, return_html = false } = await req.json();
+    const { url, extract_rules, return_html = false, render_js = true } = await req.json();
 
     if (!url) {
       throw new Error('URL is required');
@@ -35,7 +35,13 @@ serve(async (req) => {
     const scrapingBeeUrl = new URL('https://app.scrapingbee.com/api/v1/');
     scrapingBeeUrl.searchParams.set('api_key', scrapingBeeApiKey);
     scrapingBeeUrl.searchParams.set('url', url);
-    scrapingBeeUrl.searchParams.set('render_js', 'true');
+    
+    if (render_js) {
+      scrapingBeeUrl.searchParams.set('render_js', 'true');
+      scrapingBeeUrl.searchParams.set('wait', '3000');
+      scrapingBeeUrl.searchParams.set('block_ads', 'true');
+      scrapingBeeUrl.searchParams.set('block_resources', 'false');
+    }
     
     if (extract_rules) {
       scrapingBeeUrl.searchParams.set('extract_rules', JSON.stringify(extract_rules));
