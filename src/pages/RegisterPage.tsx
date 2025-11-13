@@ -32,6 +32,7 @@ export function RegisterPage() {
 
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
+    mode: 'onBlur',
     defaultValues: {
       fullName: '',
       email: '',

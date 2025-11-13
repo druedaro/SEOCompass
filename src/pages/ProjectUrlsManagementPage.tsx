@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus, Trash2, ExternalLink, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { Label } from '@/components/atoms/Label';
+import { projectUrlSchema, ProjectUrlFormData } from '@/schemas/urlSchema';
 import {
   Table,
   TableBody,
@@ -21,19 +24,27 @@ export default function ProjectUrlsManagementPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
   const { urls, isLoading, isAdding, handleAddUrl, handleDeleteUrl } = useProjectUrls(projectId);
-  const [newUrl, setNewUrl] = useState('');
-  const [newLabel, setNewLabel] = useState('');
   const [urlToDelete, setUrlToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newUrl.trim()) return;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<ProjectUrlFormData>({
+    resolver: zodResolver(projectUrlSchema),
+    mode: 'onBlur',
+    defaultValues: {
+      url: '',
+      label: '',
+    },
+  });
 
-    const success = await handleAddUrl(newUrl, newLabel);
+  const onSubmit = async (data: ProjectUrlFormData) => {
+    const success = await handleAddUrl(data.url, data.label || '');
     if (success) {
-      setNewUrl('');
-      setNewLabel('');
+      reset();
     }
   };
 
@@ -88,7 +99,7 @@ export default function ProjectUrlsManagementPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="url">URL *</Label>
@@ -96,11 +107,12 @@ export default function ProjectUrlsManagementPage() {
                   id="url"
                   type="url"
                   placeholder="https://example.com/page"
-                  value={newUrl}
-                  onChange={(e) => setNewUrl(e.target.value)}
+                  {...register('url')}
                   disabled={isAdding || urls.length >= 45}
-                  required
                 />
+                {errors.url && (
+                  <p className="text-sm text-destructive">{errors.url.message}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="label">Label (Optional)</Label>
@@ -108,10 +120,12 @@ export default function ProjectUrlsManagementPage() {
                   id="label"
                   type="text"
                   placeholder="e.g., Homepage, Blog Post"
-                  value={newLabel}
-                  onChange={(e) => setNewLabel(e.target.value)}
+                  {...register('label')}
                   disabled={isAdding || urls.length >= 45}
                 />
+                {errors.label && (
+                  <p className="text-sm text-destructive">{errors.label.message}</p>
+                )}
               </div>
             </div>
             <Button type="submit" disabled={isAdding || urls.length >= 45}>

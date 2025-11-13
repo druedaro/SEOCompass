@@ -62,6 +62,7 @@ export function CreateTaskModal({
 
   const form = useForm<TaskFormData>({
     resolver: zodResolver(taskSchema),
+    mode: 'onBlur',
     defaultValues: {
       title: initialTitle || '',
       description: initialDescription || '',
