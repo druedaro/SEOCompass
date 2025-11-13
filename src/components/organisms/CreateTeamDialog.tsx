@@ -40,6 +40,7 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
     reset,
   } = useForm<CreateTeamFormData>({
     resolver: zodResolver(createTeamSchema),
+    mode: 'onBlur',
   });
 
   const onSubmit = async (data: CreateTeamFormData) => {

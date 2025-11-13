@@ -13,6 +13,7 @@ import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { updateTeamSchema, UpdateTeamFormData } from '@/schemas/teamSchema';
+import { showErrorToast, showSuccessToast } from '@/lib/toast';
 
 const mapContainerStyle = {
   width: '100%',
@@ -40,6 +41,7 @@ export default function TeamSettingsPage() {
     setValue,
   } = useForm<UpdateTeamFormData>({
     resolver: zodResolver(updateTeamSchema),
+    mode: 'onBlur',
     defaultValues: {
       name: currentTeam?.name || '',
       description: currentTeam?.description || '',
@@ -53,6 +55,10 @@ export default function TeamSettingsPage() {
     setIsLoading(true);
     try {
       await updateTeam(currentTeam.id, { ...data, location });
+      showSuccessToast('Team updated successfully');
+    } catch (err) {
+      console.error('Failed to update team:', err);
+      showErrorToast('Failed to update team', 'Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -64,6 +70,10 @@ export default function TeamSettingsPage() {
     setIsLoading(true);
     try {
       await deleteTeam(currentTeam.id);
+      showSuccessToast('Team deleted successfully');
+    } catch (err) {
+      console.error('Failed to delete team:', err);
+      showErrorToast('Failed to delete team', 'Please try again.');
     } finally {
       setIsLoading(false);
       setShowDeleteDialog(false);

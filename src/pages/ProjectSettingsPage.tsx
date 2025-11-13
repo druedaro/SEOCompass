@@ -13,6 +13,7 @@ import { useProject } from '@/hooks/useProject';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { projectSchema, ProjectFormData } from '@/schemas/projectSchema';
+import { showErrorToast } from '@/lib/toast';
 
 export function ProjectSettingsPage() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -39,6 +40,7 @@ export function ProjectSettingsPage() {
     reset,
   } = useForm<ProjectFormData>({
     resolver: zodResolver(projectSchema),
+    mode: 'onBlur',
     defaultValues: {
       name: currentProject?.name || '',
       description: currentProject?.description || '',
@@ -72,7 +74,9 @@ export function ProjectSettingsPage() {
       setIsDeleting(true);
       await deleteProject(currentProject.id);
       navigate('/dashboard/projects');
-    } catch {
+    } catch (err) {
+      console.error('Failed to delete project:', err);
+      showErrorToast('Failed to delete project', 'Please try again.');
       setIsDeleting(false);
       setShowDeleteDialog(false);
     }

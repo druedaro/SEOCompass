@@ -9,6 +9,7 @@ import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useProject } from '@/hooks/useProject';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import type { Project } from '@/types/domain';
+import { showErrorToast } from '@/lib/toast';
 
 export function ProjectsDashboardPage() {
   const navigate = useNavigate();
@@ -28,8 +29,9 @@ export function ProjectsDashboardPage() {
         name: 'My Team',
         description: 'Default team',
       });
-    } catch {
-      alert('Failed to create team. Please try again.');
+    } catch (err) {
+      console.error('Failed to create first team:', err);
+      showErrorToast('Failed to create team', 'Please try again.');
     } finally {
       setIsCreatingTeam(false);
     }
@@ -54,8 +56,9 @@ export function ProjectsDashboardPage() {
     setIsDeleting(true);
     try {
       await deleteProject(projectToDelete.id);
-    } catch {
-      alert('Failed to delete project. Please try again.');
+    } catch (err) {
+      console.error('Failed to delete project:', err);
+      showErrorToast('Failed to delete project', 'Please try again.');
     } finally {
       setIsDeleting(false);
       setProjectToDelete(null);

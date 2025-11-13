@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import { teamService } from '@/services/teamService';
 import type { Team, TeamMember } from '@/types/domain';
 import { useAuth } from '@/hooks/useAuth';
+import { showErrorToast } from '@/lib/toast';
 
 interface WorkspaceContextType {
   currentTeam: Team | null;
@@ -9,10 +10,12 @@ interface WorkspaceContextType {
   
   teams: Team[];
   isLoadingTeams: boolean;
+  teamsError: string | null;
   refreshTeams: () => Promise<void>;
   
   teamMembers: TeamMember[];
   isLoadingMembers: boolean;
+  membersError: string | null;
   refreshMembers: () => Promise<void>;
   currentUserMember: TeamMember | null;
   
@@ -35,6 +38,8 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   
   const [isLoadingTeams, setIsLoadingTeams] = useState(false);
   const [isLoadingMembers, setIsLoadingMembers] = useState(false);
+  const [teamsError, setTeamsError] = useState<string | null>(null);
+  const [membersError, setMembersError] = useState<string | null>(null);
 
   const currentUserMember = teamMembers.find(member => member.user_id === user?.id) || null;
   const isOwner = currentTeam?.user_id === user?.id;
@@ -61,6 +66,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     if (!user) return; 
     
     setIsLoadingTeams(true);
+    setTeamsError(null);
     try {
       const data = await teamService.getUserTeams();
       setTeams(data);
@@ -72,7 +78,10 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       if (currentTeam && !data.find(t => t.id === currentTeam.id)) {
         setCurrentTeam(data.length > 0 ? data[0] : null);
       }
-    } catch {
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load teams';
+      setTeamsError(errorMessage);
+      showErrorToast('Failed to load teams', errorMessage);
       setTeams([]);
       setCurrentTeam(null);
     } finally {
@@ -84,10 +93,14 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     if (!currentTeam) return;
     
     setIsLoadingMembers(true);
+    setMembersError(null);
     try {
       const data = await teamService.getTeamMembers(currentTeam.id);
       setTeamMembers(data);
-    } catch {
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load team members';
+      setMembersError(errorMessage);
+      showErrorToast('Failed to load members', errorMessage);
       setTeamMembers([]);
     } finally {
       setIsLoadingMembers(false);
@@ -142,9 +155,11 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     setCurrentTeam,
     teams,
     isLoadingTeams,
+    teamsError,
     refreshTeams,
     teamMembers,
     isLoadingMembers,
+    membersError,
     refreshMembers,
     currentUserMember,
     createTeam,

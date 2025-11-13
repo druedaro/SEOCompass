@@ -8,6 +8,7 @@ import { EmptyState } from '@/components/molecules/EmptyState';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { Task, taskService } from '@/services/taskService';
 import { useProject } from '@/hooks/useProject';
+import { showErrorToast } from '@/lib/toast';
 
 export function ActionCenterPage() {
   const { currentProject } = useProject();
@@ -24,6 +25,10 @@ export function ActionCenterPage() {
     try {
       const data = await taskService.getTasksByProject(currentProject.id);
       setTasks(data);
+    } catch (err) {
+      console.error('Failed to load tasks', err);
+      showErrorToast('Failed to load tasks', 'Please try again.');
+      setTasks([]);
     } finally {
       setIsLoading(false);
     }

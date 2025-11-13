@@ -39,6 +39,7 @@ export default function CreateTeamPage() {
     setValue,
   } = useForm<CreateTeamFormData>({
     resolver: zodResolver(createTeamSchema),
+    mode: 'onBlur',
   });
 
   const onSubmit = async (data: CreateTeamFormData) => {
@@ -46,6 +47,8 @@ export default function CreateTeamPage() {
     try {
       await createTeam({ ...data, location });
       navigate('/dashboard');
+    } catch (err) {
+      console.error('Error creating team:', err);
     } finally {
       setIsLoading(false);
     }

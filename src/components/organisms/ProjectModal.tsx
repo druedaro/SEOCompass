@@ -35,6 +35,7 @@ export function ProjectModal({ open, onClose, project, mode = 'create' }: Projec
     reset,
   } = useForm<ProjectFormData>({
     resolver: zodResolver(projectSchema),
+    mode: 'onBlur',
     defaultValues: {
       name: project?.name || '',
       domain: project?.domain || '',

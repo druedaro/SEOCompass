@@ -46,6 +46,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             .single();
 
           if (insertError) {
+            console.error('Failed to create profile:', insertError);
             setProfile(null);
           } else {
             setProfile(newProfile);
@@ -53,6 +54,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           }
         }
       } else if (error) {
+        console.error('Failed to fetch profile:', error);
         setProfile(null);
       } else {
         setProfile(profileData);
@@ -61,7 +63,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
           setShowRoleModal(true);
         }
       }
-    } catch {
+    } catch (err) {
+      console.error('Unexpected error fetching profile:', err);
       setProfile(null);
     } finally {
       isFetchingProfileRef.current = false;
