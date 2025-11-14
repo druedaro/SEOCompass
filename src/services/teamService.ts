@@ -108,12 +108,13 @@ export const teamService = {
         data.map(async (member) => {
           const { data: profile } = await supabase
             .from('profiles')
-            .select('user_id, full_name, email, avatar_url')
+            .select('user_id, full_name, email, avatar_url, role')
             .eq('user_id', member.user_id)
             .single();
           
           return {
             ...member,
+            role: profile?.role || 'content_seo',
             profile: profile || undefined
           };
         })
@@ -133,6 +134,19 @@ export const teamService = {
       .delete()
       .eq('id', memberId)
       .eq('team_id', teamId);
+
+    if (error) throw error;
+  },
+
+  async leaveTeam(teamId: string): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { error } = await supabase
+      .from('team_members')
+      .delete()
+      .eq('team_id', teamId)
+      .eq('user_id', user.id);
 
     if (error) throw error;
   },

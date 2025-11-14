@@ -23,6 +23,7 @@ interface WorkspaceContextType {
   updateTeam: (teamId: string, data: { name?: string; description?: string; location?: string }) => Promise<Team>;
   deleteTeam: (teamId: string) => Promise<void>;
   removeTeamMember: (memberId: string) => Promise<void>;
+  leaveTeam: () => Promise<void>;
   isTeamOwner: () => Promise<boolean>;
   isOwner: boolean;
   switchTeam: (teamId: string) => Promise<void>;
@@ -43,24 +44,6 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 
   const currentUserMember = teamMembers.find(member => member.user_id === user?.id) || null;
   const isOwner = currentTeam?.user_id === user?.id;
-
-  useEffect(() => {
-    if (user) {
-      refreshTeams();
-    } else {
-      setTeams([]);
-      setCurrentTeam(null);
-      setTeamMembers([]);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    if (currentTeam) {
-      refreshMembers();
-    } else {
-      setTeamMembers([]);
-    }
-  }, [currentTeam]);
 
   const refreshTeams = async () => {
     if (!user) return; 
@@ -107,6 +90,24 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  useEffect(() => {
+    if (user) {
+      refreshTeams();
+    } else {
+      setTeams([]);
+      setCurrentTeam(null);
+      setTeamMembers([]);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (currentTeam) {
+      refreshMembers();
+    } else {
+      setTeamMembers([]);
+    }
+  }, [currentTeam]);
+
   const createTeam = async (data: { name: string; description?: string; location?: string }) => {
     const newTeam = await teamService.createTeam(data);
     setTeams((prev) => [newTeam, ...prev]);
@@ -138,6 +139,18 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     setTeamMembers((prev) => prev.filter((m) => m.id !== memberId));
   };
 
+  const leaveTeam = async () => {
+    if (!currentTeam) throw new Error('No team selected');
+    const leftTeamId = currentTeam.id;
+    await teamService.leaveTeam(leftTeamId);
+    
+    const updatedTeams = await teamService.getUserTeams();
+    setTeams(updatedTeams);
+    
+    const remainingTeams = updatedTeams.filter((t) => t.id !== leftTeamId);
+    setCurrentTeam(remainingTeams.length > 0 ? remainingTeams[0] : null);
+  };
+
   const isTeamOwner = async (): Promise<boolean> => {
     if (!currentTeam) return false;
     return await teamService.isTeamOwner(currentTeam.id);
@@ -166,6 +179,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     updateTeam,
     deleteTeam,
     removeTeamMember,
+    leaveTeam,
     isTeamOwner,
     isOwner,
     switchTeam,

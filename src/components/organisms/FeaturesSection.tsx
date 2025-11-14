@@ -10,7 +10,7 @@ export function FeaturesSection() {
             Everything you need for SEO success
           </h2>
           <p className="text-lg text-muted-foreground">
-            Powerful features designed for Technical SEO specialists, Content SEO experts, and Developers.
+            Powerful features designed for Technical SEO specialists, Content SEO experts, and SEO Managers.
           </p>
         </div>
 

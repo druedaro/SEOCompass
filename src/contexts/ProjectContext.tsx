@@ -48,6 +48,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
       setProjects([]);
       setCurrentProject(null);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTeam]);
 
   const createProject = async (name: string, description?: string, domain?: string): Promise<Project> => {

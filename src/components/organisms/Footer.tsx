@@ -23,7 +23,7 @@ export function Footer() {
             </div>
             <div>
               <span className="text-xl font-bold bg-gradient-to-r from-fuchsia-600 to-[#ee208e] bg-clip-text text-transparent">SEO Compass</span>
-              <div className="text-sm text-slate-600 font-medium">The complete SEO platform for Technical SEO specialists, Content experts, and Developers.</div>
+              <div className="text-sm text-slate-600 font-medium">The complete SEO platform for Technical SEO specialists, Content experts, and SEO Managers.</div>
             </div>
           </div>
 

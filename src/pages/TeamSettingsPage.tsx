@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Save, Trash2 } from 'lucide-react';
+import { Save, Trash2, LogOut } from 'lucide-react';
 import { GoogleMap, Marker } from '@react-google-maps/api';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
@@ -26,10 +26,11 @@ const defaultCenter = {
 };
 
 export default function TeamSettingsPage() {
-  const { currentTeam, updateTeam, deleteTeam, isOwner } = useWorkspace();
+  const { currentTeam, updateTeam, deleteTeam, leaveTeam, isOwner } = useWorkspace();
   const { isLoaded } = useGoogleMaps();
   const [isLoading, setIsLoading] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showLeaveDialog, setShowLeaveDialog] = useState(false);
   const [location, setLocation] = useState(currentTeam?.location || '');
   const [mapCenter, setMapCenter] = useState(defaultCenter);
   const [markerPosition, setMarkerPosition] = useState<google.maps.LatLngLiteral | null>(null);
@@ -77,6 +78,22 @@ export default function TeamSettingsPage() {
     } finally {
       setIsLoading(false);
       setShowDeleteDialog(false);
+    }
+  };
+
+  const handleLeave = async () => {
+    if (!currentTeam) return;
+
+    setIsLoading(true);
+    try {
+      await leaveTeam();
+      showSuccessToast('You have left the team');
+    } catch (err) {
+      console.error('Failed to leave team:', err);
+      showErrorToast('Failed to leave team', 'Please try again.');
+    } finally {
+      setIsLoading(false);
+      setShowLeaveDialog(false);
     }
   };
 
@@ -203,7 +220,7 @@ export default function TeamSettingsPage() {
           </CardContent>
         </Card>
 
-        {isOwner && (
+        {isOwner ? (
           <Card className="border-destructive">
             <CardHeader>
               <CardTitle className="text-destructive">Danger Zone</CardTitle>
@@ -223,6 +240,26 @@ export default function TeamSettingsPage() {
               </Button>
             </CardContent>
           </Card>
+        ) : (
+          <Card className="border-destructive">
+            <CardHeader>
+              <CardTitle className="text-destructive">Leave Team</CardTitle>
+              <CardDescription>
+                Remove yourself from this team
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button
+                variant="destructive"
+                onClick={() => setShowLeaveDialog(true)}
+                disabled={isLoading}
+                className="w-full"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Leave Team
+              </Button>
+            </CardContent>
+          </Card>
         )}
       </div>
 
@@ -232,6 +269,15 @@ export default function TeamSettingsPage() {
         onConfirm={handleDelete}
         title={`Delete "${currentTeam.name}"?`}
         description="This will permanently delete the team and all its projects."
+        isLoading={isLoading}
+      />
+
+      <DeleteConfirmationDialog
+        open={showLeaveDialog}
+        onOpenChange={setShowLeaveDialog}
+        onConfirm={handleLeave}
+        title={`Leave "${currentTeam.name}"?`}
+        description="You will no longer have access to this team's projects and data."
         isLoading={isLoading}
       />
       </div>

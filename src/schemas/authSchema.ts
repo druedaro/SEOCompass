@@ -35,7 +35,7 @@ export const registerSchema = z.object({
   confirmPassword: z
     .string()
     .min(1, 'Please confirm your password'),
-  role: z.enum(['tech_seo', 'content_seo', 'developer'], {
+  role: z.enum(['tech_seo', 'content_seo', 'seo_manager'], {
     message: 'Please select a role',
   }),
 }).refine((data) => data.password === data.confirmPassword, {

@@ -1,4 +1,4 @@
-export type UserRole = 'tech_seo' | 'content_seo' | 'developer';
+export type UserRole = 'tech_seo' | 'content_seo' | 'seo_manager';
 
 export interface Profile {
   id: string;

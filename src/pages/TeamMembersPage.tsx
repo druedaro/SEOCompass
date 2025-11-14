@@ -55,8 +55,8 @@ export default function TeamMembersPage() {
       case 'tech_seo':
         return 'outline';
       case 'content_seo':
-        return 'secondary';
-      case 'developer':
+        return 'default';
+      case 'seo_manager':
         return 'destructive';
       default:
         return 'secondary';

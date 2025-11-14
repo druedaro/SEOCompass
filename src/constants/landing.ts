@@ -15,7 +15,7 @@ export const HERO_DATA = {
   },
   heading: 'The Complete SEO Platform for Modern Teams',
   description:
-    'Analyze content, audit SEO issues, and manage tasks—all in one place. Built for Technical SEO specialists, Content experts, and Developers.',
+    'Analyze content, audit SEO issues, and manage tasks—all in one place. Built for Technical SEO specialists, Content experts, and SEO Managers.',
   cta: {
     primary: {
       text: 'Get Started Free',
