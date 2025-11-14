@@ -1,7 +1,8 @@
 import * as z from 'zod';
+import { VALIDATION_LIMITS, VALIDATION_MESSAGES } from '@/constants/validation';
 
 export const taskSchema = z.object({
-  title: z.string().min(1, 'Title is required').max(200, 'Title is too long'),
+  title: z.string().min(1, VALIDATION_MESSAGES.REQUIRED.TITLE).max(VALIDATION_LIMITS.TASK_TITLE_MAX, VALIDATION_MESSAGES.LENGTH.TASK_TITLE_MAX),
   description: z.string().optional(),
   priority: z.enum(['low', 'medium', 'high', 'urgent']).default('medium'),
   status: z.enum(['todo', 'in_progress', 'completed', 'cancelled']).default('todo'),

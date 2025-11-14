@@ -14,16 +14,7 @@ import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { updateTeamSchema, UpdateTeamFormData } from '@/schemas/teamSchema';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
-
-const mapContainerStyle = {
-  width: '100%',
-  height: '300px',
-};
-
-const defaultCenter = {
-  lat: 37.7749, // San Francisco
-  lng: -122.4194,
-};
+import { DEFAULT_MAP_CENTER, MAP_CONTAINER_STYLE } from '@/constants/maps';
 
 export default function TeamSettingsPage() {
   const { currentTeam, updateTeam, deleteTeam, leaveTeam, isOwner } = useWorkspace();
@@ -32,7 +23,7 @@ export default function TeamSettingsPage() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showLeaveDialog, setShowLeaveDialog] = useState(false);
   const [location, setLocation] = useState(currentTeam?.location || '');
-  const [mapCenter, setMapCenter] = useState(defaultCenter);
+  const [mapCenter, setMapCenter] = useState(DEFAULT_MAP_CENTER);
   const [markerPosition, setMarkerPosition] = useState<google.maps.LatLngLiteral | null>(null);
 
   const {
@@ -40,6 +31,7 @@ export default function TeamSettingsPage() {
     handleSubmit,
     formState: { errors },
     setValue,
+    reset,
   } = useForm<UpdateTeamFormData>({
     resolver: zodResolver(updateTeamSchema),
     mode: 'onBlur',
@@ -49,6 +41,38 @@ export default function TeamSettingsPage() {
       location: currentTeam?.location || '',
     },
   });
+
+  // Reset form and geocode location when team changes
+  useEffect(() => {
+    if (currentTeam) {
+      reset({
+        name: currentTeam.name,
+        description: currentTeam.description || '',
+        location: currentTeam.location || '',
+      });
+      setLocation(currentTeam.location || '');
+      
+      // Geocode the team's location
+      if (currentTeam.location && isLoaded) {
+        const geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ address: currentTeam.location }, (results, status) => {
+          if (status === 'OK' && results && results[0]) {
+            const location = results[0].geometry.location;
+            const coords = {
+              lat: location.lat(),
+              lng: location.lng(),
+            };
+            setMapCenter(coords);
+            setMarkerPosition(coords);
+          }
+        });
+      } else {
+        setMapCenter(DEFAULT_MAP_CENTER);
+        setMarkerPosition(null);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTeam?.id, isLoaded]);
 
   const onSubmit = async (data: UpdateTeamFormData) => {
     if (!currentTeam) return;
@@ -113,23 +137,6 @@ export default function TeamSettingsPage() {
     }
   };
 
-  useEffect(() => {
-    if (currentTeam?.location && isLoaded) {
-      const geocoder = new google.maps.Geocoder();
-      geocoder.geocode({ address: currentTeam.location }, (results, status) => {
-        if (status === 'OK' && results && results[0]) {
-          const location = results[0].geometry.location;
-          const coords = {
-            lat: location.lat(),
-            lng: location.lng(),
-          };
-          setMapCenter(coords);
-          setMarkerPosition(coords);
-        }
-      });
-    }
-  }, [currentTeam?.location, isLoaded]);
-
   if (!currentTeam) {
     return (
       <DashboardLayout>
@@ -183,18 +190,18 @@ export default function TeamSettingsPage() {
                 value={location}
                 onChange={handleLocationChange}
                 onPlaceSelect={handlePlaceSelect}
-                label="Location"
+                label="Location (Optional)"
                 disabled={isLoading}
               />
 
-              {isLoaded && (
+              {isLoaded && markerPosition && (
                 <div className="space-y-2">
                   <Label>Map Preview</Label>
                   <div className="rounded-lg overflow-hidden border">
                     <GoogleMap
-                      mapContainerStyle={mapContainerStyle}
+                      mapContainerStyle={MAP_CONTAINER_STYLE}
                       center={mapCenter}
-                      zoom={markerPosition ? 13 : 10}
+                      zoom={13}
                       options={{
                         disableDefaultUI: false,
                         zoomControl: true,
@@ -203,12 +210,9 @@ export default function TeamSettingsPage() {
                         fullscreenControl: false,
                       }}
                     >
-                      {markerPosition && <Marker position={markerPosition} />}
+                      <Marker position={markerPosition} />
                     </GoogleMap>
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    Select a location to see it on the map
-                  </p>
                 </div>
               )}
 
