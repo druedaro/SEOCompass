@@ -39,21 +39,11 @@ export default function ContentAnalyzerPage() {
           </Button>
         )}
         
-        <div className="flex items-center justify-between">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tight">Content & On-Page Analyzer</h1>
-            <p className="text-muted-foreground">
-              Analyze your tracked URLs for SEO optimization and get actionable recommendations
-            </p>
-          </div>
-          {projectId && (
-            <Link to={`/dashboard/projects/${projectId}/urls`}>
-              <Button variant="outline">
-                <Settings className="mr-2 h-4 w-4" />
-                Manage URLs
-              </Button>
-            </Link>
-          )}
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">Content & On-Page Analyzer</h1>
+          <p className="text-muted-foreground">
+            Analyze your tracked URLs for SEO optimization and get actionable recommendations
+          </p>
         </div>
 
         {urls.length === 0 ? (
@@ -71,10 +61,10 @@ export default function ContentAnalyzerPage() {
                   You can add up to 45 URLs per project.
                 </p>
                 {projectId && (
-                  <Link to={`/dashboard/projects/${projectId}/urls`}>
+                  <Link to={`/dashboard/projects/${projectId}/settings`}>
                     <Button>
                       <Settings className="mr-2 h-4 w-4" />
-                      Configure URLs
+                      Go to Settings
                     </Button>
                   </Link>
                 )}

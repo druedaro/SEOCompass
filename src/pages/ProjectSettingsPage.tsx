@@ -43,6 +43,7 @@ export function ProjectSettingsPage() {
     mode: 'onBlur',
     defaultValues: {
       name: currentProject?.name || '',
+      domain: currentProject?.domain || '',
       description: currentProject?.description || '',
     },
   });
@@ -51,6 +52,7 @@ export function ProjectSettingsPage() {
     if (currentProject) {
       reset({
         name: currentProject.name,
+        domain: currentProject.domain || '',
         description: currentProject.description || '',
       });
     }
@@ -138,6 +140,18 @@ export function ProjectSettingsPage() {
               />
               {errors.name && (
                 <p className="text-sm text-destructive">{errors.name.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="domain">Domain</Label>
+              <Input
+                id="domain"
+                placeholder="example.com"
+                {...register('domain')}
+              />
+              {errors.domain && (
+                <p className="text-sm text-destructive">{errors.domain.message}</p>
               )}
             </div>
 

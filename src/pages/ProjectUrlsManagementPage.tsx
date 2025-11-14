@@ -87,7 +87,7 @@ export default function ProjectUrlsManagementPage() {
           
           <h1 className="text-3xl font-bold">Project URLs Management</h1>
         <p className="text-muted-foreground mt-2">
-          Manage up to 45 URLs for content analysis tracking ({urls.length}/45 used)
+          Manage up to 45 URLs for SEO analysis tools ({urls.length}/45 used)
         </p>
       </div>
 
