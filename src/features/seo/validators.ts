@@ -85,11 +85,11 @@ export function validateUrl(url: string): ValidationResult {
       warnings.push(SEO_MESSAGES.URL.HAS_UPPERCASE);
       score -= 10;
     }
-    if (/[^a-z0-9\-\/]/.test(path.toLowerCase())) {
+    if (/[^a-z0-9\-/]/.test(path.toLowerCase())) {
       warnings.push(SEO_MESSAGES.URL.HAS_SPECIAL_CHARS);
       score -= 10;
     }
-  } catch (error) {
+  } catch {
     return { isValid: false, issues: [SEO_MESSAGES.URL.INVALID], warnings, score: 0 };
   }
 
@@ -201,7 +201,7 @@ export function validateCanonical(canonicalUrl: string | null, currentUrl: strin
       warnings.push(SEO_MESSAGES.CANONICAL.DIFFERS);
       score -= 10;
     }
-  } catch (error) {
+  } catch {
     issues.push(SEO_MESSAGES.CANONICAL.INVALID);
     score -= 20;
   }
