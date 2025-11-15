@@ -19,7 +19,6 @@ A collaborative web platform designed for small SEO teams and freelancers to man
 - [Project-Structure](#project-structure)
 - [API-Integrations](#api-integrations)
 - [Best-Practices](#best-practices)
-- [Deployment](#deployment)
 
 ---
 
@@ -31,9 +30,10 @@ A collaborative web platform designed for small SEO teams and freelancers to man
 
 1. **Team-First:** Collaborative workspace with real-time updates
 2. **All-in-One:** Multiple SEO modules in a unified platform
-3. **AI-Powered:** Intelligent task generation from audit results
-4. **Developer-Friendly:** Built for intermediate React developers
+3. **Data-Driven:** Intelligent task generation from audit results
+4. **Developer-Friendly:** Clean, simple code for React developers
 5. **Scalable:** Designed for small teams and freelancers
+6. **No Over-Engineering:** Direct, readable code without unnecessary abstractions
 
 ### Target Audience
 - 👥 Small SEO teams (2-10 members)
@@ -270,6 +270,7 @@ src/
 │   │   ├── EmptyState.tsx
 │   │   ├── Form.tsx
 │   │   ├── LocationAutocomplete.tsx
+│   │   ├── Pagination.tsx
 │   │   ├── PriorityBadge.tsx
 │   │   └── ProjectCard.tsx
 │   │
@@ -287,6 +288,7 @@ src/
 │       ├── ProjectModal.tsx
 │       ├── ProjectUrlsList.tsx
 │       ├── RoleSelectionModal.tsx
+│       ├── TaskFilters.tsx
 │       ├── TaskList.tsx
 │       └── TeamSelector.tsx
 │
@@ -295,6 +297,7 @@ src/
 │
 ├── constants/                
 │   ├── landing.ts           
+│   ├── maps.ts              
 │   ├── navigation.ts        
 │   ├── roles.ts          
 │   ├── seo.ts             
@@ -347,7 +350,8 @@ src/
 │   ├── authSchema.ts        
 │   ├── projectSchema.ts   
 │   ├── taskSchema.ts      
-│   └── teamSchema.ts        
+│   ├── teamSchema.ts
+│   └── urlSchema.ts        
 │
 ├── services/                
 │   ├── authService.ts      
@@ -381,7 +385,7 @@ src/
 
 **Key Patterns:**
 - ✅ **Separation of Concerns:** Clear boundaries between UI, business logic, and data
-- ✅ **Dependency Injection:** Services can be easily mocked for testing
+- ✅ **Direct Exports:** Service functions exported directly for easy testing
 - ✅ **Single Responsibility:** Each module has one clear purpose
 - ✅ **DRY Principle:** Shared constants and utilities prevent duplication
 - ✅ **Scalability:** Easy to add new features without affecting existing code
@@ -391,15 +395,16 @@ src/
 ## Best Practices
 
 ### Code Quality
-- ✅ TypeScript strict mode with generics
+- ✅ TypeScript strict mode
 - ✅ ESLint configured
 - ✅ Custom hooks for reusable logic
 - ✅ Atomic Design pattern
-- ✅ Centralized configuration
-- ✅ DRY principle (generic templates)
+- ✅ Direct function exports (no service objects)
+- ✅ Inline validation messages (no constant indirection)
+- ✅ Simple, readable code appropriate for intermediate developers
 - ✅ React Hook Form for form management
-- ✅ Zod schemas for validation
-- ✅ Clean code without comments
+- ✅ Zod schemas with inline validation
+- ✅ Clean code
 
 ### Performance
 - ✅ Lazy loading images
@@ -420,49 +425,6 @@ src/
 - ✅ **Coverage:** 25 comprehensive tests across 5 service modules
 - ✅ **CI/CD Ready:** Fast test execution with Vitest
 
----
-
-## Deployment
-
-### Production Build
-
-```bash
-npm run build
-```
-
-Generates the \`dist/\` folder ready for deployment.
-
-### Deploy to Vercel
-
-```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel --prod
-```
-
-### Environment Variables in Vercel
-
-Configure in Vercel Dashboard → Settings → Environment Variables:
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_ANON_KEY`
-- `VITE_SCRAPINGBEE_API_KEY`
-- `VITE_PAGESPEED_API_KEY`
-- `VITE_APP_URL`
-
-### Supabase Setup
-
-1. Run database migrations:
-```bash
-npx supabase db push
-```
-
-2. Configure RLS policies in Supabase dashboard
-
-3. Set up email templates for team invitations
-
-4. Configure authentication providers
 
 ---
 
