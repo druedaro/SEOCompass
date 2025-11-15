@@ -42,7 +42,6 @@ export default function TeamSettingsPage() {
     },
   });
 
-  // Reset form and geocode location when team changes
   useEffect(() => {
     if (currentTeam) {
       reset({
@@ -52,7 +51,6 @@ export default function TeamSettingsPage() {
       });
       setLocation(currentTeam.location || '');
       
-      // Geocode the team's location
       if (currentTeam.location && isLoaded) {
         const geocoder = new google.maps.Geocoder();
         geocoder.geocode({ address: currentTeam.location }, (results, status) => {

@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/atoms/Card';
 import { Button } from '@/components/atoms/Button';
-import { MoreVertical, Calendar, Users } from 'lucide-react';
+import { MoreVertical, Calendar } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -79,10 +79,6 @@ export function ProjectCard({ project, onSelect, onEdit, onDelete }: ProjectCard
           <div className="flex items-center gap-1.5">
             <Calendar className="h-3.5 w-3.5" />
             <span>{timeAgo}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Users className="h-3.5 w-3.5" />
-            <span>Team project</span>
           </div>
         </div>
       </CardFooter>
