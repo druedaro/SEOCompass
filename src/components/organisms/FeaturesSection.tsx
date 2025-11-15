@@ -9,7 +9,7 @@ export function FeaturesSection() {
         loop
         muted
         playsInline
-        className="absolute top-0 left-0 w-full h-full object-cover opacity-70"
+        className="absolute top-0 left-0 w-full h-full object-cover opacity-40"
       >
         <source src="/features.mp4" type="video/mp4" />
       </video>
@@ -30,11 +30,11 @@ export function FeaturesSection() {
             return (
               <Card
                 key={feature.title}
-                className="hover:border-purple-300 hover:shadow-lg transition-all bg-white"
+                className="hover:border-primary/30 hover:shadow-lg transition-all bg-white"
               >
                 <CardHeader>
-                  <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100">
-                    <Icon className="h-6 w-6 text-purple-600" />
+                  <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+                    <Icon className="h-6 w-6 text-primary" />
                   </div>
                   <CardTitle className="text-xl">{feature.title}</CardTitle>
                   <CardDescription className="text-base">

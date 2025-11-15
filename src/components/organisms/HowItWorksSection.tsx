@@ -20,20 +20,20 @@ export function HowItWorksSection() {
 
         <div className="mx-auto max-w-4xl">
           <div className="relative">
-            <div className="absolute left-8 top-0 h-full w-0.5 bg-purple-200 hidden md:block" />
+            <div className="absolute left-8 top-0 h-full w-0.5 bg-primary/20 hidden md:block" />
 
             <div className="space-y-12">
               {STEPS_DATA.map((step) => {
                 const Icon = step.icon;
                 return (
                   <div key={step.number} className="relative flex gap-6 md:gap-8">
-                    <div className="relative z-10 flex h-16 w-16 min-w-[4rem] items-center justify-center rounded-full bg-purple-100 border-2 border-purple-300">
-                      <Icon className="h-7 w-7 text-purple-600" />
+                    <div className="relative z-10 flex h-16 w-16 min-w-[4rem] items-center justify-center rounded-full bg-primary/10 border-2 border-primary/30">
+                      <Icon className="h-7 w-7 text-primary" />
                     </div>
 
                     <div className="flex-1 pt-1.5">
                       <div className="flex items-center gap-3 mb-2">
-                        <span className="text-sm font-semibold text-purple-600">{step.number}</span>
+                        <span className="text-sm font-semibold text-primary">{step.number}</span>
                         <h3 className="text-xl font-bold">{step.title}</h3>
                       </div>
                       <p className="text-gray-600">{step.description}</p>

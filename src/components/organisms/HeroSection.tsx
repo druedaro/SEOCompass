@@ -24,12 +24,12 @@ export function HeroSection() {
         </div>
 
         <div className="mx-auto max-w-3xl text-center">
-          <div className="mb-6 inline-flex items-center rounded-full border border-purple-200 bg-purple-50 px-4 py-1.5 text-sm font-medium text-purple-700"> <img src="/logo.svg" alt="SEO Compass" className="h-6 w-6" />
+          <div className="mb-6 inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary"> <img src="/logo.svg" alt="SEO Compass" className="h-6 w-6" />
             {HERO_DATA.badge.text}
           </div>
 
           <h1 className="mb-6 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-            SEO Compass — <span className="text-purple-600">The Complete SEO Platform</span>
+            SEO Compass — <span className="text-primary">The Complete SEO Platform</span>
           </h1>
 
           <p className="mb-8 text-lg text-gray-600 sm:text-xl max-w-2xl mx-auto">
@@ -37,10 +37,9 @@ export function HeroSection() {
           </p>
 
           <div className="flex justify-center mb-12">
-            <Button asChild size="lg" className="px-8 py-6 text-base font-semibold bg-purple-600 hover:bg-purple-700">
-              
+            <Button asChild size="lg" className="px-8 py-6 text-base font-semibold bg-primary hover:bg-primary/90">
               <Link to={user ? '/dashboard' : '/auth/login'}>
-              Launch App
+                Launch App
               </Link>
             </Button>
           </div>
@@ -51,8 +50,8 @@ export function HeroSection() {
               const Icon = feature.icon;
               return (
                 <div key={feature.label} className="flex flex-col items-center gap-2">
-                  <div className="rounded-lg bg-purple-100 p-3">
-                    <Icon className="h-6 w-6 text-purple-600" />
+                  <div className="rounded-lg bg-primary/10 p-3">
+                    <Icon className="h-6 w-6 text-primary" />
                   </div>
                   <span className="font-medium text-gray-700">{feature.label}</span>
                 </div>
