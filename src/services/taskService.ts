@@ -1,4 +1,5 @@
 import { supabase } from '@/config/supabase';
+import { TASKS_PER_PAGE } from '@/constants/tasks';
 
 export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent';
 export type TaskStatus = 'todo' | 'in_progress' | 'completed' | 'cancelled';
@@ -40,16 +41,74 @@ export interface UpdateTaskInput {
   assigned_to?: string;
 }
 
+export interface TaskFilters {
+  status?: TaskStatus;
+  priority?: TaskPriority;
+  assigned_to?: string | null;
+  overdue?: boolean;
+}
+
+export interface PaginatedTasksResponse {
+  tasks: Task[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 export const taskService = {
-  async getTasksByProject(projectId: string): Promise<Task[]> {
-    const { data, error } = await supabase
+  async getTasksByProject(
+    projectId: string,
+    filters?: TaskFilters,
+    page: number = 1
+  ): Promise<PaginatedTasksResponse> {
+    const from = (page - 1) * TASKS_PER_PAGE;
+    const to = from + TASKS_PER_PAGE - 1;
+
+    let query = supabase
       .from('tasks')
-      .select('*')
-      .eq('project_id', projectId)
-      .order('created_at', { ascending: false });
+      .select('*', { count: 'exact' })
+      .eq('project_id', projectId);
+
+    // Apply filters
+    if (filters?.status) {
+      query = query.eq('status', filters.status);
+    }
+    if (filters?.priority) {
+      query = query.eq('priority', filters.priority);
+    }
+    if (filters?.assigned_to !== undefined) {
+      if (filters.assigned_to === null) {
+        query = query.is('assigned_to', null);
+      } else {
+        query = query.eq('assigned_to', filters.assigned_to);
+      }
+    }
+    if (filters?.overdue) {
+      const now = new Date().toISOString();
+      query = query
+        .lt('due_date', now)
+        .neq('status', 'completed');
+    }
+
+    query = query
+      .order('created_at', { ascending: false })
+      .range(from, to);
+
+    const { data, error, count } = await query;
 
     if (error) throw error;
-    return data || [];
+
+    const total = count || 0;
+    const totalPages = Math.ceil(total / TASKS_PER_PAGE);
+
+    return {
+      tasks: data || [],
+      total,
+      page,
+      pageSize: TASKS_PER_PAGE,
+      totalPages,
+    };
   },
 
   async getTaskById(taskId: string): Promise<Task | null> {
