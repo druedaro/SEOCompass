@@ -162,13 +162,9 @@ function detectStructuredData(doc: Document): {
   jsonLdScripts.forEach((script) => {
     const content = script.textContent;
     if (content) {
-      try {
-        const data = JSON.parse(content);
-        if (data['@type']) {
-          types.push(data['@type']);
-        }
-      } catch {
-        // Silently ignore invalid JSON-LD scripts
+      const data = JSON.parse(content);
+      if (data['@type']) {
+        types.push(data['@type']);
       }
     }
   });

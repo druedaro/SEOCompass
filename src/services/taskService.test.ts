@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { taskService } from './taskService';
+import { createTask, getTaskById, updateTask, getTasksByProject, deleteTask } from './taskService';
 import type { CreateTaskInput, UpdateTaskInput } from './taskService';
 import {
   mockSupabaseFrom,
@@ -40,7 +40,7 @@ describe('Task Service - Moscow Method Tests', () => {
       project_id: 'project-123',
     };
 
-    const result = await taskService.createTask(input);
+    const result = await createTask(input);
 
     expect(result).toEqual(mockTask);
   });
@@ -62,7 +62,7 @@ describe('Task Service - Moscow Method Tests', () => {
     );
     mockSupabaseFrom.mockReturnValueOnce(selectBuilder);
 
-    const result = await taskService.getTaskById('task-123');
+    const result = await getTaskById('task-123');
 
     expect(result).toEqual(mockTask);
   });
@@ -89,7 +89,7 @@ describe('Task Service - Moscow Method Tests', () => {
       status: 'in_progress',
     };
 
-    const result = await taskService.updateTask('task-123', input);
+    const result = await updateTask('task-123', input);
 
     expect(result).toEqual(mockUpdatedTask);
   });
@@ -108,14 +108,20 @@ describe('Task Service - Moscow Method Tests', () => {
     const selectBuilder = createQueryBuilder();
     selectBuilder.select.mockReturnValueOnce(selectBuilder);
     selectBuilder.eq.mockReturnValueOnce(selectBuilder);
-    selectBuilder.order.mockResolvedValueOnce(
-      createSuccessResponse(mockTasks)
-    );
+    selectBuilder.order.mockReturnValueOnce(selectBuilder);
+    selectBuilder.range.mockResolvedValueOnce({
+      data: mockTasks,
+      error: null,
+      count: 1,
+    });
     mockSupabaseFrom.mockReturnValueOnce(selectBuilder);
 
-    const result = await taskService.getTasksByProject('project-123');
+    const result = await getTasksByProject('project-123');
 
-    expect(result).toEqual(mockTasks);
+    expect(result.tasks).toEqual(mockTasks);
+    expect(result.total).toBe(1);
+    expect(result.page).toBe(1);
+    expect(result.totalPages).toBe(1);
   });
 
   it('should delete task successfully', async () => {
@@ -124,7 +130,7 @@ describe('Task Service - Moscow Method Tests', () => {
     deleteBuilder.eq.mockResolvedValueOnce(createSuccessResponse(null));
     mockSupabaseFrom.mockReturnValueOnce(deleteBuilder);
 
-    await taskService.deleteTask('task-123');
+    await deleteTask('task-123');
 
     expect(deleteBuilder.delete).toHaveBeenCalled();
   });

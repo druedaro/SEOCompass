@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, ReactNode } from 'react';
-import { projectService } from '@/services/projectService';
+import { getProjectsByTeam, createProject as createProjectService, updateProject as updateProjectService, deleteProject as deleteProjectService } from '@/services/projectService';
 import type { Project } from '@/types/domain';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 
@@ -27,7 +27,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     try {
       setIsLoading(true);
       setError(null);
-      const data = await projectService.getProjectsByTeam(teamId);
+      const data = await getProjectsByTeam(teamId);
       setProjects(data);
       
       if (currentProject) {
@@ -48,7 +48,6 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
       setProjects([]);
       setCurrentProject(null);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTeam]);
 
   const createProject = async (name: string, description?: string, domain?: string): Promise<Project> => {
@@ -56,7 +55,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
 
     try {
       setError(null);
-      const newProject = await projectService.createProject(
+      const newProject = await createProjectService(
         currentTeam.id,
         name,
         description,
@@ -77,7 +76,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
   ): Promise<Project> => {
     try {
       setError(null);
-      const updatedProject = await projectService.updateProject(projectId, updates);
+      const updatedProject = await updateProjectService(projectId, updates);
       setProjects((prev) =>
         prev.map((p) => (p.id === projectId ? updatedProject : p))
       );
@@ -95,7 +94,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
   const deleteProject = async (projectId: string): Promise<void> => {
     try {
       setError(null);
-      await projectService.deleteProject(projectId);
+      await deleteProjectService(projectId);
       
       setProjects((prev) => prev.filter((p) => p.id !== projectId));
       if (currentProject?.id === projectId) {

@@ -19,7 +19,7 @@ const mapContainerStyle = {
 };
 
 const defaultCenter = {
-  lat: 37.7749, // San Francisco (default)
+  lat: 37.7749,
   lng: -122.4194,
 };
 
@@ -47,8 +47,6 @@ export default function CreateTeamPage() {
     try {
       await createTeam({ ...data, location });
       navigate('/dashboard');
-    } catch (err) {
-      console.error('Error creating team:', err);
     } finally {
       setIsLoading(false);
     }

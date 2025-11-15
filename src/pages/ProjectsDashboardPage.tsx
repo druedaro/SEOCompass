@@ -29,9 +29,8 @@ export function ProjectsDashboardPage() {
         name: 'My Team',
         description: 'Default team',
       });
-    } catch (err) {
-      console.error('Failed to create first team:', err);
-      showErrorToast('Failed to create team', 'Please try again.');
+    } catch {
+      showErrorToast('Failed to create team. Please try again.');
     } finally {
       setIsCreatingTeam(false);
     }
@@ -56,9 +55,8 @@ export function ProjectsDashboardPage() {
     setIsDeleting(true);
     try {
       await deleteProject(projectToDelete.id);
-    } catch (err) {
-      console.error('Failed to delete project:', err);
-      showErrorToast('Failed to delete project', 'Please try again.');
+    } catch {
+      showErrorToast('Failed to delete project. Please try again.');
     } finally {
       setIsDeleting(false);
       setProjectToDelete(null);

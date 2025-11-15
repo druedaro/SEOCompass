@@ -22,12 +22,10 @@ export function Pagination({
   const maxVisiblePages = 7;
 
   if (totalPages <= maxVisiblePages) {
-    // Show all pages
     for (let i = 1; i <= totalPages; i++) {
       pages.push(i);
     }
   } else {
-    // Show first page, current range, and last page with ellipsis
     pages.push(1);
 
     if (currentPage > 3) {

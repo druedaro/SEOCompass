@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, UserPlus } from 'lucide-react';
 import { registerSchema, type RegisterFormData, roleOptions } from '@/schemas/authSchema';
-import { authService } from '@/services/authService';
+import { signUp, signInWithGoogle } from '@/services/authService';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import {
@@ -49,9 +49,7 @@ export function RegisterPage() {
       setIsLoading(true);
       setError(null);
       
-      console.log('Attempting registration with:', data.email, data.role);
-      const result = await authService.signUp(data);
-      console.log('Registration result:', result);
+      const result = await signUp(data);
       
       if (result.session === null) {
         setError('Account created! Check your email to confirm your account before logging in.');
@@ -78,7 +76,7 @@ export function RegisterPage() {
     try {
       setIsLoading(true);
       setError(null);
-      await authService.signInWithGoogle();
+      await signInWithGoogle();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to sign in with Google');
       setIsLoading(false);

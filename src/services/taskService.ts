@@ -56,8 +56,7 @@ export interface PaginatedTasksResponse {
   totalPages: number;
 }
 
-export const taskService = {
-  async getTasksByProject(
+export async function getTasksByProject(
     projectId: string,
     filters?: TaskFilters,
     page: number = 1
@@ -70,7 +69,6 @@ export const taskService = {
       .select('*', { count: 'exact' })
       .eq('project_id', projectId);
 
-    // Apply filters
     if (filters?.status) {
       query = query.eq('status', filters.status);
     }
@@ -108,10 +106,10 @@ export const taskService = {
       page,
       pageSize: TASKS_PER_PAGE,
       totalPages,
-    };
-  },
+  };
+}
 
-  async getTaskById(taskId: string): Promise<Task | null> {
+export async function getTaskById(taskId: string): Promise<Task | null> {
     const { data, error } = await supabase
       .from('tasks')
       .select('*')
@@ -119,11 +117,22 @@ export const taskService = {
       .single();
 
     if (error) throw error;
-    return data;
-  },
+  return data;
+}
 
-  async createTask(input: CreateTaskInput): Promise<Task> {
-    const taskData: any = {
+export async function createTask(input: CreateTaskInput): Promise<Task> {
+    interface TaskInsertData {
+      title: string;
+      description: string | null;
+      priority: TaskPriority;
+      status: TaskStatus;
+      project_id: string;
+      due_date?: string;
+      audit_reference?: string;
+      assigned_to?: string;
+    }
+
+    const taskData: TaskInsertData = {
       title: input.title,
       description: input.description || null,
       priority: input.priority || 'medium',
@@ -142,11 +151,11 @@ export const taskService = {
       .single();
 
     if (error) throw error;
-    return data;
-  },
+  return data;
+}
 
-  async updateTask(taskId: string, input: UpdateTaskInput): Promise<Task> {
-    const updateData: any = { ...input };
+export async function updateTask(taskId: string, input: UpdateTaskInput): Promise<Task> {
+    const updateData: Record<string, string | null | undefined> = { ...input };
     if ('assigned_to' in input && input.assigned_to === undefined) {
       updateData.assigned_to = null;
     }
@@ -159,19 +168,18 @@ export const taskService = {
       .single();
 
     if (error) throw error;
-    return data;
-  },
+  return data;
+}
 
-  async deleteTask(taskId: string): Promise<void> {
+export async function deleteTask(taskId: string): Promise<void> {
     const { error } = await supabase.from('tasks').delete().eq('id', taskId);
-    if (error) throw error;
-  },
+  if (error) throw error;
+}
 
-  async completeTask(taskId: string): Promise<Task> {
-    return this.updateTask(taskId, { status: 'completed' });
-  },
+export async function completeTask(taskId: string): Promise<Task> {
+  return updateTask(taskId, { status: 'completed' });
+}
 
-  async startTask(taskId: string): Promise<Task> {
-    return this.updateTask(taskId, { status: 'in_progress' });
-  },
-};
+export async function startTask(taskId: string): Promise<Task> {
+  return updateTask(taskId, { status: 'in_progress' });
+}

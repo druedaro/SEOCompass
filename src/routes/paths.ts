@@ -2,7 +2,7 @@ export const AUTH_PATHS = {
   LOGIN: '/auth/login',
   REGISTER: '/auth/register',
   CALLBACK: '/auth/callback',
-} as const;
+};
 
 export const APP_PATHS = {
   DASHBOARD: '/dashboard',
@@ -17,9 +17,9 @@ export const APP_PATHS = {
   URL_DETAILS: '/projects/:projectId/urls/:urlId',
   ACTION_CENTER: '/projects/:projectId/actions',
   PROJECT_SETTINGS: '/projects/:projectId/settings',
-} as const;
+};
 
 export const PUBLIC_PATHS = {
   HOME: '/',
   WELCOME: '/welcome',
-} as const;
+};

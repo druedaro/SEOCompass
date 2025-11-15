@@ -19,10 +19,13 @@ export const createQueryBuilder = () => {
     delete: vi.fn(),
     eq: vi.fn(),
     neq: vi.fn(),
+    is: vi.fn(),
+    lt: vi.fn(),
     single: vi.fn(),
     maybeSingle: vi.fn(),
     order: vi.fn(),
     limit: vi.fn(),
+    range: vi.fn(),
   };
   
   builder.select.mockReturnValue(builder);
@@ -31,8 +34,11 @@ export const createQueryBuilder = () => {
   builder.delete.mockReturnValue(builder);
   builder.eq.mockReturnValue(builder);
   builder.neq.mockReturnValue(builder);
+  builder.is.mockReturnValue(builder);
+  builder.lt.mockReturnValue(builder);
   builder.order.mockReturnValue(builder);
   builder.limit.mockReturnValue(builder);
+  builder.range.mockReturnValue(builder);
   
   return builder;
 };

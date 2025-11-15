@@ -21,7 +21,7 @@ export function useProjectUrls(projectId?: string) {
       setUrls(data);
     } catch (error) {
       const err = error as Error;
-      showErrorToast('Error loading URLs', err.message);
+      showErrorToast(`Error loading URLs: ${err.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -29,14 +29,13 @@ export function useProjectUrls(projectId?: string) {
 
   useEffect(() => {
     loadUrls();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
   const handleAddUrl = async (url: string, label?: string) => {
     if (!projectId || !url.trim()) return;
 
     if (urls.length >= 45) {
-      showErrorToast('Limit Reached', 'Maximum 45 URLs per project');
+      showErrorToast('Limit Reached: Maximum 45 URLs per project');
       return;
     }
 
@@ -54,7 +53,7 @@ export function useProjectUrls(projectId?: string) {
       return true;
     } catch (error) {
       const err = error as Error;
-      showErrorToast('Failed to add URL', err.message);
+      showErrorToast(`Failed to add URL: ${err.message}`);
       return false;
     } finally {
       setIsAdding(false);
@@ -68,7 +67,7 @@ export function useProjectUrls(projectId?: string) {
       await loadUrls();
     } catch (error) {
       const err = error as Error;
-      showErrorToast('Failed to delete URL', err.message);
+      showErrorToast(`Failed to delete URL: ${err.message}`);
     }
   };
 

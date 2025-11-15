@@ -1,17 +1,6 @@
 import { supabase } from '@/config/supabase';
 import type { Team, TeamMember } from '@/types/domain';
-
-export interface CreateTeamData {
-  name: string;
-  description?: string;
-  location?: string;
-}
-
-export interface UpdateTeamData {
-  name?: string;
-  description?: string;
-  location?: string;
-}
+import type { CreateTeamFormData, UpdateTeamFormData } from '@/schemas/teamSchema';
 
 async function checkTeamOwnership(teamId: string): Promise<void> {
   const { data: { user } } = await supabase.auth.getUser();
@@ -29,8 +18,7 @@ async function checkTeamOwnership(teamId: string): Promise<void> {
   }
 }
 
-export const teamService = {
-  async getUserTeams(): Promise<Team[]> {
+export async function getUserTeams(): Promise<Team[]> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
@@ -40,10 +28,10 @@ export const teamService = {
       .order('created_at', { ascending: false });
 
     if (error) return [];
-    return data as Team[];
-  },
+  return data as Team[];
+}
 
-  async getTeamById(teamId: string): Promise<Team> {
+export async function getTeamById(teamId: string): Promise<Team> {
     const { data, error } = await supabase
       .from('teams')
       .select('*')
@@ -51,10 +39,10 @@ export const teamService = {
       .single();
 
     if (error) throw error;
-    return data;
-  },
+  return data;
+}
 
-  async createTeam(teamData: CreateTeamData): Promise<Team> {
+export async function createTeam(teamData: CreateTeamFormData): Promise<Team> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
@@ -68,10 +56,10 @@ export const teamService = {
       .single();
 
     if (error) throw error;
-    return data;
-  },
+  return data;
+}
 
-  async updateTeam(teamId: string, teamData: UpdateTeamData): Promise<Team> {
+export async function updateTeam(teamId: string, teamData: UpdateTeamFormData): Promise<Team> {
     const { data, error } = await supabase
       .from('teams')
       .update(teamData)
@@ -80,10 +68,10 @@ export const teamService = {
       .single();
 
     if (error) throw error;
-    return data;
-  },
+  return data;
+}
 
-  async deleteTeam(teamId: string): Promise<void> {
+export async function deleteTeam(teamId: string): Promise<void> {
     await checkTeamOwnership(teamId);
 
     const { error } = await supabase
@@ -91,10 +79,10 @@ export const teamService = {
       .delete()
       .eq('id', teamId);
 
-    if (error) throw error;
-  },
+  if (error) throw error;
+}
 
-  async getTeamMembers(teamId: string): Promise<TeamMember[]> {
+export async function getTeamMembers(teamId: string): Promise<TeamMember[]> {
     const { data, error } = await supabase
       .from('team_members')
       .select('*')
@@ -123,10 +111,10 @@ export const teamService = {
       return membersWithProfiles as TeamMember[];
     }
     
-    return data as TeamMember[];
-  },
+  return data as TeamMember[];
+}
 
-  async removeTeamMember(teamId: string, memberId: string): Promise<void> {
+export async function removeTeamMember(teamId: string, memberId: string): Promise<void> {
     await checkTeamOwnership(teamId);
 
     const { error } = await supabase
@@ -135,10 +123,10 @@ export const teamService = {
       .eq('id', memberId)
       .eq('team_id', teamId);
 
-    if (error) throw error;
-  },
+  if (error) throw error;
+}
 
-  async leaveTeam(teamId: string): Promise<void> {
+export async function leaveTeam(teamId: string): Promise<void> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
@@ -148,19 +136,18 @@ export const teamService = {
       .eq('team_id', teamId)
       .eq('user_id', user.id);
 
-    if (error) throw error;
-  },
+  if (error) throw error;
+}
 
-  async isTeamOwner(teamId: string): Promise<boolean> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return false;
+export async function isTeamOwner(teamId: string): Promise<boolean> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return false;
 
-    const { data: team } = await supabase
-      .from('teams')
-      .select('user_id')
-      .eq('id', teamId)
-      .single();
+  const { data: team } = await supabase
+    .from('teams')
+    .select('user_id')
+    .eq('id', teamId)
+    .single();
 
-    return team?.user_id === user.id;
-  },
-};
+  return team?.user_id === user.id;
+}

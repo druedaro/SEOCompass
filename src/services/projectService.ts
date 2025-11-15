@@ -25,8 +25,7 @@ async function checkProjectOwnership(projectId: string): Promise<void> {
   }
 }
 
-export const projectService = {
-  async getProjectsByTeam(teamId: string): Promise<Project[]> {
+export async function getProjectsByTeam(teamId: string): Promise<Project[]> {
     const { data, error } = await supabase
       .from('projects')
       .select('*')
@@ -34,10 +33,10 @@ export const projectService = {
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return data || [];
-  },
+  return data || [];
+}
 
-  async getProjectById(projectId: string): Promise<Project | null> {
+export async function getProjectById(projectId: string): Promise<Project | null> {
     const { data, error } = await supabase
       .from('projects')
       .select('*')
@@ -45,10 +44,10 @@ export const projectService = {
       .single();
 
     if (error) throw error;
-    return data;
-  },
+  return data;
+}
 
-  async createProject(
+export async function createProject(
     teamId: string,
     name: string,
     description?: string,
@@ -66,10 +65,10 @@ export const projectService = {
       .single();
 
     if (error) throw error;
-    return data;
-  },
+  return data;
+}
 
-  async updateProject(
+export async function updateProject(
     projectId: string,
     updates: { name?: string; description?: string; domain?: string }
   ): Promise<Project> {
@@ -81,17 +80,16 @@ export const projectService = {
       .single();
 
     if (error) throw error;
-    return data;
-  },
+  return data;
+}
 
-  async deleteProject(projectId: string): Promise<void> {
-    await checkProjectOwnership(projectId);
+export async function deleteProject(projectId: string): Promise<void> {
+  await checkProjectOwnership(projectId);
 
-    const { error } = await supabase
-      .from('projects')
-      .delete()
-      .eq('id', projectId);
+  const { error } = await supabase
+    .from('projects')
+    .delete()
+    .eq('id', projectId);
 
-    if (error) throw error;
-  },
-};
+  if (error) throw error;
+}

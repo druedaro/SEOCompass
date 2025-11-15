@@ -76,9 +76,8 @@ export function ProjectSettingsPage() {
       setIsDeleting(true);
       await deleteProject(currentProject.id);
       navigate('/dashboard/projects');
-    } catch (err) {
-      console.error('Failed to delete project:', err);
-      showErrorToast('Failed to delete project', 'Please try again.');
+    } catch {
+      showErrorToast('Failed to delete project. Please try again.');
       setIsDeleting(false);
       setShowDeleteDialog(false);
     }

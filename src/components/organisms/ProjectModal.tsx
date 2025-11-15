@@ -122,7 +122,9 @@ export function ProjectModal({ open, onClose, project, mode = 'create' }: Projec
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Saving...' : mode === 'create' ? 'Create Project' : 'Save Changes'}
+              {isSubmitting && 'Saving...'}
+              {!isSubmitting && mode === 'create' && 'Create Project'}
+              {!isSubmitting && mode === 'edit' && 'Save Changes'}
             </Button>
           </DialogFooter>
         </form>

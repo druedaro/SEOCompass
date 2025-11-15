@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { projectService } from './projectService';
+import { createProject, getProjectById, updateProject, getProjectsByTeam, deleteProject } from './projectService';
 import {
   mockSupabaseAuth,
   mockSupabaseFrom,
@@ -31,7 +31,7 @@ describe('Project Service - Moscow Method Tests', () => {
     );
     mockSupabaseFrom.mockReturnValueOnce(insertBuilder);
 
-    const result = await projectService.createProject(
+    const result = await createProject(
       'team-123',
       'Test Project',
       'A test project',
@@ -57,7 +57,7 @@ describe('Project Service - Moscow Method Tests', () => {
     );
     mockSupabaseFrom.mockReturnValueOnce(selectBuilder);
 
-    const result = await projectService.getProjectById('project-123');
+    const result = await getProjectById('project-123');
 
     expect(result).toEqual(mockProject);
   });
@@ -80,7 +80,7 @@ describe('Project Service - Moscow Method Tests', () => {
     );
     mockSupabaseFrom.mockReturnValueOnce(updateBuilder);
 
-    const result = await projectService.updateProject('project-123', {
+    const result = await updateProject('project-123', {
       name: 'Updated Project',
       description: 'Updated description',
     });
@@ -106,7 +106,7 @@ describe('Project Service - Moscow Method Tests', () => {
     );
     mockSupabaseFrom.mockReturnValueOnce(selectBuilder);
 
-    const result = await projectService.getProjectsByTeam('team-123');
+    const result = await getProjectsByTeam('team-123');
 
     expect(result).toEqual(mockProjects);
   });
@@ -139,7 +139,7 @@ describe('Project Service - Moscow Method Tests', () => {
       .mockReturnValueOnce(selectTeamBuilder)
       .mockReturnValueOnce(deleteBuilder);
 
-    await projectService.deleteProject('project-123');
+    await deleteProject('project-123');
 
     expect(mockSupabaseAuth.getUser).toHaveBeenCalled();
     expect(selectProjectBuilder.select).toHaveBeenCalledWith('team_id');

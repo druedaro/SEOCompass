@@ -1,7 +1,7 @@
-import { useEffect, useState, useRef, useCallback, ReactNode } from 'react';
+import { useEffect, useState, useRef, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/config/supabase';
-import { authService } from '@/services/authService';
+import { signOut } from '@/services/authService';
 import type { Profile, UserRole } from '@/types/domain';
 import { AuthContext } from './AuthContext';
 import { RoleSelectionModal } from '@/components/organisms/RoleSelectionModal';
@@ -18,7 +18,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [showRoleModal, setShowRoleModal] = useState(false);
   const isFetchingProfileRef = useRef(false);
 
-  const fetchProfile = useCallback(async (userId: string) => {
+  const fetchProfile = async (userId: string) => {
     if (isFetchingProfileRef.current) {
       return;
     }
@@ -46,7 +46,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
             .single();
 
           if (insertError) {
-            console.error('Failed to create profile:', insertError);
             setProfile(null);
           } else {
             setProfile(newProfile);
@@ -54,7 +53,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
           }
         }
       } else if (error) {
-        console.error('Failed to fetch profile:', error);
         setProfile(null);
       } else {
         setProfile(profileData);
@@ -63,13 +61,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
           setShowRoleModal(true);
         }
       }
-    } catch (err) {
-      console.error('Unexpected error fetching profile:', err);
+    } catch {
       setProfile(null);
     } finally {
       isFetchingProfileRef.current = false;
     }
-  }, []);
+  };
 
   useEffect(() => {
     const initAuth = async () => {
@@ -111,10 +108,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return () => {
       subscription.unsubscribe();
     };
-  }, [fetchProfile]);
+  }, []);
 
   const handleSignOut = async () => {
-    await authService.signOut();
+    await signOut();
     setUser(null);
     setSession(null);
     setProfile(null);
@@ -123,22 +120,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const handleRoleSelection = async (role: UserRole, fullName: string) => {
     if (!user) return;
     
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ 
-          role,
-          full_name: fullName,
-        })
-        .eq('user_id', user.id);
+    const { error } = await supabase
+      .from('profiles')
+      .update({ 
+        role,
+        full_name: fullName,
+      })
+      .eq('user_id', user.id);
 
-      if (error) throw error;
+    if (error) throw error;
 
-      await fetchProfile(user.id);
-      setShowRoleModal(false);
-    } catch (error) {
-      throw error;
-    }
+    await fetchProfile(user.id);
+    setShowRoleModal(false);
   };
 
   const value = {

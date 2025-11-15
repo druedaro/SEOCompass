@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { teamService } from './teamService';
+import { createTeam, getTeamById, updateTeam, getTeamMembers, deleteTeam } from './teamService';
 import {
   mockSupabaseAuth,
   mockSupabaseFrom,
@@ -35,7 +35,7 @@ describe('Team Service - Moscow Method Tests', () => {
     );
     mockSupabaseFrom.mockReturnValueOnce(insertBuilder);
 
-    const result = await teamService.createTeam({
+    const result = await createTeam({
       name: 'Test Team',
       description: 'A test team',
     });
@@ -60,7 +60,7 @@ describe('Team Service - Moscow Method Tests', () => {
     );
     mockSupabaseFrom.mockReturnValueOnce(selectBuilder);
 
-    const result = await teamService.getTeamById('team-123');
+    const result = await getTeamById('team-123');
 
     expect(result).toEqual(mockTeam);
   });
@@ -83,7 +83,7 @@ describe('Team Service - Moscow Method Tests', () => {
     );
     mockSupabaseFrom.mockReturnValueOnce(updateBuilder);
 
-    const result = await teamService.updateTeam('team-123', {
+    const result = await updateTeam('team-123', {
       name: 'Updated Team',
       description: 'Updated description',
     });
@@ -124,7 +124,7 @@ describe('Team Service - Moscow Method Tests', () => {
       .mockReturnValueOnce(membersBuilder)
       .mockReturnValueOnce(profileBuilder1);
 
-    const result = await teamService.getTeamMembers('team-123');
+    const result = await getTeamMembers('team-123');
 
     expect(result).toHaveLength(1);
     expect(result[0]).toHaveProperty('profile');
@@ -150,7 +150,7 @@ describe('Team Service - Moscow Method Tests', () => {
       .mockReturnValueOnce(selectBuilder)
       .mockReturnValueOnce(deleteBuilder);
 
-    await teamService.deleteTeam('team-123');
+    await deleteTeam('team-123');
 
     expect(mockSupabaseAuth.getUser).toHaveBeenCalled();
     expect(selectBuilder.select).toHaveBeenCalledWith('user_id');

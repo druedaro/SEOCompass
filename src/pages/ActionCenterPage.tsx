@@ -8,7 +8,7 @@ import { Pagination } from '@/components/molecules/Pagination';
 import { CreateTaskModal } from '@/components/organisms/CreateTaskModal';
 import { EmptyState } from '@/components/molecules/EmptyState';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
-import { Task, taskService, TaskFilters as TaskFiltersType } from '@/services/taskService';
+import { Task, getTasksByProject, TaskFilters as TaskFiltersType } from '@/services/taskService';
 import { useProject } from '@/hooks/useProject';
 import { showErrorToast } from '@/lib/toast';
 
@@ -44,7 +44,7 @@ export function ActionCenterPage() {
 
     setIsLoading(true);
     try {
-      const response = await taskService.getTasksByProject(
+      const response = await getTasksByProject(
         currentProject.id,
         filters,
         currentPage
@@ -52,9 +52,8 @@ export function ActionCenterPage() {
       setTasks(response.tasks);
       setTotalTasks(response.total);
       setTotalPages(response.totalPages);
-    } catch (err) {
-      console.error('Failed to load tasks', err);
-      showErrorToast('Failed to load tasks', 'Please try again.');
+    } catch {
+      showErrorToast('Failed to load tasks. Please try again.');
       setTasks([]);
       setTotalTasks(0);
       setTotalPages(0);
@@ -64,8 +63,7 @@ export function ActionCenterPage() {
   };
 
   useEffect(() => {
-    void loadTasks();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    loadTasks();
   }, [currentProject?.id, filters, currentPage]);
 
   const handleFiltersChange = (newFilters: TaskFiltersType) => {

@@ -69,8 +69,7 @@ export default function TeamSettingsPage() {
         setMarkerPosition(null);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentTeam?.id, isLoaded]);
+  }, [currentTeam, isLoaded, reset]);
 
   const onSubmit = async (data: UpdateTeamFormData) => {
     if (!currentTeam) return;
@@ -79,9 +78,8 @@ export default function TeamSettingsPage() {
     try {
       await updateTeam(currentTeam.id, { ...data, location });
       showSuccessToast('Team updated successfully');
-    } catch (err) {
-      console.error('Failed to update team:', err);
-      showErrorToast('Failed to update team', 'Please try again.');
+    } catch {
+      showErrorToast('Failed to update team');
     } finally {
       setIsLoading(false);
     }
@@ -94,9 +92,8 @@ export default function TeamSettingsPage() {
     try {
       await deleteTeam(currentTeam.id);
       showSuccessToast('Team deleted successfully');
-    } catch (err) {
-      console.error('Failed to delete team:', err);
-      showErrorToast('Failed to delete team', 'Please try again.');
+    } catch {
+      showErrorToast('Failed to delete team. Please try again.');
     } finally {
       setIsLoading(false);
       setShowDeleteDialog(false);
@@ -110,9 +107,8 @@ export default function TeamSettingsPage() {
     try {
       await leaveTeam();
       showSuccessToast('You have left the team');
-    } catch (err) {
-      console.error('Failed to leave team:', err);
-      showErrorToast('Failed to leave team', 'Please try again.');
+    } catch {
+      showErrorToast('Failed to leave team. Please try again.');
     } finally {
       setIsLoading(false);
       setShowLeaveDialog(false);

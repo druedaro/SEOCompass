@@ -2,20 +2,14 @@ import toast from 'react-hot-toast';
 
 export { toast };
 
-export function showSuccessToast(title: string, description?: string) {
-  const message = description ? `${title}: ${description}` : title;
+export function showSuccessToast(message: string) {
   toast.success(message);
 }
 
-export function showErrorToast(title: string, description?: string) {
-  const message = description ? `${title}: ${description}` : title;
+export function showErrorToast(message: string) {
   toast.error(message);
 }
 
 export function showInfoToast(message: string) {
   toast(message);
-}
-
-export function showWarningToast(message: string) {
-  toast(message, { icon: '⚠️' });
 }

@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { AuthProvider } from './auth/AuthProvider';
-import { WorkspaceProvider } from './contexts/WorkspaceContext';
-import { ProjectProvider } from './contexts/ProjectContext';
+import { AuthProvider } from '@/auth/AuthProvider';
+import { WorkspaceProvider } from '@/contexts/WorkspaceContext';
+import { ProjectProvider } from '@/contexts/ProjectContext';
 import { ProtectedRoute } from '@/routes/ProtectedRoute';
 import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
@@ -132,10 +132,10 @@ function App() {
 
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
+            <Toaster />
           </ProjectProvider>
         </WorkspaceProvider>
       </AuthProvider>
-      <Toaster />
     </BrowserRouter>
   );
 }

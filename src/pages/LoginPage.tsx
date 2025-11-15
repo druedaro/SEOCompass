@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { loginSchema, type LoginFormData } from '@/schemas/authSchema';
-import { authService } from '@/services/authService';
+import { signIn, signInWithGoogle } from '@/services/authService';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
@@ -44,7 +44,7 @@ export function LoginPage() {
       setIsLoading(true);
       setError(null);
       
-      await authService.signIn(data);
+      await signIn(data);
       
       navigate('/dashboard');
     } catch (err) {
@@ -65,7 +65,7 @@ export function LoginPage() {
     try {
       setIsLoading(true);
       setError(null);
-      await authService.signInWithGoogle();
+      await signInWithGoogle();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to sign in with Google');
       setIsLoading(false);

@@ -23,8 +23,9 @@ export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
 
   const handleStatusChange = (status: string) => {
     if (status === 'all') {
-      const { status: _statusToRemove, ...rest } = filters;
-      onFiltersChange(rest);
+      const newFilters = { ...filters };
+      delete newFilters.status;
+      onFiltersChange(newFilters);
     } else {
       onFiltersChange({ ...filters, status: status as TaskStatus });
     }
@@ -32,8 +33,9 @@ export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
 
   const handleAssigneeChange = (assignee: string) => {
     if (assignee === 'all') {
-      const { assigned_to: _assignedToRemove, ...rest } = filters;
-      onFiltersChange(rest);
+      const newFilters = { ...filters };
+      delete newFilters.assigned_to;
+      onFiltersChange(newFilters);
     } else if (assignee === 'unassigned') {
       onFiltersChange({ ...filters, assigned_to: null });
     } else {
@@ -72,11 +74,9 @@ export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
         <Label className="text-sm">Assigned to:</Label>
         <Select
           value={
-            filters.assigned_to === undefined
-              ? 'all'
-              : filters.assigned_to === null
-              ? 'unassigned'
-              : filters.assigned_to
+            filters.assigned_to === undefined ? 'all' :
+            filters.assigned_to === null ? 'unassigned' :
+            filters.assigned_to
           }
           onValueChange={handleAssigneeChange}
         >

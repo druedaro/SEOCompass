@@ -26,7 +26,7 @@ export function useUrlDetails(urlId?: string) {
         }
       } catch (error) {
         const err = error as Error;
-        showErrorToast('Error loading URL details', err.message);
+        showErrorToast(`Error loading URL details: ${err.message}`);
       } finally {
         setIsLoading(false);
       }

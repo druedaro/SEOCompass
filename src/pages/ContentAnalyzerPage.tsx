@@ -56,15 +56,15 @@ export default function ContentAnalyzerPage() {
             </CardHeader>
             <CardContent className="flex flex-col items-center justify-center py-12">
               <div className="text-center space-y-4">
-                <p className="text-muted-foreground max-w-md">
+                <p className="text-muted-foreground max-w-md mb-4">
                   To analyze content and track SEO performance, you need to add URLs to your project.
                   You can add up to 45 URLs per project.
                 </p>
                 {projectId && (
-                  <Link to={`/dashboard/projects/${projectId}/settings`}>
+                  <Link to={`/dashboard/projects/${projectId}/urls`}>
                     <Button>
                       <Settings className="mr-2 h-4 w-4" />
-                      Go to Settings
+                      Go to URLs Management
                     </Button>
                   </Link>
                 )}

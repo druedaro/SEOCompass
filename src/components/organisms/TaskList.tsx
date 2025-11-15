@@ -20,7 +20,7 @@ import {
 } from '@/components/molecules/DropdownMenu';
 import { Button } from '@/components/atoms/Button';
 import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
-import { Task, taskService } from '@/services/taskService';
+import { Task, deleteTask, startTask, completeTask } from '@/services/taskService';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { STATUS_CONFIG } from '@/constants/tasks';
 
@@ -52,7 +52,7 @@ export function TaskList({ tasks, onTaskUpdate, onTaskEdit }: TaskListProps) {
 
     setIsDeleting(true);
     try {
-      await taskService.deleteTask(taskToDelete.id);
+      await deleteTask(taskToDelete.id);
       onTaskUpdate();
       setDeleteDialogOpen(false);
       setTaskToDelete(null);
@@ -62,15 +62,12 @@ export function TaskList({ tasks, onTaskUpdate, onTaskEdit }: TaskListProps) {
   };
 
   const handleStatusChange = async (task: Task, newStatus: 'in_progress' | 'completed') => {
-    try {
-      if (newStatus === 'in_progress') {
-        await taskService.startTask(task.id);
-      } else {
-        await taskService.completeTask(task.id);
-      }
-      onTaskUpdate();
-    } catch {
+    if (newStatus === 'in_progress') {
+      await startTask(task.id);
+    } else {
+      await completeTask(task.id);
     }
+    onTaskUpdate();
   };
 
   if (tasks.length === 0) {
