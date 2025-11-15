@@ -3,10 +3,20 @@ import { FEATURES_DATA } from '@/constants/landing';
 
 export function FeaturesSection() {
   return (
-    <section className="py-20 sm:py-32 bg-gray-50">
-      <div className="container mx-auto px-4">
+    <section className="relative py-20 sm:py-32 bg-gray-50">
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute top-0 left-0 w-full h-full object-cover opacity-70"
+      >
+        <source src="/features.mp4" type="video/mp4" />
+      </video>
+
+      <div className="container mx-auto px-4 relative z-10">
         <div className="mx-auto max-w-2xl text-center mb-16">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4 text-shadow-md">
             Everything you need for SEO success
           </h2>
           <p className="text-lg text-muted-foreground">

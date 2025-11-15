@@ -7,17 +7,13 @@ export function HeroSection() {
   const { user } = useAuth();
 
   return (
-    <section className="relative overflow-hidden py-24 sm:py-32">
-      <div className="absolute inset-0 -z-20">
-        <div className="absolute inset-0 bg-gradient-to-br from-violet-100 via-fuchsia-100 to-cyan-100" />
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-bl from-fuchsia-300/50 to-transparent rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-cyan-300/50 to-transparent rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-br from-violet-300/40 via-transparent to-transparent rounded-full blur-3xl" />
-      </div>
-      
-      <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#8882_1px,transparent_1px),linear-gradient(to_bottom,#8882_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
+    <section className="relative overflow-hidden py-24 sm:py-32 bg-gray-50">
+      <div 
+        className="absolute top-0 left-0 right-0 bottom-0 bg-cover bg-center"
+        style={{ backgroundImage: 'url(/hero.png)' }}
+      />
 
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 relative z-10">
         <div className="mb-8 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center">
@@ -28,25 +24,23 @@ export function HeroSection() {
         </div>
 
         <div className="mx-auto max-w-3xl text-center">
-          <div className="mb-6 inline-flex items-center rounded-full border px-4 py-1.5 text-sm font-medium backdrop-blur-sm">
+          <div className="mb-6 inline-flex items-center rounded-full border border-purple-200 bg-purple-50 px-4 py-1.5 text-sm font-medium text-purple-700"> <img src="/logo.svg" alt="SEO Compass" className="h-6 w-6" />
             {HERO_DATA.badge.text}
           </div>
 
-          <h1 className="mb-6 text-4xl font-extrabold tracking-tight sm:text-5xl">
-            SEO Compass —
-            <span className="ml-2 bg-gradient-to-r from-fuchsia-600 via-violet-600 to-cyan-600 bg-clip-text text-transparent">
-              The Complete SEO Platform
-            </span>
+          <h1 className="mb-6 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+            SEO Compass — <span className="text-purple-600">The Complete SEO Platform</span>
           </h1>
 
-          <p className="mb-8 text-lg text-slate-700 sm:text-xl max-w-2xl mx-auto font-medium">
+          <p className="mb-8 text-lg text-gray-600 sm:text-xl max-w-2xl mx-auto">
             Track keywords, analyze content, run technical audits and manage fixes — all in one place for teams that ship results.
           </p>
 
           <div className="flex justify-center mb-12">
-            <Button asChild size="lg" className="px-10 py-6 text-lg font-bold bg-gradient-to-r from-fuchsia-600 to-violet-600 hover:from-fuchsia-700 hover:to-violet-700 shadow-2xl shadow-fuchsia-500/50 hover:shadow-fuchsia-600/60 transition-all duration-300 hover:scale-105 border-0">
+            <Button asChild size="lg" className="px-8 py-6 text-base font-semibold bg-purple-600 hover:bg-purple-700">
+              
               <Link to={user ? '/dashboard' : '/auth/login'}>
-                🚀 Launch App
+              Launch App
               </Link>
             </Button>
           </div>
@@ -57,10 +51,10 @@ export function HeroSection() {
               const Icon = feature.icon;
               return (
                 <div key={feature.label} className="flex flex-col items-center gap-2">
-                  <div className="rounded-lg bg-gradient-to-br from-fuchsia-100 to-violet-100 p-3 shadow-lg">
-                    <Icon className="h-6 w-6 text-fuchsia-600" />
+                  <div className="rounded-lg bg-purple-100 p-3">
+                    <Icon className="h-6 w-6 text-purple-600" />
                   </div>
-                  <span className="font-semibold text-slate-700">{feature.label}</span>
+                  <span className="font-medium text-gray-700">{feature.label}</span>
                 </div>
               );
             })}

@@ -11,7 +11,7 @@ import {
 
 export const HERO_DATA = {
   badge: {
-    text: '🚀 Now in Beta',
+    text: 'MVP Build',
   },
   heading: 'The Complete SEO Platform for Modern Teams',
   description:
