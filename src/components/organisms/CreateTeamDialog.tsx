@@ -17,6 +17,7 @@ import { LocationAutocomplete } from '@/components/molecules/LocationAutocomplet
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { createTeamSchema, CreateTeamFormData } from '@/schemas/teamSchema';
+import { DEFAULT_MAP_CENTER, MAP_CONTAINER_STYLE } from '@/constants/maps';
 
 interface CreateTeamDialogProps {
   open: boolean;
@@ -29,8 +30,7 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
   const [isLoading, setIsLoading] = useState(false);
   const [location, setLocation] = useState('');
   
-  const defaultCenter = { lat: 37.7749, lng: -122.4194 }; // San Francisco
-  const [mapCenter, setMapCenter] = useState(defaultCenter);
+  const [mapCenter, setMapCenter] = useState(DEFAULT_MAP_CENTER);
   const [markerPosition, setMarkerPosition] = useState<google.maps.LatLngLiteral | null>(null);
 
   const {
@@ -40,6 +40,7 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
     reset,
   } = useForm<CreateTeamFormData>({
     resolver: zodResolver(createTeamSchema),
+    mode: 'onBlur',
   });
 
   const onSubmit = async (data: CreateTeamFormData) => {
@@ -48,7 +49,7 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
       await createTeam({ ...data, location });
       reset();
       setLocation('');
-      setMapCenter(defaultCenter);
+      setMapCenter(DEFAULT_MAP_CENTER);
       setMarkerPosition(null);
       onOpenChange(false);
     } finally {
@@ -65,12 +66,6 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
       setMapCenter(newCenter);
       setMarkerPosition(newCenter);
     }
-  };
-
-  const mapContainerStyle = {
-    width: '100%',
-    height: '300px',
-    borderRadius: '0.5rem',
   };
 
   return (
@@ -114,25 +109,28 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
             value={location}
             onChange={setLocation}
             onPlaceSelect={handlePlaceSelect}
-            label="Location"
+            label="Location (Optional)"
             placeholder="San Francisco, CA"
             disabled={isLoading}
           />
 
-          {isLoaded && (
+          {isLoaded && markerPosition && (
             <div className="space-y-2">
               <Label>Map Preview</Label>
-              <GoogleMap
-                mapContainerStyle={mapContainerStyle}
-                center={mapCenter}
-                zoom={markerPosition ? 12 : 10}
-                options={{
-                  streetViewControl: false,
-                  mapTypeControl: false,
-                }}
-              >
-                {markerPosition && <Marker position={markerPosition} />}
-              </GoogleMap>
+              <div className="rounded-lg overflow-hidden border">
+                <GoogleMap
+                  mapContainerStyle={MAP_CONTAINER_STYLE}
+                  center={mapCenter}
+                  zoom={12}
+                  options={{
+                    streetViewControl: false,
+                    mapTypeControl: false,
+                    fullscreenControl: false,
+                  }}
+                >
+                  <Marker position={markerPosition} />
+                </GoogleMap>
+              </div>
             </div>
           )}
 

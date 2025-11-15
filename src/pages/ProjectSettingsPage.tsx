@@ -10,13 +10,16 @@ import { Label } from '@/components/atoms/Label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
 import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
 import { useProject } from '@/hooks/useProject';
+import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { projectSchema, ProjectFormData } from '@/schemas/projectSchema';
+import { showErrorToast } from '@/lib/toast';
 
 export function ProjectSettingsPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
   const { projects, currentProject, setCurrentProject, updateProject, deleteProject } = useProject();
+  const { isOwner } = useWorkspace();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -37,8 +40,10 @@ export function ProjectSettingsPage() {
     reset,
   } = useForm<ProjectFormData>({
     resolver: zodResolver(projectSchema),
+    mode: 'onBlur',
     defaultValues: {
       name: currentProject?.name || '',
+      domain: currentProject?.domain || '',
       description: currentProject?.description || '',
     },
   });
@@ -47,6 +52,7 @@ export function ProjectSettingsPage() {
     if (currentProject) {
       reset({
         name: currentProject.name,
+        domain: currentProject.domain || '',
         description: currentProject.description || '',
       });
     }
@@ -71,6 +77,7 @@ export function ProjectSettingsPage() {
       await deleteProject(currentProject.id);
       navigate('/dashboard/projects');
     } catch {
+      showErrorToast('Failed to delete project. Please try again.');
       setIsDeleting(false);
       setShowDeleteDialog(false);
     }
@@ -136,6 +143,18 @@ export function ProjectSettingsPage() {
             </div>
 
             <div className="space-y-2">
+              <Label htmlFor="domain">Domain</Label>
+              <Input
+                id="domain"
+                placeholder="example.com"
+                {...register('domain')}
+              />
+              {errors.domain && (
+                <p className="text-sm text-destructive">{errors.domain.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
               <Textarea
                 id="description"
@@ -155,32 +174,34 @@ export function ProjectSettingsPage() {
         </CardContent>
       </Card>
 
-      <Card className="border-destructive">
-        <CardHeader>
-          <CardTitle className="text-destructive">Danger Zone</CardTitle>
-          <CardDescription>
-            Irreversible and destructive actions
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="font-medium">Delete this project</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Once you delete a project, there is no going back. Please be certain.
-              </p>
+      {isOwner && (
+        <Card className="border-destructive">
+          <CardHeader>
+            <CardTitle className="text-destructive">Danger Zone</CardTitle>
+            <CardDescription>
+              Irreversible and destructive actions
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="font-medium">Delete this project</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Once you delete a project, there is no going back. Please be certain.
+                </p>
+              </div>
+              <Button
+                variant="destructive"
+                onClick={() => setShowDeleteDialog(true)}
+                disabled={isDeleting}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                {isDeleting ? 'Deleting...' : 'Delete Project'}
+              </Button>
             </div>
-            <Button
-              variant="destructive"
-              onClick={() => setShowDeleteDialog(true)}
-              disabled={isDeleting}
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              {isDeleting ? 'Deleting...' : 'Delete Project'}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
       <DeleteConfirmationDialog
         open={showDeleteDialog}

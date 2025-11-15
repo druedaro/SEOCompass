@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { LogOut, Settings} from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/atoms/Button';
-import { Avatar, AvatarFallback } from '@/components/atoms/Avatar';
+import { Avatar } from '@/components/atoms/Avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -49,7 +49,7 @@ export function Navbar() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                     <Avatar>
-                      <AvatarFallback>{getInitials(profile?.full_name)}</AvatarFallback>
+                      {getInitials(profile?.full_name)}
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
@@ -64,13 +64,6 @@ export function Navbar() {
                       )}
                     </div>
                   </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link to="/dashboard/team/settings">
-                      <Settings className="mr-2 h-4 w-4" />
-                      Team Settings
-                    </Link>
-                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={signOut}>
                     <LogOut className="mr-2 h-4 w-4" />

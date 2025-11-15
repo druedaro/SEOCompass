@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, ReactNode } from 'react';
-import { projectService } from '@/services/projectService';
+import { getProjectsByTeam, createProject as createProjectService, updateProject as updateProjectService, deleteProject as deleteProjectService } from '@/services/projectService';
 import type { Project } from '@/types/domain';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 
@@ -27,7 +27,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     try {
       setIsLoading(true);
       setError(null);
-      const data = await projectService.getProjectsByTeam(teamId);
+      const data = await getProjectsByTeam(teamId);
       setProjects(data);
       
       if (currentProject) {
@@ -50,46 +50,18 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     }
   }, [currentTeam]);
 
-  useEffect(() => {
-    if (!currentTeam) return;
-
-    const subscription = projectService.subscribeToProjects(
-      currentTeam.id,
-      (payload) => {
-        if (payload.eventType === 'INSERT') {
-          setProjects((prev) => [payload.new, ...prev]);
-        } else if (payload.eventType === 'UPDATE') {
-          setProjects((prev) =>
-            prev.map((p) => (p.id === payload.new.id ? payload.new : p))
-          );
-          if (currentProject?.id === payload.new.id) {
-            setCurrentProject(payload.new);
-          }
-        } else if (payload.eventType === 'DELETE') {
-          setProjects((prev) => prev.filter((p) => p.id !== payload.old.id));
-          if (currentProject?.id === payload.old.id) {
-            setCurrentProject(null);
-          }
-        }
-      }
-    );
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [currentTeam, currentProject]);
-
   const createProject = async (name: string, description?: string, domain?: string): Promise<Project> => {
     if (!currentTeam) throw new Error('No team selected');
 
     try {
       setError(null);
-      const newProject = await projectService.createProject(
+      const newProject = await createProjectService(
         currentTeam.id,
         name,
         description,
         domain
       );
+      setProjects((prev) => [newProject, ...prev]);
       return newProject;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create project';
@@ -104,7 +76,13 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
   ): Promise<Project> => {
     try {
       setError(null);
-      const updatedProject = await projectService.updateProject(projectId, updates);
+      const updatedProject = await updateProjectService(projectId, updates);
+      setProjects((prev) =>
+        prev.map((p) => (p.id === projectId ? updatedProject : p))
+      );
+      if (currentProject?.id === projectId) {
+        setCurrentProject(updatedProject);
+      }
       return updatedProject;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update project';
@@ -116,7 +94,12 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
   const deleteProject = async (projectId: string): Promise<void> => {
     try {
       setError(null);
-      await projectService.deleteProject(projectId);
+      await deleteProjectService(projectId);
+      
+      setProjects((prev) => prev.filter((p) => p.id !== projectId));
+      if (currentProject?.id === projectId) {
+        setCurrentProject(null);
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to delete project';
       setError(errorMessage);

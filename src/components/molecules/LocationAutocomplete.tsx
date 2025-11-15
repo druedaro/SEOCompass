@@ -31,7 +31,7 @@ export function LocationAutocomplete({
   const onPlaceChanged = () => {
     if (autocompleteRef.current) {
       const place = autocompleteRef.current.getPlace();
-      if (place.formatted_address) {
+      if (place?.formatted_address) {
         onChange(place.formatted_address);
         onPlaceSelect?.(place);
       }

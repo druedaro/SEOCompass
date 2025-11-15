@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Save, Trash2 } from 'lucide-react';
+import { Save, Trash2, LogOut } from 'lucide-react';
 import { GoogleMap, Marker } from '@react-google-maps/api';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
@@ -13,24 +13,17 @@ import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { updateTeamSchema, UpdateTeamFormData } from '@/schemas/teamSchema';
-
-const mapContainerStyle = {
-  width: '100%',
-  height: '300px',
-};
-
-const defaultCenter = {
-  lat: 37.7749, // San Francisco
-  lng: -122.4194,
-};
+import { showErrorToast, showSuccessToast } from '@/lib/toast';
+import { DEFAULT_MAP_CENTER, MAP_CONTAINER_STYLE } from '@/constants/maps';
 
 export default function TeamSettingsPage() {
-  const { currentTeam, updateTeam, deleteTeam } = useWorkspace();
+  const { currentTeam, updateTeam, deleteTeam, leaveTeam, isOwner } = useWorkspace();
   const { isLoaded } = useGoogleMaps();
   const [isLoading, setIsLoading] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showLeaveDialog, setShowLeaveDialog] = useState(false);
   const [location, setLocation] = useState(currentTeam?.location || '');
-  const [mapCenter, setMapCenter] = useState(defaultCenter);
+  const [mapCenter, setMapCenter] = useState(DEFAULT_MAP_CENTER);
   const [markerPosition, setMarkerPosition] = useState<google.maps.LatLngLiteral | null>(null);
 
   const {
@@ -38,8 +31,10 @@ export default function TeamSettingsPage() {
     handleSubmit,
     formState: { errors },
     setValue,
+    reset,
   } = useForm<UpdateTeamFormData>({
     resolver: zodResolver(updateTeamSchema),
+    mode: 'onBlur',
     defaultValues: {
       name: currentTeam?.name || '',
       description: currentTeam?.description || '',
@@ -47,12 +42,44 @@ export default function TeamSettingsPage() {
     },
   });
 
+  useEffect(() => {
+    if (currentTeam) {
+      reset({
+        name: currentTeam.name,
+        description: currentTeam.description || '',
+        location: currentTeam.location || '',
+      });
+      setLocation(currentTeam.location || '');
+      
+      if (currentTeam.location && isLoaded) {
+        const geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ address: currentTeam.location }, (results, status) => {
+          if (status === 'OK' && results && results[0]) {
+            const location = results[0].geometry.location;
+            const coords = {
+              lat: location.lat(),
+              lng: location.lng(),
+            };
+            setMapCenter(coords);
+            setMarkerPosition(coords);
+          }
+        });
+      } else {
+        setMapCenter(DEFAULT_MAP_CENTER);
+        setMarkerPosition(null);
+      }
+    }
+  }, [currentTeam, isLoaded, reset]);
+
   const onSubmit = async (data: UpdateTeamFormData) => {
     if (!currentTeam) return;
 
     setIsLoading(true);
     try {
       await updateTeam(currentTeam.id, { ...data, location });
+      showSuccessToast('Team updated successfully');
+    } catch {
+      showErrorToast('Failed to update team');
     } finally {
       setIsLoading(false);
     }
@@ -64,9 +91,27 @@ export default function TeamSettingsPage() {
     setIsLoading(true);
     try {
       await deleteTeam(currentTeam.id);
+      showSuccessToast('Team deleted successfully');
+    } catch {
+      showErrorToast('Failed to delete team. Please try again.');
     } finally {
       setIsLoading(false);
       setShowDeleteDialog(false);
+    }
+  };
+
+  const handleLeave = async () => {
+    if (!currentTeam) return;
+
+    setIsLoading(true);
+    try {
+      await leaveTeam();
+      showSuccessToast('You have left the team');
+    } catch {
+      showErrorToast('Failed to leave team. Please try again.');
+    } finally {
+      setIsLoading(false);
+      setShowLeaveDialog(false);
     }
   };
 
@@ -85,23 +130,6 @@ export default function TeamSettingsPage() {
       setMarkerPosition(newCenter);
     }
   };
-
-  useEffect(() => {
-    if (currentTeam?.location && isLoaded) {
-      const geocoder = new google.maps.Geocoder();
-      geocoder.geocode({ address: currentTeam.location }, (results, status) => {
-        if (status === 'OK' && results && results[0]) {
-          const location = results[0].geometry.location;
-          const coords = {
-            lat: location.lat(),
-            lng: location.lng(),
-          };
-          setMapCenter(coords);
-          setMarkerPosition(coords);
-        }
-      });
-    }
-  }, [currentTeam?.location, isLoaded]);
 
   if (!currentTeam) {
     return (
@@ -156,18 +184,18 @@ export default function TeamSettingsPage() {
                 value={location}
                 onChange={handleLocationChange}
                 onPlaceSelect={handlePlaceSelect}
-                label="Location"
+                label="Location (Optional)"
                 disabled={isLoading}
               />
 
-              {isLoaded && (
+              {isLoaded && markerPosition && (
                 <div className="space-y-2">
                   <Label>Map Preview</Label>
                   <div className="rounded-lg overflow-hidden border">
                     <GoogleMap
-                      mapContainerStyle={mapContainerStyle}
+                      mapContainerStyle={MAP_CONTAINER_STYLE}
                       center={mapCenter}
-                      zoom={markerPosition ? 13 : 10}
+                      zoom={13}
                       options={{
                         disableDefaultUI: false,
                         zoomControl: true,
@@ -176,12 +204,9 @@ export default function TeamSettingsPage() {
                         fullscreenControl: false,
                       }}
                     >
-                      {markerPosition && <Marker position={markerPosition} />}
+                      <Marker position={markerPosition} />
                     </GoogleMap>
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    Select a location to see it on the map
-                  </p>
                 </div>
               )}
 
@@ -193,25 +218,47 @@ export default function TeamSettingsPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-destructive">
-          <CardHeader>
-            <CardTitle className="text-destructive">Danger Zone</CardTitle>
-            <CardDescription>
-              Irreversible and destructive actions
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button
-              variant="destructive"
-              onClick={() => setShowDeleteDialog(true)}
-              disabled={isLoading}
-              className="w-full"
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete Team
-            </Button>
-          </CardContent>
-        </Card>
+        {isOwner ? (
+          <Card className="border-destructive">
+            <CardHeader>
+              <CardTitle className="text-destructive">Danger Zone</CardTitle>
+              <CardDescription>
+                Irreversible and destructive actions
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button
+                variant="destructive"
+                onClick={() => setShowDeleteDialog(true)}
+                disabled={isLoading}
+                className="w-full"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Team
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="border-destructive">
+            <CardHeader>
+              <CardTitle className="text-destructive">Leave Team</CardTitle>
+              <CardDescription>
+                Remove yourself from this team
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button
+                variant="destructive"
+                onClick={() => setShowLeaveDialog(true)}
+                disabled={isLoading}
+                className="w-full"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Leave Team
+              </Button>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       <DeleteConfirmationDialog
@@ -220,6 +267,15 @@ export default function TeamSettingsPage() {
         onConfirm={handleDelete}
         title={`Delete "${currentTeam.name}"?`}
         description="This will permanently delete the team and all its projects."
+        isLoading={isLoading}
+      />
+
+      <DeleteConfirmationDialog
+        open={showLeaveDialog}
+        onOpenChange={setShowLeaveDialog}
+        onConfirm={handleLeave}
+        title={`Leave "${currentTeam.name}"?`}
+        description="You will no longer have access to this team's projects and data."
         isLoading={isLoading}
       />
       </div>

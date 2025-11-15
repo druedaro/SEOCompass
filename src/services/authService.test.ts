@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { authService } from './authService';
+import { signUp, signIn, signOut, getSession, getCurrentUser, signInWithGoogle, resetPassword, updatePassword } from './authService';
 import type { LoginFormData, RegisterFormData } from '@/schemas/authSchema';
 import {
   mockSupabaseAuth,
@@ -46,7 +46,7 @@ describe('Authentication Service - Moscow Method Tests', () => {
         .mockReturnValueOnce(profileCheckBuilder)
         .mockReturnValueOnce(profileInsertBuilder);
 
-      const result = await authService.signUp(registerData);
+      const result = await signUp(registerData);
 
       expect(mockSupabaseAuth.signUp).toHaveBeenCalledWith({
         email: registerData.email,
@@ -74,7 +74,7 @@ describe('Authentication Service - Moscow Method Tests', () => {
         createErrorResponse('Email already registered', 'USER_ALREADY_EXISTS')
       );
 
-      await expect(authService.signUp(registerData)).rejects.toThrow();
+      await expect(signUp(registerData)).rejects.toThrow();
       expect(mockSupabaseAuth.signUp).toHaveBeenCalled();
     });
 
@@ -91,7 +91,7 @@ describe('Authentication Service - Moscow Method Tests', () => {
         createSuccessResponse({ user: mockUser, session: mockSession })
       );
 
-      const result = await authService.signIn(loginData);
+      const result = await signIn(loginData);
 
       expect(mockSupabaseAuth.signInWithPassword).toHaveBeenCalledWith({
         email: loginData.email,
@@ -111,14 +111,14 @@ describe('Authentication Service - Moscow Method Tests', () => {
         createErrorResponse('Invalid login credentials', 'INVALID_CREDENTIALS')
       );
 
-      await expect(authService.signIn(loginData)).rejects.toThrow();
+      await expect(signIn(loginData)).rejects.toThrow();
       expect(mockSupabaseAuth.signInWithPassword).toHaveBeenCalled();
     });
 
     it('should sign out current user successfully', async () => {
       mockSupabaseAuth.signOut.mockResolvedValue(createSuccessResponse({}));
 
-      await expect(authService.signOut()).resolves.not.toThrow();
+      await expect(signOut()).resolves.not.toThrow();
       expect(mockSupabaseAuth.signOut).toHaveBeenCalled();
     });
 
@@ -129,7 +129,7 @@ describe('Authentication Service - Moscow Method Tests', () => {
         createSuccessResponse({ session: mockSession })
       );
 
-      const result = await authService.getSession();
+      const result = await getSession();
 
       expect(mockSupabaseAuth.getSession).toHaveBeenCalled();
       expect(result).toEqual(mockSession);
@@ -142,7 +142,7 @@ describe('Authentication Service - Moscow Method Tests', () => {
         createSuccessResponse({ user: mockUser })
       );
 
-      const result = await authService.getCurrentUser();
+      const result = await getCurrentUser();
 
       expect(mockSupabaseAuth.getUser).toHaveBeenCalled();
       expect(result).toEqual(mockUser);
@@ -155,7 +155,7 @@ describe('Authentication Service - Moscow Method Tests', () => {
         createSuccessResponse({ provider: 'google', url: 'https://oauth.url' })
       );
 
-      const result = await authService.signInWithGoogle();
+      const result = await signInWithGoogle();
 
       expect(mockSupabaseAuth.signInWithOAuth).toHaveBeenCalledWith({
         provider: 'google',
@@ -175,7 +175,7 @@ describe('Authentication Service - Moscow Method Tests', () => {
         createSuccessResponse({})
       );
 
-      await expect(authService.resetPassword(email)).resolves.not.toThrow();
+      await expect(resetPassword(email)).resolves.not.toThrow();
 
       expect(mockSupabaseAuth.resetPasswordForEmail).toHaveBeenCalledWith(
         email,
@@ -192,7 +192,7 @@ describe('Authentication Service - Moscow Method Tests', () => {
         createSuccessResponse({ user: { id: '123' } })
       );
 
-      await expect(authService.updatePassword(newPassword)).resolves.not.toThrow();
+      await expect(updatePassword(newPassword)).resolves.not.toThrow();
 
       expect(mockSupabaseAuth.updateUser).toHaveBeenCalledWith({
         password: newPassword,

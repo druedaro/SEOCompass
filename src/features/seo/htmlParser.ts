@@ -160,12 +160,12 @@ function detectStructuredData(doc: Document): {
 
   const jsonLdScripts = doc.querySelectorAll('script[type="application/ld+json"]');
   jsonLdScripts.forEach((script) => {
-    try {
-      const data = JSON.parse(script.textContent || '');
+    const content = script.textContent;
+    if (content) {
+      const data = JSON.parse(content);
       if (data['@type']) {
         types.push(data['@type']);
       }
-    } catch (e) {
     }
   });
 

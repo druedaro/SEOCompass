@@ -69,7 +69,7 @@ export function RoleSelectionModal({ onSelectRole }: RoleSelectionModalProps) {
               <div className="text-sm text-gray-600 mt-1">
                 {role.value === 'tech_seo' && 'Focus on technical SEO aspects and website optimization'}
                 {role.value === 'content_seo' && 'Create and optimize content for search engines'}
-                {role.value === 'developer' && 'Build and maintain SEO-friendly websites'}
+                {role.value === 'seo_manager' && 'Oversee SEO strategy and coordinate team efforts'}
               </div>
             </button>
           ))}

@@ -1,8 +1,31 @@
 import { supabase } from '@/config/supabase';
 import type { Project } from '@/types/domain';
 
-export const projectService = {
-  async getProjectsByTeam(teamId: string): Promise<Project[]> {
+async function checkProjectOwnership(projectId: string): Promise<void> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { data: project } = await supabase
+    .from('projects')
+    .select('team_id')
+    .eq('id', projectId)
+    .single();
+
+  if (!project) throw new Error('Project not found');
+
+  const { data: team } = await supabase
+    .from('teams')
+    .select('user_id')
+    .eq('id', project.team_id)
+    .single();
+
+  if (!team) throw new Error('Team not found');
+  if (team.user_id !== user.id) {
+    throw new Error('Only the team owner can perform this action');
+  }
+}
+
+export async function getProjectsByTeam(teamId: string): Promise<Project[]> {
     const { data, error } = await supabase
       .from('projects')
       .select('*')
@@ -10,10 +33,10 @@ export const projectService = {
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return data || [];
-  },
+  return data || [];
+}
 
-  async getProjectById(projectId: string): Promise<Project | null> {
+export async function getProjectById(projectId: string): Promise<Project | null> {
     const { data, error } = await supabase
       .from('projects')
       .select('*')
@@ -21,10 +44,10 @@ export const projectService = {
       .single();
 
     if (error) throw error;
-    return data;
-  },
+  return data;
+}
 
-  async createProject(
+export async function createProject(
     teamId: string,
     name: string,
     description?: string,
@@ -42,10 +65,10 @@ export const projectService = {
       .single();
 
     if (error) throw error;
-    return data;
-  },
+  return data;
+}
 
-  async updateProject(
+export async function updateProject(
     projectId: string,
     updates: { name?: string; description?: string; domain?: string }
   ): Promise<Project> {
@@ -57,34 +80,16 @@ export const projectService = {
       .single();
 
     if (error) throw error;
-    return data;
-  },
+  return data;
+}
 
-  async deleteProject(projectId: string): Promise<void> {
-    const { error } = await supabase
-      .from('projects')
-      .delete()
-      .eq('id', projectId);
+export async function deleteProject(projectId: string): Promise<void> {
+  await checkProjectOwnership(projectId);
 
-    if (error) throw error;
-  },
+  const { error } = await supabase
+    .from('projects')
+    .delete()
+    .eq('id', projectId);
 
-  subscribeToProjects(
-    teamId: string,
-    callback: (payload: { eventType: string; new: any; old: any }) => void
-  ) {
-    return supabase
-      .channel(`projects:team_id=eq.${teamId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'projects',
-          filter: `team_id=eq.${teamId}`,
-        },
-        callback
-      )
-      .subscribe();
-  },
-};
+  if (error) throw error;
+}

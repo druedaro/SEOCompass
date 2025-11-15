@@ -50,7 +50,7 @@ A collaborative web platform designed for small SEO teams and freelancers to man
 - ✅ Google OAuth authentication
 - ✅ Password reset functionality
 - ✅ Protected routes and session management
-- ✅ Role-based user profiles (Tech SEO, Content SEO, Link Building, Client)
+- ✅ Role-based user profiles (Technical SEO, Content SEO, SEO Manager)
 
 ### 👥 Team Workspace
 - ✅ Team creation with name, description, and location

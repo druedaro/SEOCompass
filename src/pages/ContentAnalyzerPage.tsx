@@ -5,11 +5,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ProjectUrlsList } from '@/components/organisms/ProjectUrlsList';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useContentAnalyzer } from '@/hooks/useContentAnalyzer';
+import { useProjectUrls } from '@/hooks/useProjectUrls';
 
 export default function ContentAnalyzerPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
-  const { urls, isLoadingUrls, isAnalyzing, currentAuditingUrlId, analyzePageByUrlId } = useContentAnalyzer(projectId);
+  const { urls, isLoading: isLoadingUrls } = useProjectUrls(projectId);
+  const { isAnalyzing, currentAuditingUrlId, analyzePageByUrlId } = useContentAnalyzer(projectId);
 
   if (isLoadingUrls) {
     return (
@@ -37,21 +39,11 @@ export default function ContentAnalyzerPage() {
           </Button>
         )}
         
-        <div className="flex items-center justify-between">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tight">Content & On-Page Analyzer</h1>
-            <p className="text-muted-foreground">
-              Analyze your tracked URLs for SEO optimization and get actionable recommendations
-            </p>
-          </div>
-          {projectId && (
-            <Link to={`/dashboard/projects/${projectId}/urls`}>
-              <Button variant="outline">
-                <Settings className="mr-2 h-4 w-4" />
-                Manage URLs
-              </Button>
-            </Link>
-          )}
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">Content & On-Page Analyzer</h1>
+          <p className="text-muted-foreground">
+            Analyze your tracked URLs for SEO optimization and get actionable recommendations
+          </p>
         </div>
 
         {urls.length === 0 ? (
@@ -64,7 +56,7 @@ export default function ContentAnalyzerPage() {
             </CardHeader>
             <CardContent className="flex flex-col items-center justify-center py-12">
               <div className="text-center space-y-4">
-                <p className="text-muted-foreground max-w-md">
+                <p className="text-muted-foreground max-w-md mb-4">
                   To analyze content and track SEO performance, you need to add URLs to your project.
                   You can add up to 45 URLs per project.
                 </p>
@@ -72,7 +64,7 @@ export default function ContentAnalyzerPage() {
                   <Link to={`/dashboard/projects/${projectId}/urls`}>
                     <Button>
                       <Settings className="mr-2 h-4 w-4" />
-                      Configure URLs
+                      Go to URLs Management
                     </Button>
                   </Link>
                 )}

@@ -19,7 +19,7 @@ const mapContainerStyle = {
 };
 
 const defaultCenter = {
-  lat: 37.7749, // San Francisco (default)
+  lat: 37.7749,
   lng: -122.4194,
 };
 
@@ -39,6 +39,7 @@ export default function CreateTeamPage() {
     setValue,
   } = useForm<CreateTeamFormData>({
     resolver: zodResolver(createTeamSchema),
+    mode: 'onBlur',
   });
 
   const onSubmit = async (data: CreateTeamFormData) => {

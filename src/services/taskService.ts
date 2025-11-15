@@ -1,4 +1,5 @@
 import { supabase } from '@/config/supabase';
+import { TASKS_PER_PAGE } from '@/constants/tasks';
 
 export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent';
 export type TaskStatus = 'todo' | 'in_progress' | 'completed' | 'cancelled';
@@ -40,19 +41,75 @@ export interface UpdateTaskInput {
   assigned_to?: string;
 }
 
-export const taskService = {
-  async getTasksByProject(projectId: string): Promise<Task[]> {
-    const { data, error } = await supabase
+export interface TaskFilters {
+  status?: TaskStatus;
+  priority?: TaskPriority;
+  assigned_to?: string | null;
+  overdue?: boolean;
+}
+
+export interface PaginatedTasksResponse {
+  tasks: Task[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export async function getTasksByProject(
+    projectId: string,
+    filters?: TaskFilters,
+    page: number = 1
+  ): Promise<PaginatedTasksResponse> {
+    const from = (page - 1) * TASKS_PER_PAGE;
+    const to = from + TASKS_PER_PAGE - 1;
+
+    let query = supabase
       .from('tasks')
-      .select('*')
-      .eq('project_id', projectId)
-      .order('created_at', { ascending: false });
+      .select('*', { count: 'exact' })
+      .eq('project_id', projectId);
+
+    if (filters?.status) {
+      query = query.eq('status', filters.status);
+    }
+    if (filters?.priority) {
+      query = query.eq('priority', filters.priority);
+    }
+    if (filters?.assigned_to !== undefined) {
+      if (filters.assigned_to === null) {
+        query = query.is('assigned_to', null);
+      } else {
+        query = query.eq('assigned_to', filters.assigned_to);
+      }
+    }
+    if (filters?.overdue) {
+      const now = new Date().toISOString();
+      query = query
+        .lt('due_date', now)
+        .neq('status', 'completed');
+    }
+
+    query = query
+      .order('created_at', { ascending: false })
+      .range(from, to);
+
+    const { data, error, count } = await query;
 
     if (error) throw error;
-    return data || [];
-  },
 
-  async getTaskById(taskId: string): Promise<Task | null> {
+    const total = count || 0;
+    const totalPages = Math.ceil(total / TASKS_PER_PAGE);
+
+    return {
+      tasks: data || [],
+      total,
+      page,
+      pageSize: TASKS_PER_PAGE,
+      totalPages,
+  };
+}
+
+export async function getTaskById(taskId: string): Promise<Task | null> {
     const { data, error } = await supabase
       .from('tasks')
       .select('*')
@@ -60,11 +117,22 @@ export const taskService = {
       .single();
 
     if (error) throw error;
-    return data;
-  },
+  return data;
+}
 
-  async createTask(input: CreateTaskInput): Promise<Task> {
-    const taskData: any = {
+export async function createTask(input: CreateTaskInput): Promise<Task> {
+    interface TaskInsertData {
+      title: string;
+      description: string | null;
+      priority: TaskPriority;
+      status: TaskStatus;
+      project_id: string;
+      due_date?: string;
+      audit_reference?: string;
+      assigned_to?: string;
+    }
+
+    const taskData: TaskInsertData = {
       title: input.title,
       description: input.description || null,
       priority: input.priority || 'medium',
@@ -83,11 +151,11 @@ export const taskService = {
       .single();
 
     if (error) throw error;
-    return data;
-  },
+  return data;
+}
 
-  async updateTask(taskId: string, input: UpdateTaskInput): Promise<Task> {
-    const updateData: any = { ...input };
+export async function updateTask(taskId: string, input: UpdateTaskInput): Promise<Task> {
+    const updateData: Record<string, string | null | undefined> = { ...input };
     if ('assigned_to' in input && input.assigned_to === undefined) {
       updateData.assigned_to = null;
     }
@@ -100,19 +168,18 @@ export const taskService = {
       .single();
 
     if (error) throw error;
-    return data;
-  },
+  return data;
+}
 
-  async deleteTask(taskId: string): Promise<void> {
+export async function deleteTask(taskId: string): Promise<void> {
     const { error } = await supabase.from('tasks').delete().eq('id', taskId);
-    if (error) throw error;
-  },
+  if (error) throw error;
+}
 
-  async completeTask(taskId: string): Promise<Task> {
-    return this.updateTask(taskId, { status: 'completed' });
-  },
+export async function completeTask(taskId: string): Promise<Task> {
+  return updateTask(taskId, { status: 'completed' });
+}
 
-  async startTask(taskId: string): Promise<Task> {
-    return this.updateTask(taskId, { status: 'in_progress' });
-  },
-};
+export async function startTask(taskId: string): Promise<Task> {
+  return updateTask(taskId, { status: 'in_progress' });
+}

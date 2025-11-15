@@ -28,7 +28,7 @@ import {
   SelectValue,
 } from '@/components/atoms/Select';
 import { DatePicker } from '@/components/molecules/DatePicker';
-import { taskService, CreateTaskInput, Task } from '@/services/taskService';
+import { createTask, updateTask, CreateTaskInput, Task } from '@/services/taskService';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { PRIORITY_OPTIONS, STATUS_OPTIONS } from '@/constants/tasks';
 import { taskSchema, TaskFormData } from '@/schemas/taskSchema';
@@ -62,6 +62,7 @@ export function CreateTaskModal({
 
   const form = useForm<TaskFormData>({
     resolver: zodResolver(taskSchema),
+    mode: 'onBlur',
     defaultValues: {
       title: initialTitle || '',
       description: initialDescription || '',
@@ -113,9 +114,9 @@ export function CreateTaskModal({
       };
 
       if (isEditing && taskToEdit) {
-        await taskService.updateTask(taskToEdit.id, input);
+        await updateTask(taskToEdit.id, input);
       } else {
-        await taskService.createTask(input);
+        await createTask(input);
       }
       
       onTaskCreated();
@@ -298,7 +299,10 @@ export function CreateTaskModal({
                 Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? (isEditing ? 'Updating...' : 'Creating...') : (isEditing ? 'Update Task' : 'Create Task')}
+                {isSubmitting && isEditing && 'Updating...'}
+                {isSubmitting && !isEditing && 'Creating...'}
+                {!isSubmitting && isEditing && 'Update Task'}
+                {!isSubmitting && !isEditing && 'Create Task'}
               </Button>
             </DialogFooter>
           </form>

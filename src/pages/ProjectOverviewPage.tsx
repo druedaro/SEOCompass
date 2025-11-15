@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { ArrowLeft, Settings } from 'lucide-react';
+import { ArrowLeft, Settings, Link as LinkIcon } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
 import { useProject } from '@/hooks/useProject';
@@ -105,13 +105,22 @@ export function ProjectOverviewPage() {
               Created {timeAgo}
             </p>
           </div>
-          <Button
-            variant="outline"
-            onClick={() => navigate(`/dashboard/projects/${projectId}/settings`)}
-          >
-            <Settings className="h-4 w-4 mr-2" />
-            Settings
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => navigate(`/dashboard/projects/${projectId}/settings`)}
+            >
+              <Settings className="h-4 w-4 mr-2" />
+              Settings
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => navigate(`/dashboard/projects/${projectId}/urls`)}
+            >
+              <LinkIcon className="h-4 w-4 mr-2" />
+              Manage URLs
+            </Button>
+          </div>
         </div>
       </div>
 

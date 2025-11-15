@@ -35,6 +35,7 @@ export function ProjectModal({ open, onClose, project, mode = 'create' }: Projec
     reset,
   } = useForm<ProjectFormData>({
     resolver: zodResolver(projectSchema),
+    mode: 'onBlur',
     defaultValues: {
       name: project?.name || '',
       domain: project?.domain || '',
@@ -121,7 +122,9 @@ export function ProjectModal({ open, onClose, project, mode = 'create' }: Projec
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Saving...' : mode === 'create' ? 'Create Project' : 'Save Changes'}
+              {isSubmitting && 'Saving...'}
+              {!isSubmitting && mode === 'create' && 'Create Project'}
+              {!isSubmitting && mode === 'edit' && 'Save Changes'}
             </Button>
           </DialogFooter>
         </form>

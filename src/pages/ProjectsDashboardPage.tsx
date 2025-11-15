@@ -9,10 +9,11 @@ import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useProject } from '@/hooks/useProject';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import type { Project } from '@/types/domain';
+import { showErrorToast } from '@/lib/toast';
 
 export function ProjectsDashboardPage() {
   const navigate = useNavigate();
-  const { currentTeam, createTeam } = useWorkspace();
+  const { currentTeam, createTeam, isOwner } = useWorkspace();
   const { projects, isLoading, deleteProject } = useProject();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | undefined>(undefined);
@@ -29,7 +30,7 @@ export function ProjectsDashboardPage() {
         description: 'Default team',
       });
     } catch {
-      alert('Failed to create team. Please try again.');
+      showErrorToast('Failed to create team. Please try again.');
     } finally {
       setIsCreatingTeam(false);
     }
@@ -55,7 +56,7 @@ export function ProjectsDashboardPage() {
     try {
       await deleteProject(projectToDelete.id);
     } catch {
-      alert('Failed to delete project. Please try again.');
+      showErrorToast('Failed to delete project. Please try again.');
     } finally {
       setIsDeleting(false);
       setProjectToDelete(null);
@@ -90,8 +91,8 @@ export function ProjectsDashboardPage() {
 
   return (
     <DashboardLayout>
-      <div className="container mx-auto py-8 px-4">
-        <div className="flex items-center justify-between mb-8">
+      <div className="container mx-auto py-6 px-4 pb-4">
+        <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold">Projects</h1>
             <p className="text-muted-foreground mt-1">
@@ -106,7 +107,7 @@ export function ProjectsDashboardPage() {
 
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
+            {[1, 2, 3].map((i) => ( 
               <div key={i} className="h-48 bg-muted animate-pulse rounded-lg" />
             ))}
           </div>
@@ -131,7 +132,7 @@ export function ProjectsDashboardPage() {
                 project={project}
                 onSelect={() => handleSelectProject(project)}
                 onEdit={() => handleEditProject(project)}
-                onDelete={() => handleDeleteProject(project)}
+                onDelete={isOwner ? () => handleDeleteProject(project) : undefined}
               />
             ))}
           </div>

@@ -18,7 +18,7 @@ export const registerSchema = z.object({
   fullName: z
     .string()
     .min(1, 'Full name is required')
-    .min(2, 'Full name must be at least 2 characters')
+    .min(3, 'Full name must be at least 3 characters')
     .max(100, 'Full name must be less than 100 characters'),
   email: z
     .string()
@@ -35,11 +35,11 @@ export const registerSchema = z.object({
   confirmPassword: z
     .string()
     .min(1, 'Please confirm your password'),
-  role: z.enum(['tech_seo', 'content_seo', 'developer'], {
+  role: z.enum(['tech_seo', 'content_seo', 'seo_manager'], {
     message: 'Please select a role',
   }),
 }).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
+  message: 'Passwords do not match',
   path: ['confirmPassword'],
 });
 

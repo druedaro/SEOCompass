@@ -1,5 +1,6 @@
 import { supabase } from '@/config/supabase';
 import { getProjectUrlById } from './projectUrlsService';
+import type { Recommendation } from '@/features/seo/recommendationsEngine';
 
 export interface ScrapedContent {
   html: string;
@@ -88,7 +89,7 @@ export interface AuditHistoryEntry {
   content_score: number;
   technical_score: number;
   on_page_score: number;
-  recommendations?: any[];
+  recommendations?: Recommendation[];
 }
 
 export async function getAuditHistory(projectUrlId: string): Promise<AuditHistoryEntry[]> {
