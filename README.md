@@ -109,6 +109,10 @@ A collaborative web platform designed for small SEO teams and freelancers to man
 ### Backend & Services
 ![Supabase](https://img.shields.io/badge/Supabase-2.47-3ECF8E?style=flat&logo=supabase&logoColor=white)
 
+### API Integrations
+![Google Maps](https://img.shields.io/badge/Google_Maps-4285F4?style=flat&logo=googlemaps&logoColor=white)
+![ScrapingBee](https://img.shields.io/badge/ScrapingBee-FFA500?style=flat&logoColor=white)
+
 ### State Management & Routing
 ![React Router](https://img.shields.io/badge/React_Router-7.9-CA4245?style=flat&logo=reactrouter&logoColor=white)
 
@@ -169,9 +173,6 @@ VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 # ScrapingBee (Web Scraping & SERP Data)
 VITE_SCRAPINGBEE_API_KEY=your_scrapingbee_api_key
 
-# Google PageSpeed Insights
-VITE_PAGESPEED_API_KEY=your_pagespeed_api_key
-
 # Application
 VITE_APP_URL=http://localhost:5173
 ```
@@ -188,11 +189,6 @@ VITE_APP_URL=http://localhost:5173
 1. Create account at [scrapingbee.com](https://www.scrapingbee.com)
 2. Get API key from dashboard
 3. Free tier: 1,000 API credits
-
-**Google PageSpeed Insights:**
-1. Go to [Google Cloud Console](https://console.cloud.google.com)
-2. Enable PageSpeed Insights API
-3. Create API key
 
 ---
 
