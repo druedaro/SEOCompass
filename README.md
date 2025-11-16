@@ -362,7 +362,7 @@ src/
 │   ├── contentScrapingService.ts
 │   └── contentScrapingService.test.ts 
 │
-├── test/              ¡
+├── test/      
 │   └── setup.ts         
 │
 └── types/                     
