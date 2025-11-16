@@ -7,7 +7,7 @@ export function HeroSection() {
   const { user } = useAuth();
 
   return (
-    <section className="relative overflow-hidden py-24 sm:py-32 bg-gray-50">
+    <section className="relative overflow-hidden py-12 sm:py-36 bg-gray-50">
       <div 
         className="absolute top-0 left-0 right-0 bottom-0 bg-cover bg-center"
         style={{ backgroundImage: 'url(/hero.png)' }}
