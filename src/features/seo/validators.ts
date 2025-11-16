@@ -272,28 +272,17 @@ export function validateHreflang(hreflangTags: Array<{ hreflang: string; href: s
 export function validateRobotsMeta(robotsMeta: string | null): ValidationResult {
   const issues: string[] = [];
   const warnings: string[] = [];
-  let score = 100;
 
-  if (!robotsMeta) {
-    return { isValid: true, issues, warnings, score };
+  if (!robotsMeta || !robotsMeta.trim()) {
+    issues.push('Robots meta tag is missing.');
+    return { isValid: false, issues, warnings, score: 0 };
   }
 
-  const robotsLower = robotsMeta.toLowerCase();
+  const robotsLower = robotsMeta.toLowerCase().trim();
 
-  if (robotsLower.includes('noindex')) {
-    issues.push(SEO_MESSAGES.ROBOTS.NOINDEX);
-    score -= 100;
+  if (robotsLower.includes('index') && robotsLower.includes('follow')) {
+    return { isValid: true, issues, warnings, score: 100 };
   }
 
-  if (robotsLower.includes('nofollow')) {
-    warnings.push(SEO_MESSAGES.ROBOTS.NOFOLLOW);
-    score -= 30;
-  }
-
-  if (robotsLower.includes('none')) {
-    issues.push(SEO_MESSAGES.ROBOTS.NONE);
-    score -= 100;
-  }
-
-  return { isValid: issues.length === 0, issues, warnings, score: Math.max(0, score) };
+  return { isValid: false, issues, warnings, score: 0 };
 }
