@@ -131,14 +131,21 @@ export function validateHeadingHierarchy(headings: Array<{ level: number }>): Va
     return { isValid: false, issues: [SEO_MESSAGES.HEADINGS.NONE], warnings, score: 0 };
   }
 
-  let prevLevel = 0;
-  headings.forEach((h, i) => {
-    if (h.level > prevLevel + 1 && i > 0) {
-      warnings.push(SEO_MESSAGES.HEADINGS.HIERARCHY_SKIP(prevLevel, h.level));
+ 
+  if (headings[0].level > 1) {
+    warnings.push(SEO_MESSAGES.HEADINGS.HIERARCHY_SKIP(0, headings[0].level));
+    score -= 15;
+  }
+
+  for (let i = 1; i < headings.length; i++) {
+    const currentLevel = headings[i].level;
+    const prevLevel = headings[i - 1].level;
+    
+    if (currentLevel > prevLevel + 1) {
+      warnings.push(SEO_MESSAGES.HEADINGS.HIERARCHY_SKIP(prevLevel, currentLevel));
       score -= 10;
     }
-    prevLevel = h.level;
-  });
+  }
 
   return { isValid: issues.length === 0, issues, warnings, score: Math.max(0, score) };
 }
