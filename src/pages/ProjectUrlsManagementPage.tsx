@@ -143,7 +143,7 @@ export default function ProjectUrlsManagementPage() {
             All URLs tracked in this project
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="max-h-[600px] overflow-y-auto">
           {urls.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <p>No URLs added yet. Add your first URL above to start tracking.</p>

@@ -75,7 +75,7 @@ export function TaskList({ tasks, onTaskUpdate, onTaskEdit }: TaskListProps) {
 
   return (
     <>
-      <div className="rounded-md border">
+      <div className="rounded-md border max-h-[600px] overflow-y-auto">
         <Table>
           <TableHeader>
             <TableRow>

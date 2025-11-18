@@ -125,7 +125,7 @@ export function AuditResultsTable({
         </Badge>
       </div>
 
-      <Card>
+      <Card className="max-h-[600px] overflow-y-auto">
         <Table>
           <TableHeader>
             <TableRow>
