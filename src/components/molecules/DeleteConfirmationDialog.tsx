@@ -8,15 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/atoms/AlertDialog';
-
-interface DeleteConfirmationDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onConfirm: () => void;
-  title?: string;
-  description?: string;
-  isLoading?: boolean;
-}
+import type { DeleteConfirmationDialogProps } from '@/types/componentTypes';
 
 export function DeleteConfirmationDialog({
   open,

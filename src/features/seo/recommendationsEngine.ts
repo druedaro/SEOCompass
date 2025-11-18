@@ -1,15 +1,7 @@
-import type { ValidationResult } from './validators';
+import type { ValidationResult, Recommendation } from '@/types/seoTypes';
 import { SEO_RECOMMENDATIONS } from '@/constants/seo';
 
-export interface Recommendation {
-  id: string;
-  category: 'meta' | 'content' | 'technical' | 'links' | 'images';
-  severity: 'critical' | 'warning' | 'info';
-  title: string;
-  description: string;
-  action: string;
-  priority: number;
-}
+export type { Recommendation };
 
 interface RecommendationInput {
   titleValidation: ValidationResult;

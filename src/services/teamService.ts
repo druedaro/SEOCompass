@@ -1,5 +1,5 @@
 import { supabase } from '@/config/supabase';
-import type { Team, TeamMember } from '@/types/domain';
+import type { Team, TeamMember } from '@/types/team';
 import type { CreateTeamFormData, UpdateTeamFormData } from '@/schemas/teamSchema';
 
 async function checkTeamOwnership(teamId: string): Promise<void> {

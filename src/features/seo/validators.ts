@@ -1,11 +1,7 @@
 import { SEO_LIMITS, SEO_MESSAGES } from '@/constants/seo';
+import type { ValidationResult } from '@/types/seoTypes';
 
-export interface ValidationResult {
-  isValid: boolean;
-  issues: string[];
-  warnings: string[];
-  score: number;
-}
+export type { ValidationResult };
 
 export function validateTitle(title: string | null | undefined): ValidationResult {
   const issues: string[] = [];

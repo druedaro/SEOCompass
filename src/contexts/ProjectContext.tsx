@@ -1,22 +1,12 @@
-import { createContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useState, useEffect } from 'react';
 import { getProjectsByTeam, createProject as createProjectService, updateProject as updateProjectService, deleteProject as deleteProjectService } from '@/services/projectService';
-import type { Project } from '@/types/domain';
+import type { Project } from '@/types/project';
+import type { ProjectContextType } from '@/types/context';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
-
-interface ProjectContextType {
-  projects: Project[];
-  currentProject: Project | null;
-  isLoading: boolean;
-  error: string | null;
-  setCurrentProject: (project: Project | null) => void;
-  createProject: (name: string, description?: string, domain?: string) => Promise<Project>;
-  updateProject: (projectId: string, updates: { name?: string; description?: string; domain?: string }) => Promise<Project>;
-  deleteProject: (projectId: string) => Promise<void>;
-}
 
 export const ProjectContext = createContext<ProjectContextType | null>(null);
 
-export function ProjectProvider({ children }: { children: ReactNode }) {
+export function ProjectProvider({ children }: { children: React.ReactNode }) {
   const { currentTeam } = useWorkspace();
   const [projects, setProjects] = useState<Project[]>([]);
   const [currentProject, setCurrentProject] = useState<Project | null>(null);

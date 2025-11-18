@@ -1,13 +1,9 @@
-import { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { cn } from '@/lib/utils';
 import { DASHBOARD_NAVIGATION } from '@/constants/navigation';
-
-interface DashboardLayoutProps {
-  children: ReactNode;
-}
+import type { DashboardLayoutProps } from '@/types/componentTypes';
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const location = useLocation();

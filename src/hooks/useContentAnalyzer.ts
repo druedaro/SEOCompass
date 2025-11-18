@@ -14,27 +14,11 @@ import {
   validateLinks,
   validateHreflang,
   validateRobotsMeta,
-  type ValidationResult,
 } from '@/features/seo/validators';
 import { calculateSEOScore, type SEOScoreBreakdown } from '@/features/seo/scoreCalculator';
 import { generateRecommendations, type Recommendation } from '@/features/seo/recommendationsEngine';
 import { showErrorToast, showSuccessToast, showInfoToast } from '@/lib/toast';
-
-interface ValidationResults {
-  titleValidation: ValidationResult;
-  descriptionValidation: ValidationResult;
-  urlValidation: ValidationResult;
-  h1Validation: ValidationResult;
-  headingHierarchyValidation: ValidationResult;
-  imagesValidation: ValidationResult;
-  contentLengthValidation: ValidationResult;
-  canonicalValidation: ValidationResult;
-  linksValidation: ValidationResult;
-  hreflangValidation: ValidationResult;
-  robotsValidation: ValidationResult;
-  internalLinks: number;
-  externalLinks: number;
-}
+import type { ValidationResults } from '@/types/hooks';
 
 function extractH1Texts(parsedContent: ParsedContent): string[] {
   return parsedContent.headings

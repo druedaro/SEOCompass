@@ -1,14 +1,5 @@
-import { LucideIcon } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
-
-interface EmptyStateProps {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-  actionLabel?: string;
-  onAction?: () => void;
-  className?: string;
-}
+import type { EmptyStateProps } from '@/types/componentTypes';
 
 export function EmptyState({
   icon: Icon,

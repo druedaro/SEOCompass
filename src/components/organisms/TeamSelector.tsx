@@ -8,10 +8,7 @@ import {
   SelectValue,
 } from '@/components/atoms/Select';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
-
-interface TeamSelectorProps {
-  onCreateTeam?: () => void;
-}
+import type { TeamSelectorProps } from '@/types/componentTypes';
 
 export function TeamSelector({ onCreateTeam }: TeamSelectorProps) {
   const { currentTeam, teams, switchTeam } = useWorkspace();

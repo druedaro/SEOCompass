@@ -23,12 +23,7 @@ import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmat
 import { Task, deleteTask, startTask, completeTask } from '@/services/taskService';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { STATUS_CONFIG } from '@/constants/tasks';
-
-interface TaskListProps {
-  tasks: Task[];
-  onTaskUpdate: () => void;
-  onTaskEdit: (task: Task) => void;
-}
+import type { TaskListProps } from '@/types/componentTypes';
 
 export function TaskList({ tasks, onTaskUpdate, onTaskEdit }: TaskListProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);

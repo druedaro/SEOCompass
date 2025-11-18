@@ -1,5 +1,5 @@
 import { supabase } from '@/config/supabase';
-import type { Project } from '@/types/domain';
+import type { Project } from '@/types/project';
 
 async function checkProjectOwnership(projectId: string): Promise<void> {
   const { data: { user } } = await supabase.auth.getUser();

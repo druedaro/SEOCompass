@@ -1,58 +1,6 @@
-export interface HTMLMetadata {
-  title: string | null;
-  description: string | null;
-  canonicalUrl: string | null;
-  ogTitle: string | null;
-  ogDescription: string | null;
-  ogImage: string | null;
-  robots: string | null;
-  viewport: string | null;
-}
+import type { ParsedMetadata, ParsedHeading, ParsedImage, ParsedLink, ParsedContent } from '@/types/seoTypes';
 
-export interface ParsedMetadata {
-  title: string | null;
-  description: string | null;
-  canonicalUrl: string | null;
-  robots: string | null;
-  author: string | null;
-  language: string | null;
-  viewport: string | null;
-}
-
-export interface ParsedHeading {
-  level: number;
-  text: string;
-  id?: string;
-}
-
-export interface ParsedImage {
-  src: string;
-  alt: string | null;
-  title: string | null;
-  width?: number;
-  height?: number;
-}
-
-export interface ParsedLink {
-  href: string;
-  text: string;
-  rel: string | null;
-  target: string | null;
-  isInternal: boolean;
-  isExternal: boolean;
-}
-
-export interface ParsedContent {
-  metadata: ParsedMetadata;
-  headings: ParsedHeading[];
-  images: ParsedImage[];
-  links: ParsedLink[];
-  hreflangTags: Array<{ hreflang: string; href: string }>;
-  bodyText: string;
-  wordCount: number;
-  hasStructuredData: boolean;
-  structuredDataTypes: string[];
-}
+export type { ParsedMetadata, ParsedHeading, ParsedImage, ParsedLink, ParsedContent };
 
 function parseHTML(html: string): Document {
   const parser = new DOMParser();

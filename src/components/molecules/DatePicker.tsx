@@ -8,13 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/atoms/Popover';
-
-interface DatePickerProps {
-  date?: Date;
-  onDateChange: (date: Date | undefined) => void;
-  placeholder?: string;
-  className?: string;
-}
+import type { DatePickerProps } from '@/types/componentTypes';
 
 export function DatePicker({
   date,

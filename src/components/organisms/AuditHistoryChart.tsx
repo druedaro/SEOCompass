@@ -2,11 +2,7 @@ import { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { getAuditHistory, type AuditHistoryEntry } from '@/services/contentScrapingService';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
-
-interface AuditHistoryChartProps {
-  projectUrlId: string;
-  urlLabel: string;
-}
+import type { AuditHistoryChartProps } from '@/types/componentTypes';
 
 export function AuditHistoryChart({ projectUrlId, urlLabel }: AuditHistoryChartProps) {
   const [history, setHistory] = useState<AuditHistoryEntry[]>([]);

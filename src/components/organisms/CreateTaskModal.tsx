@@ -28,21 +28,11 @@ import {
   SelectValue,
 } from '@/components/atoms/Select';
 import { DatePicker } from '@/components/molecules/DatePicker';
-import { createTask, updateTask, CreateTaskInput, Task } from '@/services/taskService';
+import { createTask, updateTask, type CreateTaskInput } from '@/services/taskService';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { PRIORITY_OPTIONS, STATUS_OPTIONS } from '@/constants/tasks';
 import { taskSchema, TaskFormData } from '@/schemas/taskSchema';
-
-interface CreateTaskModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  projectId: string;
-  onTaskCreated: () => void;
-  auditReference?: string;
-  initialTitle?: string;
-  initialDescription?: string;
-  taskToEdit?: Task | null;
-}
+import type { CreateTaskModalProps } from '@/types/componentTypes';
 
 export function CreateTaskModal({
   open,

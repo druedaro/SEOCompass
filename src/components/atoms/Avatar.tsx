@@ -1,9 +1,5 @@
 import { cn } from '@/lib/utils';
-
-interface AvatarProps {
-  children: React.ReactNode;
-  className?: string;
-}
+import type { AvatarProps } from '@/types/componentTypes';
 
 export function Avatar({ children, className }: AvatarProps) {
   return (

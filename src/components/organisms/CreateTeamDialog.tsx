@@ -18,11 +18,7 @@ import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { createTeamSchema, CreateTeamFormData } from '@/schemas/teamSchema';
 import { DEFAULT_MAP_CENTER, MAP_CONTAINER_STYLE } from '@/constants/maps';
-
-interface CreateTeamDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
+import type { CreateTeamDialogProps } from '@/types/componentTypes';
 
 export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) {
   const { createTeam } = useWorkspace();

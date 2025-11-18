@@ -14,15 +14,8 @@ import { Input } from '@/components/atoms/Input';
 import { Textarea } from '@/components/atoms/Textarea';
 import { Label } from '@/components/atoms/Label';
 import { useProject } from '@/hooks/useProject';
-import type { Project } from '@/types/domain';
 import { projectSchema, ProjectFormData } from '@/schemas/projectSchema';
-
-interface ProjectModalProps {
-  open: boolean;
-  onClose: () => void;
-  project?: Project;
-  mode?: 'create' | 'edit';
-}
+import type { ProjectModalProps } from '@/types/componentTypes';
 
 export function ProjectModal({ open, onClose, project, mode = 'create' }: ProjectModalProps) {
   const { createProject, updateProject } = useProject();

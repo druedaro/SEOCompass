@@ -3,15 +3,7 @@ import { Autocomplete } from '@react-google-maps/api';
 import { Input } from '@/components/atoms/Input';
 import { Label } from '@/components/atoms/Label';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
-
-interface LocationAutocompleteProps {
-  value: string;
-  onChange: (value: string) => void;
-  onPlaceSelect?: (place: google.maps.places.PlaceResult) => void;
-  label?: string;
-  placeholder?: string;
-  disabled?: boolean;
-}
+import type { LocationAutocompleteProps } from '@/types/componentTypes';
 
 export function LocationAutocomplete({
   value,

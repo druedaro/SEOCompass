@@ -8,15 +8,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/molecules/DropdownMenu';
-import type { Project } from '@/types/domain';
+import type { ProjectCardProps } from '@/types/componentTypes';
 import { formatDistanceToNow } from 'date-fns';
-
-interface ProjectCardProps {
-  project: Project;
-  onSelect?: () => void;
-  onEdit?: () => void;
-  onDelete?: () => void;
-}
 
 export function ProjectCard({ project, onSelect, onEdit, onDelete }: ProjectCardProps) {
   const createdDate = new Date(project.created_at);

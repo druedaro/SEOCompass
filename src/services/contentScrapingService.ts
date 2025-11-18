@@ -1,20 +1,8 @@
 import { supabase } from '@/config/supabase';
 import { getProjectUrlById } from './projectUrlsService';
-import type { Recommendation } from '@/features/seo/recommendationsEngine';
+import type { ScrapedContent, ScrapeOptions, AuditHistoryEntry } from '@/types/audit';
 
-export interface ScrapedContent {
-  html: string;
-  statusCode: number;
-  finalUrl: string;
-  headers: Record<string, string>;
-  projectUrlId?: string;
-}
-
-export interface ScrapeOptions {
-  renderJs?: boolean;
-  premiumProxy?: boolean;
-  countryCode?: string;
-}
+export type { ScrapedContent, ScrapeOptions, AuditHistoryEntry };
 
 export async function scrapeByProjectUrlId(
   projectUrlId: string,
@@ -79,17 +67,6 @@ export async function checkUrlStatus(url: string): Promise<{
       finalUrl: url,
     };
   }
-}
-
-export interface AuditHistoryEntry {
-  id: string;
-  created_at: string;
-  overall_score: number;
-  meta_score: number;
-  content_score: number;
-  technical_score: number;
-  on_page_score: number;
-  recommendations?: Recommendation[];
 }
 
 export async function getAuditHistory(projectUrlId: string): Promise<AuditHistoryEntry[]> {

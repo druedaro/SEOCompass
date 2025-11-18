@@ -9,14 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/atoms/Table';
-import type { ProjectUrl } from '@/services/projectUrlsService';
-
-interface ProjectUrlsListProps {
-  urls: ProjectUrl[];
-  onAudit: (urlId: string) => void;
-  isAuditing?: boolean;
-  currentAuditingUrlId?: string;
-}
+import type { ProjectUrlsListProps } from '@/types/componentTypes';
 
 export function ProjectUrlsList({
   urls,

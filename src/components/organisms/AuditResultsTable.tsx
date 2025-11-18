@@ -12,19 +12,7 @@ import { Card } from '@/components/atoms/Card';
 import { AlertCircle, AlertTriangle, Info, Plus } from 'lucide-react';
 import type { Recommendation } from '@/features/seo/recommendationsEngine';
 import { CATEGORY_STYLES } from '@/constants/seo';
-
-interface AuditResultsTableProps {
-  recommendations: Recommendation[];
-  overallScore: number;
-  categoryScores: {
-    meta: number;
-    content: number;
-    technical: number;
-    onPage: number;
-  };
-  onAddTask?: (recommendation: Recommendation) => void;
-  urlLabel?: string;
-}
+import type { AuditResultsTableProps } from '@/types/componentTypes';
 
 function getSeverityBadge(severity: 'critical' | 'warning' | 'info') {
   switch (severity) {

@@ -8,14 +8,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/atoms/Select';
-import { TaskFilters as TaskFiltersType, TaskStatus } from '@/services/taskService';
+import type { TaskStatus } from '@/services/taskService';
 import { STATUS_OPTIONS } from '@/constants/tasks';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
-
-interface TaskFiltersProps {
-  filters: TaskFiltersType;
-  onFiltersChange: (filters: TaskFiltersType) => void;
-}
+import type { TaskFiltersProps } from '@/types/componentTypes';
 
 export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
   const { teamMembers } = useWorkspace();

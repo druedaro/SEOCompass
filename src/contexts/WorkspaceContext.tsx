@@ -1,37 +1,13 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { getUserTeams, getTeamMembers, createTeam as createTeamService, updateTeam as updateTeamService, deleteTeam as deleteTeamService, removeTeamMember as removeTeamMemberService, leaveTeam as leaveTeamService, isTeamOwner as isTeamOwnerService } from '@/services/teamService';
-import type { Team, TeamMember } from '@/types/domain';
+import type { Team, TeamMember } from '@/types/team';
+import type { WorkspaceContextType } from '@/types/context';
 import { useAuth } from '@/hooks/useAuth';
 import { showErrorToast } from '@/lib/toast';
 
-interface WorkspaceContextType {
-  currentTeam: Team | null;
-  setCurrentTeam: (team: Team | null) => void;
-  
-  teams: Team[];
-  isLoadingTeams: boolean;
-  teamsError: string | null;
-  refreshTeams: () => Promise<void>;
-  
-  teamMembers: TeamMember[];
-  isLoadingMembers: boolean;
-  membersError: string | null;
-  refreshMembers: () => Promise<void>;
-  currentUserMember: TeamMember | null;
-  
-  createTeam: (data: { name: string; description?: string; location?: string }) => Promise<Team>;
-  updateTeam: (teamId: string, data: { name?: string; description?: string; location?: string }) => Promise<Team>;
-  deleteTeam: (teamId: string) => Promise<void>;
-  removeTeamMember: (memberId: string) => Promise<void>;
-  leaveTeam: () => Promise<void>;
-  isTeamOwner: () => Promise<boolean>;
-  isOwner: boolean;
-  switchTeam: (teamId: string) => Promise<void>;
-}
-
 const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefined);
 
-export function WorkspaceProvider({ children }: { children: ReactNode }) {
+export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
   const [teams, setTeams] = useState<Team[]>([]);

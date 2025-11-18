@@ -1,29 +1,6 @@
-import type { ValidationResult } from './validators';
+import type { ValidationResult, SEOScoreBreakdown, ScoreCalculationInput } from '@/types/seoTypes';
 
-export interface SEOScoreBreakdown {
-  overall: number;
-  meta: number;
-  content: number;
-  technical: number;
-  onPage: number;
-}
-
-export interface ScoreCalculationInput {
-  titleValidation: ValidationResult;
-  descriptionValidation: ValidationResult;
-  urlValidation: ValidationResult;
-  h1Validation: ValidationResult;
-  headingHierarchyValidation: ValidationResult;
-  imagesValidation: ValidationResult;
-  contentLengthValidation: ValidationResult;
-  canonicalValidation?: ValidationResult;
-  linksValidation?: ValidationResult;
-  hreflangValidation?: ValidationResult;
-  robotsValidation?: ValidationResult;
-  hasStructuredData?: boolean;
-  internalLinks?: number;
-  externalLinks?: number;
-}
+export type { SEOScoreBreakdown, ScoreCalculationInput, ValidationResult };
 
 const WEIGHTS = {
   TITLE: 0.16,
