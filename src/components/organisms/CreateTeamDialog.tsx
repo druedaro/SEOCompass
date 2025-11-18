@@ -17,6 +17,7 @@ import { LocationAutocomplete } from '@/components/molecules/LocationAutocomplet
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { createTeamSchema, CreateTeamFormData } from '@/schemas/teamSchema';
+import { showSuccessToast } from '@/lib/toast';
 import { DEFAULT_MAP_CENTER, MAP_CONTAINER_STYLE } from '@/constants/maps';
 import type { CreateTeamDialogProps } from '@/types/componentTypes';
 
@@ -43,6 +44,7 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
     setIsLoading(true);
     try {
       await createTeam({ ...data, location });
+      showSuccessToast('Team created successfully!');
       reset();
       setLocation('');
       setMapCenter(DEFAULT_MAP_CENTER);
