@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { loginSchema, type LoginFormData } from '@/schemas/authSchema';
-import { signIn, signInWithGoogle } from '@/services/auth';
+import { signIn, signInWithGoogle } from '@/services/auth/authService';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';

@@ -28,7 +28,7 @@ import {
   SelectValue,
 } from '@/components/atoms/Select';
 import { DatePicker } from '@/components/molecules/DatePicker';
-import { createTask, updateTask, type CreateTaskInput } from '@/services/task';
+import { createTask, updateTask, type CreateTaskInput } from '@/services/task/taskService';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { PRIORITY_OPTIONS, STATUS_OPTIONS } from '@/constants/tasks';
 import { taskSchema, TaskFormData } from '@/schemas/taskSchema';

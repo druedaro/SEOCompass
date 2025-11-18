@@ -4,8 +4,8 @@ import {
   addProjectUrl,
   deleteProjectUrl,
   type ProjectUrl,
-} from '@/services/projectUrls';
-import { showErrorToast, showSuccessToast, toast } from '@/lib/toast';
+} from '@/services/projectUrls/projectUrlsService';
+import { showErrorToast, showSuccessToast } from '@/lib/toast';
 
 export function useProjectUrls(projectId?: string) {
   const [urls, setUrls] = useState<ProjectUrl[]>([]);
@@ -63,7 +63,7 @@ export function useProjectUrls(projectId?: string) {
   const handleDeleteUrl = async (urlId: string) => {
     try {
       await deleteProjectUrl(urlId);
-      toast('URL Deleted - Successfully removed from project', { icon: '🗑️' });
+      showSuccessToast('URL deleted successfully');
       await loadUrls();
     } catch (error) {
       const err = error as Error;

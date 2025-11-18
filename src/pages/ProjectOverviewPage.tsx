@@ -1,25 +1,23 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { ArrowLeft, Settings, Link as LinkIcon } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
 import { Badge } from '@/components/atoms/Badge';
 import { useProject } from '@/hooks/useProject';
 import { useAuth } from '@/hooks/useAuth';
+import { useProjectStats } from '@/hooks/useProjectStats';
+import { useLatestAudit } from '@/hooks/useLatestAudit';
 import { formatDistanceToNow } from 'date-fns';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
-import { supabase } from '@/config/supabase';
 
 export function ProjectOverviewPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
   const { projects, currentProject, setCurrentProject } = useProject();
   const { user } = useAuth();
-  const [pagesAudited, setPagesAudited] = useState(0);
-  const [openTasks, setOpenTasks] = useState(0);
-  const [myPendingTasks, setMyPendingTasks] = useState(0);
-  const [overallScore, setOverallScore] = useState<number | null>(null);
-  const [seoScores, setSeoScores] = useState<{ content: number; meta: number; onpage: number; technical: number } | null>(null);
+  const { stats } = useProjectStats(projectId, user?.id);
+  const { audit } = useLatestAudit(projectId);
 
   useEffect(() => {
     if (projectId) {
@@ -29,74 +27,6 @@ export function ProjectOverviewPage() {
       }
     }
   }, [projectId, projects, setCurrentProject]);
-
-  useEffect(() => {
-    const fetchAuditCount = async () => {
-      if (!projectId) return;
-      
-      const { count } = await supabase
-        .from('content_audits')
-        .select('*', { count: 'exact', head: true })
-        .eq('project_id', projectId);
-      
-      setPagesAudited(count || 0);
-    };
-
-    const fetchOpenTasksCount = async () => {
-      if (!projectId) return;
-      
-      const { count } = await supabase
-        .from('tasks')
-        .select('*', { count: 'exact', head: true })
-        .eq('project_id', projectId)
-        .neq('status', 'completed')
-        .neq('status', 'cancelled');
-      
-      setOpenTasks(count || 0);
-    };
-
-    const fetchMyPendingTasks = async () => {
-      if (!projectId || !user) return;
-      
-      const { count } = await supabase
-        .from('tasks')
-        .select('*', { count: 'exact', head: true })
-        .eq('project_id', projectId)
-        .eq('assigned_to', user.id)
-        .in('status', ['todo', 'in_progress']);
-      
-      setMyPendingTasks(count || 0);
-    };
-
-    const fetchContentScores = async () => {
-      if (!projectId) return;
-      
-      const { data, error } = await supabase
-        .from('content_audits')
-        .select('overall_score, meta_score, content_score, technical_score, on_page_score')
-        .eq('project_id', projectId)
-        .order('created_at', { ascending: false })
-        .limit(1);
-      
-      if (error || !data || data.length === 0) return;
-      
-      const audit = data[0];
-      if (audit) {
-        setOverallScore(audit.overall_score || 0);
-        setSeoScores({
-          content: audit.content_score || 0,
-          meta: audit.meta_score || 0,
-          onpage: audit.on_page_score || 0,
-          technical: audit.technical_score || 0
-        });
-      }
-    };
-
-    fetchAuditCount();
-    fetchOpenTasksCount();
-    fetchMyPendingTasks();
-    fetchContentScores();
-  }, [projectId, user]);
 
   if (!currentProject) {
     return (
@@ -185,11 +115,11 @@ export function ProjectOverviewPage() {
         <Card>
           <CardHeader className="pb-3">
             <CardDescription>Pages Audited</CardDescription>
-            <CardTitle className="text-3xl">{pagesAudited}</CardTitle>
+            <CardTitle className="text-3xl">{stats.pagesAudited}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-xs text-muted-foreground">
-              {pagesAudited === 0 ? 'No pages audited yet' : `Total audits performed`}
+              {stats.pagesAudited === 0 ? 'No pages audited yet' : `Total audits performed`}
             </p>
           </CardContent>
         </Card>
@@ -197,11 +127,11 @@ export function ProjectOverviewPage() {
         <Card>
           <CardHeader className="pb-3">
             <CardDescription>Open Tasks</CardDescription>
-            <CardTitle className="text-3xl">{openTasks}</CardTitle>
+            <CardTitle className="text-3xl">{stats.openTasks}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-xs text-muted-foreground">
-              {openTasks === 0 ? 'No tasks created yet' : `Active tasks to complete`}
+              {stats.openTasks === 0 ? 'No tasks created yet' : `Active tasks to complete`}
             </p>
           </CardContent>
         </Card>
@@ -229,35 +159,41 @@ export function ProjectOverviewPage() {
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               Content Analyzer
-              {overallScore !== null && (
-                <Badge variant={overallScore >= 80 ? 'default' : overallScore >= 60 ? 'secondary' : 'destructive'}>
-                  {overallScore}%
+              {audit && (
+                <Badge variant={audit.scores.overall >= 80 ? 'default' : audit.scores.overall >= 60 ? 'secondary' : 'destructive'}>
+                  {audit.scores.overall}%
                 </Badge>
               )}
             </CardTitle>
             <CardDescription>
               Audit and optimize your content for SEO
-              <p>Last audit:</p>
+              {audit && (
+                <p className="mt-2 text-xs">
+                  Last audit: <span className="font-medium">{audit.url}</span>
+                  <br />
+                  <span className="text-muted-foreground">{formatDistanceToNow(new Date(audit.createdAt), { addSuffix: true })}</span>
+                </p>
+              )}
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {seoScores && (
+            {audit && (
               <div className="grid grid-cols-2 gap-2 mb-4 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Content:</span>
-                  <span className="font-medium">{seoScores.content}%</span>
+                  <span className="font-medium">{audit.scores.content}%</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Meta:</span>
-                  <span className="font-medium">{seoScores.meta}%</span>
+                  <span className="font-medium">{audit.scores.meta}%</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">On-Page:</span>
-                  <span className="font-medium">{seoScores.onpage}%</span>
+                  <span className="font-medium">{audit.scores.onPage}%</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Technical:</span>
-                  <span className="font-medium">{seoScores.technical}%</span>
+                  <span className="font-medium">{audit.scores.technical}%</span>
                 </div>
               </div>
             )}
@@ -288,8 +224,8 @@ export function ProjectOverviewPage() {
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               Action Center
-              {myPendingTasks > 0 && (
-                <Badge variant="secondary">{myPendingTasks} pending</Badge>
+              {stats.myPendingTasks > 0 && (
+                <Badge variant="secondary">{stats.myPendingTasks} pending</Badge>
               )}
             </CardTitle>
             <CardDescription>
@@ -297,9 +233,9 @@ export function ProjectOverviewPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {myPendingTasks > 0 ? (
+            {stats.myPendingTasks > 0 ? (
               <p className="text-sm text-muted-foreground mb-4">
-                You have {myPendingTasks} pending {myPendingTasks === 1 ? 'task' : 'tasks'} assigned to you
+                You have {stats.myPendingTasks} pending {stats.myPendingTasks === 1 ? 'task' : 'tasks'} assigned to you
               </p>
             ) : (
               <p className="text-sm text-muted-foreground mb-4">

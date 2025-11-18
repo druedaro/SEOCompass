@@ -18,7 +18,7 @@ vi.mock('@/config/supabase', () => ({
 }));
 
 const { scrapeUrl, checkUrlStatus, getAuditHistory } = 
-  await import('@/services/contentScraping');
+  await import('@/services/contentScraping/contentScrapingService');
 
 describe('Content Scraping Service - Moscow Method Tests', () => {
   beforeEach(() => {

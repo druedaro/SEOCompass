@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/atoms/Select';
-import type { TaskStatus } from '@/services/task';
+import type { TaskStatus } from '@/services/task/taskService';
 import { STATUS_OPTIONS } from '@/constants/tasks';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import type { TaskFiltersProps } from '@/types/componentTypes';

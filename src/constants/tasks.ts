@@ -1,4 +1,4 @@
-import type { TaskPriority, TaskStatus } from '@/services/task';
+import type { TaskPriority, TaskStatus } from '@/services/task/taskService';
 
 export const PRIORITY_OPTIONS = [
   { value: 'low', label: 'Low' },

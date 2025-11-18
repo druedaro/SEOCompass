@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getProjectUrlById, type ProjectUrl } from '@/services/projectUrls';
-import { getAuditHistory, type AuditHistoryEntry } from '@/services/contentScraping';
+import { getProjectUrlById, type ProjectUrl } from '@/services/projectUrls/projectUrlsService';
+import { getAuditHistory, type AuditHistoryEntry } from '@/services/contentScraping/contentScrapingService';
 import { showErrorToast } from '@/lib/toast';
 
 export function useUrlDetails(urlId?: string) {
