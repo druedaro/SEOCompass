@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from 'react';
-import { getProjectsByTeam, createProject as createProjectService, updateProject as updateProjectService, deleteProject as deleteProjectService } from '@/services/projectService';
+import { getProjectsByTeam, createProject as createProjectService, updateProject as updateProjectService, deleteProject as deleteProjectService } from '@/services/project';
 import type { Project } from '@/types/project';
 import type { ProjectContextType } from '@/types/context';
 import { useWorkspace } from '@/contexts/WorkspaceContext';

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/config/supabase';
-import { signOut } from '@/services/authService';
+import { signOut } from '@/services/auth';
 import type { Profile, UserRole } from '@/types/domain';
 import { AuthContext } from './AuthContext';
 import { RoleSelectionModal } from '@/components/organisms/RoleSelectionModal';

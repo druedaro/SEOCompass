@@ -20,7 +20,7 @@ import {
 } from '@/components/molecules/DropdownMenu';
 import { Button } from '@/components/atoms/Button';
 import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
-import { Task, deleteTask, startTask, completeTask } from '@/services/taskService';
+import { Task, deleteTask, startTask, completeTask } from '@/services/task';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { STATUS_CONFIG } from '@/constants/tasks';
 import type { TaskListProps } from '@/types/componentTypes';

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { getUserTeams, getTeamMembers, createTeam as createTeamService, updateTeam as updateTeamService, deleteTeam as deleteTeamService, removeTeamMember as removeTeamMemberService, leaveTeam as leaveTeamService, isTeamOwner as isTeamOwnerService } from '@/services/teamService';
+import { getUserTeams, getTeamMembers, createTeam as createTeamService, updateTeam as updateTeamService, deleteTeam as deleteTeamService, removeTeamMember as removeTeamMemberService, leaveTeam as leaveTeamService, isTeamOwner as isTeamOwnerService } from '@/services/team';
 import type { Team, TeamMember } from '@/types/team';
 import type { WorkspaceContextType } from '@/types/context';
 import { useAuth } from '@/hooks/useAuth';

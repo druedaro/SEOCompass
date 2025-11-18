@@ -4,7 +4,7 @@ import {
   addProjectUrl,
   deleteProjectUrl,
   type ProjectUrl,
-} from '@/services/projectUrlsService';
+} from '@/services/projectUrls';
 import { showErrorToast, showSuccessToast, toast } from '@/lib/toast';
 
 export function useProjectUrls(projectId?: string) {
