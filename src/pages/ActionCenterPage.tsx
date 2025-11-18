@@ -8,7 +8,7 @@ import { Pagination } from '@/components/molecules/Pagination';
 import { CreateTaskModal } from '@/components/organisms/CreateTaskModal';
 import { EmptyState } from '@/components/molecules/EmptyState';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
-import { Task, getTasksByProject, TaskFilters as TaskFiltersType } from '@/services/task';
+import { Task, getTasksByProject, TaskFilters as TaskFiltersType } from '@/services/task/taskService';
 import { useProject } from '@/hooks/useProject';
 import { showErrorToast } from '@/lib/toast';
 

@@ -1,5 +1,5 @@
 import { supabase } from '@/config/supabase';
-import { getProjectUrlById } from '../projectUrls';
+import { getProjectUrlById } from '../projectUrls/projectUrlsService';
 import type { ScrapedContent, ScrapeOptions, AuditHistoryEntry } from '@/types/audit';
 
 export type { ScrapedContent, ScrapeOptions, AuditHistoryEntry };

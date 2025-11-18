@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { LogOut } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { LogOut, CheckSquare, FileText } from 'lucide-react';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { Button } from '@/components/atoms/Button';
 import { Avatar } from '@/components/atoms/Avatar';
 import {
@@ -17,6 +17,12 @@ import { useAuth } from '@/hooks/useAuth';
 export function Navbar() {
   const { user, profile, signOut } = useAuth();
   const [showCreateTeamDialog, setShowCreateTeamDialog] = useState(false);
+  const location = useLocation();
+  const params = useParams<{ id: string }>();
+  
+  // Detectar si estamos en una página de proyecto y obtener el ID
+  const projectId = params.id || location.pathname.match(/\/projects\/([^/]+)/)?.[1];
+  const isInProject = projectId && location.pathname.includes('/projects/');
 
   const getInitials = (name?: string) => {
     if (!name) return user?.email?.[0].toUpperCase() || '?';
@@ -42,6 +48,23 @@ export function Navbar() {
               </Link>
 
               <TeamSelector onCreateTeam={() => setShowCreateTeamDialog(true)} />
+              
+              {isInProject && projectId && (
+                <div className="flex items-center gap-2">
+                  <Link to={`/dashboard/projects/${projectId}/actions`}>
+                    <Button variant="ghost" size="sm" className="gap-2">
+                      <CheckSquare className="h-4 w-4" />
+                      Action Center
+                    </Button>
+                  </Link>
+                  <Link to={`/dashboard/projects/${projectId}/content`}>
+                    <Button variant="ghost" size="sm" className="gap-2">
+                      <FileText className="h-4 w-4" />
+                      Content Analyzer
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </div>
 
             <div className="flex items-center gap-4">
