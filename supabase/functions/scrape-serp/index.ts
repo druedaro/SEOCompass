@@ -31,7 +31,8 @@ serve(async (req) => {
       throw new Error('ScrapingBee API key not configured');
     }
 
-    const scrapingBeeUrl = new URL('https://app.scrapingbee.com/api/v1/');
+    const scrapingBeeBaseUrl = Deno.env.get('SCRAPINGBEE_BASE_URL');
+    const scrapingBeeUrl = new URL(scrapingBeeBaseUrl);
     scrapingBeeUrl.searchParams.set('api_key', scrapingBeeApiKey);
     scrapingBeeUrl.searchParams.set('url', url);
     
@@ -54,7 +55,7 @@ serve(async (req) => {
 
     if (return_html) {
       const html = await response.text();
-      const finalUrl = response.headers.get('spb-final-url') || url; //fix para redirects en sitemaps
+      const finalUrl = response.headers.get('spb-final-url') || url;
       const statusCode = parseInt(response.headers.get('spb-status-code') || '200');
       
       return new Response(JSON.stringify({
