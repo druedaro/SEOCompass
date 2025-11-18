@@ -3,7 +3,9 @@ import { useEffect, useState } from 'react';
 import { ArrowLeft, Settings, Link as LinkIcon } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
+import { Badge } from '@/components/atoms/Badge';
 import { useProject } from '@/hooks/useProject';
+import { useAuth } from '@/hooks/useAuth';
 import { formatDistanceToNow } from 'date-fns';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { supabase } from '@/config/supabase';
@@ -12,8 +14,12 @@ export function ProjectOverviewPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
   const { projects, currentProject, setCurrentProject } = useProject();
+  const { user } = useAuth();
   const [pagesAudited, setPagesAudited] = useState(0);
   const [openTasks, setOpenTasks] = useState(0);
+  const [myPendingTasks, setMyPendingTasks] = useState(0);
+  const [overallScore, setOverallScore] = useState<number | null>(null);
+  const [seoScores, setSeoScores] = useState<{ content: number; meta: number; onpage: number; technical: number } | null>(null);
 
   useEffect(() => {
     if (projectId) {
@@ -49,9 +55,48 @@ export function ProjectOverviewPage() {
       setOpenTasks(count || 0);
     };
 
+    const fetchMyPendingTasks = async () => {
+      if (!projectId || !user) return;
+      
+      const { count } = await supabase
+        .from('tasks')
+        .select('*', { count: 'exact', head: true })
+        .eq('project_id', projectId)
+        .eq('assigned_to', user.id)
+        .in('status', ['todo', 'in_progress']);
+      
+      setMyPendingTasks(count || 0);
+    };
+
+    const fetchContentScores = async () => {
+      if (!projectId) return;
+      
+      const { data, error } = await supabase
+        .from('content_audits')
+        .select('overall_score, meta_score, content_score, technical_score, on_page_score')
+        .eq('project_id', projectId)
+        .order('created_at', { ascending: false })
+        .limit(1);
+      
+      if (error || !data || data.length === 0) return;
+      
+      const audit = data[0];
+      if (audit) {
+        setOverallScore(audit.overall_score || 0);
+        setSeoScores({
+          content: audit.content_score || 0,
+          meta: audit.meta_score || 0,
+          onpage: audit.on_page_score || 0,
+          technical: audit.technical_score || 0
+        });
+      }
+    };
+
     fetchAuditCount();
     fetchOpenTasksCount();
-  }, [projectId]);
+    fetchMyPendingTasks();
+    fetchContentScores();
+  }, [projectId, user]);
 
   if (!currentProject) {
     return (
@@ -182,12 +227,40 @@ export function ProjectOverviewPage() {
 
         <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate(`/dashboard/projects/${projectId}/content`)}>
           <CardHeader>
-            <CardTitle>Content Analyzer</CardTitle>
+            <CardTitle className="flex items-center justify-between">
+              Content Analyzer
+              {overallScore !== null && (
+                <Badge variant={overallScore >= 80 ? 'default' : overallScore >= 60 ? 'secondary' : 'destructive'}>
+                  {overallScore}%
+                </Badge>
+              )}
+            </CardTitle>
             <CardDescription>
               Audit and optimize your content for SEO
+              <p>Last audit:</p>
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {seoScores && (
+              <div className="grid grid-cols-2 gap-2 mb-4 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Content:</span>
+                  <span className="font-medium">{seoScores.content}%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Meta:</span>
+                  <span className="font-medium">{seoScores.meta}%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">On-Page:</span>
+                  <span className="font-medium">{seoScores.onpage}%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Technical:</span>
+                  <span className="font-medium">{seoScores.technical}%</span>
+                </div>
+              </div>
+            )}
             <Button variant="outline" className="w-full">
               Go to Content Analyzer →
             </Button>
@@ -213,12 +286,26 @@ export function ProjectOverviewPage() {
 
         <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate(`/dashboard/projects/${projectId}/actions`)}>
           <CardHeader>
-            <CardTitle>Action Center</CardTitle>
+            <CardTitle className="flex items-center justify-between">
+              Action Center
+              {myPendingTasks > 0 && (
+                <Badge variant="secondary">{myPendingTasks} pending</Badge>
+              )}
+            </CardTitle>
             <CardDescription>
               Manage tasks and action items
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {myPendingTasks > 0 ? (
+              <p className="text-sm text-muted-foreground mb-4">
+                You have {myPendingTasks} pending {myPendingTasks === 1 ? 'task' : 'tasks'} assigned to you
+              </p>
+            ) : (
+              <p className="text-sm text-muted-foreground mb-4">
+                No pending tasks assigned to you
+              </p>
+            )}
             <Button variant="outline" className="w-full">
               Go to Action Center →
             </Button>

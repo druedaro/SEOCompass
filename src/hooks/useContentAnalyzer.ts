@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { scrapeByProjectUrlId, type ScrapedContent } from '@/services/contentScraping';
+import { scrapeByProjectUrlId, type ScrapedContent } from '@/services/contentScraping/contentScrapingService';
 import { supabase } from '@/config/supabase';
 import { parseHTMLContent, type ParsedContent } from '@/features/seo/htmlParser';
 import {
