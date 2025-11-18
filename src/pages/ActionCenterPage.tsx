@@ -9,20 +9,17 @@ import { CreateTaskModal } from '@/components/organisms/CreateTaskModal';
 import { EmptyState } from '@/components/molecules/EmptyState';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { TaskCalendar } from '@/components/organisms/TaskCalendar';
-import { Task, getTasksByProject, TaskFilters as TaskFiltersType } from '@/services/task/taskService';
+import { Task, TaskFilters as TaskFiltersType } from '@/services/task/taskService';
+import { useTasks } from '@/hooks/useTasks';
 import { useProject } from '@/hooks/useProject';
-import { showErrorToast } from '@/lib/toast';
 
 export function ActionCenterPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const { currentProject, projects, setCurrentProject } = useProject();
   const navigate = useNavigate();
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [totalTasks, setTotalTasks] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<TaskFiltersType>({});
-  const [isLoading, setIsLoading] = useState(true);
+  const { tasks, totalTasks, totalPages, isLoading, reload } = useTasks(currentProject?.id, filters, currentPage);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
   const [activeTab, setActiveTab] = useState<'list' | 'calendar'>('list');
@@ -38,35 +35,6 @@ export function ActionCenterPage() {
     }
   }, [projectId, projects, currentProject, setCurrentProject]);
 
-  const loadTasks = async () => {
-    if (!currentProject?.id) {
-      setIsLoading(false);
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const response = await getTasksByProject(
-        currentProject.id,
-        filters,
-        currentPage
-      );
-      setTasks(response.tasks);
-      setTotalTasks(response.total);
-      setTotalPages(response.totalPages);
-    } catch {
-      showErrorToast('Failed to load tasks. Please try again.');
-      setTasks([]);
-      setTotalTasks(0);
-      setTotalPages(0);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadTasks();
-  }, [currentProject?.id, filters, currentPage]);
 
   const handleFiltersChange = (newFilters: TaskFiltersType) => {
     setFilters(newFilters);
@@ -179,7 +147,7 @@ export function ActionCenterPage() {
             <>
               <TaskList
                 tasks={tasks}
-                onTaskUpdate={loadTasks}
+                onTaskUpdate={() => {}}
                 onTaskEdit={handleTaskEdit}
               />
               <Pagination
@@ -211,7 +179,7 @@ export function ActionCenterPage() {
           if (!open) setTaskToEdit(null);
         }}
         projectId={currentProject.id}
-        onTaskCreated={loadTasks}
+        onTaskCreated={reload}
         taskToEdit={taskToEdit}
       />
     </div>

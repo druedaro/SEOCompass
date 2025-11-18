@@ -84,3 +84,25 @@ export interface Recommendation {
   action: string;
   priority: number;
 }
+
+export interface RecommendationInput {
+  titleValidation: ValidationResult;
+  title?: string | null;
+  descriptionValidation: ValidationResult;
+  description?: string | null;
+  urlValidation: ValidationResult;
+  h1Validation: ValidationResult;
+  h1s?: string[];
+  headingHierarchyValidation: ValidationResult;
+  imagesValidation: ValidationResult;
+  images?: Array<{ src: string; alt: string | null }>;
+  contentLengthValidation: ValidationResult;
+  wordCount?: number;
+  canonicalValidation?: ValidationResult;
+  robotsValidation?: ValidationResult;
+  hasStructuredData?: boolean;
+  internalLinks?: number;
+  externalLinks?: number;
+  has404Error?: boolean;
+  hasServerError?: boolean;
+}

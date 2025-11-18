@@ -1,23 +1,9 @@
 import type { ValidationResult, SEOScoreBreakdown, ScoreCalculationInput } from '@/types/seoTypes';
+import { SEO_WEIGHTS } from '@/constants/seo';
 
 export type { SEOScoreBreakdown, ScoreCalculationInput, ValidationResult };
 
-const WEIGHTS = {
-  TITLE: 0.16,
-  DESCRIPTION: 0.12,
-  URL: 0.06,
-  H1: 0.12,
-  HEADING_HIERARCHY: 0.06,
-  IMAGES: 0.10,
-  CONTENT_LENGTH: 0.15,
-  CANONICAL: 0.06,
-  STRUCTURED_DATA: 0.06,
-  INTERNAL_LINKS: 0.05,
-  EXTERNAL_LINKS: 0.04,
-  LINKS: 0.05,
-  HREFLANG: 0.02,
-  ROBOTS: 0.01,
-};
+
 
 function calculateCategoryScores(input: ScoreCalculationInput): {
   meta: number;
@@ -58,49 +44,48 @@ function calculateCategoryScores(input: ScoreCalculationInput): {
 export function calculateSEOScore(input: ScoreCalculationInput): SEOScoreBreakdown {
   let totalScore = 0;
 
-  totalScore += input.titleValidation.score * WEIGHTS.TITLE;
-  totalScore += input.descriptionValidation.score * WEIGHTS.DESCRIPTION;
-  totalScore += input.urlValidation.score * WEIGHTS.URL;
-  totalScore += input.h1Validation.score * WEIGHTS.H1;
-  totalScore += input.headingHierarchyValidation.score * WEIGHTS.HEADING_HIERARCHY;
-  totalScore += input.imagesValidation.score * WEIGHTS.IMAGES;
-  totalScore += input.contentLengthValidation.score * WEIGHTS.CONTENT_LENGTH;
+  totalScore += input.titleValidation.score * SEO_WEIGHTS.TITLE;
+  totalScore += input.descriptionValidation.score * SEO_WEIGHTS.DESCRIPTION;
+  totalScore += input.urlValidation.score * SEO_WEIGHTS.URL;
+  totalScore += input.h1Validation.score * SEO_WEIGHTS.H1;
+  totalScore += input.headingHierarchyValidation.score * SEO_WEIGHTS.HEADING_HIERARCHY;
+  totalScore += input.imagesValidation.score * SEO_WEIGHTS.IMAGES;
+  totalScore += input.contentLengthValidation.score * SEO_WEIGHTS.CONTENT_LENGTH;
 
   if (input.canonicalValidation) {
-    totalScore += input.canonicalValidation.score * WEIGHTS.CANONICAL;
+    totalScore += input.canonicalValidation.score * SEO_WEIGHTS.CANONICAL;
   } else {
-    totalScore += 85 * WEIGHTS.CANONICAL;
+    totalScore += 85 * SEO_WEIGHTS.CANONICAL;
   }
 
   if (input.hasStructuredData !== undefined) {
-    totalScore += (input.hasStructuredData ? 100 : 0) * WEIGHTS.STRUCTURED_DATA;
+    totalScore += (input.hasStructuredData ? 100 : 0) * SEO_WEIGHTS.STRUCTURED_DATA;
   } else {
-    totalScore += 50 * WEIGHTS.STRUCTURED_DATA;
+    totalScore += 50 * SEO_WEIGHTS.STRUCTURED_DATA;
   }
 
   const internalLinksScore = Math.min(100, (input.internalLinks ?? 0) * 10);
-  totalScore += internalLinksScore * WEIGHTS.INTERNAL_LINKS;
+  totalScore += internalLinksScore * SEO_WEIGHTS.INTERNAL_LINKS;
 
   const externalLinksScore = Math.min(100, (input.externalLinks ?? 0) * 20);
-  totalScore += externalLinksScore * WEIGHTS.EXTERNAL_LINKS;
+  totalScore += externalLinksScore * SEO_WEIGHTS.EXTERNAL_LINKS;
 
   if (input.linksValidation) {
-    totalScore += input.linksValidation.score * WEIGHTS.LINKS;
+    totalScore += input.linksValidation.score * SEO_WEIGHTS.LINKS;
   } else {
-    totalScore += 70 * WEIGHTS.LINKS;
+    totalScore += 70 * SEO_WEIGHTS.LINKS;
   }
 
   if (input.hreflangValidation) {
-    totalScore += input.hreflangValidation.score * WEIGHTS.HREFLANG;
+    totalScore += input.hreflangValidation.score * SEO_WEIGHTS.HREFLANG;
   } else {
-    totalScore += 80 * WEIGHTS.HREFLANG;
+    totalScore += 80 * SEO_WEIGHTS.HREFLANG;
   }
 
-
   if (input.robotsValidation) {
-    totalScore += input.robotsValidation.score * WEIGHTS.ROBOTS;
+    totalScore += input.robotsValidation.score * SEO_WEIGHTS.ROBOTS;
   } else {
-    totalScore += 100 * WEIGHTS.ROBOTS;
+    totalScore += 100 * SEO_WEIGHTS.ROBOTS;
   }
 
   const categoryScores = calculateCategoryScores(input);
