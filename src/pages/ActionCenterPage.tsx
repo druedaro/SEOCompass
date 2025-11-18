@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, ArrowLeft } from 'lucide-react';
+import { Plus, ArrowLeft, List, Calendar } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/atoms/Button';
 import { TaskList } from '@/components/organisms/TaskList';
@@ -8,6 +8,7 @@ import { Pagination } from '@/components/molecules/Pagination';
 import { CreateTaskModal } from '@/components/organisms/CreateTaskModal';
 import { EmptyState } from '@/components/molecules/EmptyState';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
+import { TaskCalendar } from '@/components/organisms/TaskCalendar';
 import { Task, getTasksByProject, TaskFilters as TaskFiltersType } from '@/services/task/taskService';
 import { useProject } from '@/hooks/useProject';
 import { showErrorToast } from '@/lib/toast';
@@ -24,6 +25,7 @@ export function ActionCenterPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
+  const [activeTab, setActiveTab] = useState<'list' | 'calendar'>('list');
 
   const activeFiltersCount = Object.keys(filters).length;
 
@@ -135,38 +137,71 @@ export function ActionCenterPage() {
         </Button>
       </div>
 
-      <TaskFilters
-        filters={filters}
-        onFiltersChange={handleFiltersChange}
-      />
+      <div className="flex items-center gap-2 mb-6">
+        <Button
+          variant={activeTab === 'list' ? 'default' : 'outline'}
+          onClick={() => setActiveTab('list')}
+          className="gap-2"
+        >
+          <List className="h-4 w-4" />
+          Tasks
+        </Button>
+        <Button
+          variant={activeTab === 'calendar' ? 'default' : 'outline'}
+          onClick={() => setActiveTab('calendar')}
+          className="gap-2"
+        >
+          <Calendar className="h-4 w-4" />
+          Calendar
+        </Button>
+      </div>
 
-      {tasks.length === 0 ? (
-        <EmptyState
-          icon={Plus}
-          title={activeFiltersCount > 0 ? "No tasks found" : "No tasks yet"}
-          description={
-            activeFiltersCount > 0
-              ? "No tasks match the selected filters. Try adjusting your filters."
-              : "Create your first task to start tracking your SEO improvements and fixes."
-          }
-          actionLabel={activeFiltersCount > 0 ? undefined : "Create Task"}
-          onAction={activeFiltersCount > 0 ? undefined : () => setCreateModalOpen(true)}
-        />
-      ) : (
+      {activeTab === 'list' && (
         <>
-          <TaskList
-            tasks={tasks}
-            onTaskUpdate={loadTasks}
-            onTaskEdit={handleTaskEdit}
+          <TaskFilters
+            filters={filters}
+            onFiltersChange={handleFiltersChange}
           />
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-            totalItems={totalTasks}
-            pageSize={15}
-          />
+
+          {tasks.length === 0 ? (
+            <EmptyState
+              icon={Plus}
+              title={activeFiltersCount > 0 ? "No tasks found" : "No tasks yet"}
+              description={
+                activeFiltersCount > 0
+                  ? "No tasks match the selected filters. Try adjusting your filters."
+                  : "Create your first task to start tracking your SEO improvements and fixes."
+              }
+              actionLabel={activeFiltersCount > 0 ? undefined : "Create Task"}
+              onAction={activeFiltersCount > 0 ? undefined : () => setCreateModalOpen(true)}
+            />
+          ) : (
+            <>
+              <TaskList
+                tasks={tasks}
+                onTaskUpdate={loadTasks}
+                onTaskEdit={handleTaskEdit}
+              />
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                totalItems={totalTasks}
+                pageSize={15}
+              />
+            </>
+          )}
         </>
+      )}
+
+      {activeTab === 'calendar' && (
+        <TaskCalendar
+          tasks={tasks}
+          onTaskClick={handleTaskEdit}
+          onDateSelect={() => {
+            setCreateModalOpen(true);
+          }}
+        />
       )}
 
       <CreateTaskModal
