@@ -21,7 +21,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/molecules/DropdownMenu';
-import { useRegister } from '@/hooks/auth/useRegister';
+import { useRegister } from '@/hooks/useRegister';
 
 export function RegisterForm() {
     const [showPassword, setShowPassword] = useState(false);

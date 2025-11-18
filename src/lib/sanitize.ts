@@ -6,7 +6,6 @@ export function sanitize(value: unknown): unknown {
   let output = value;
   output = output.normalize('NFKC');
   output = output.replace(/[\u200B-\u200F\u202A-\u202E]/g, '');
-  output = output.replace(/<script.*?>.*?<\/script>/gi, '');
   output = DOMPurify.sanitize(output);
   return typeof output === 'string' ? output : String(output);
 }
