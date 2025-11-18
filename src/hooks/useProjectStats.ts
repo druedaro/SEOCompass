@@ -22,7 +22,6 @@ export function useProjectStats(projectId: string | undefined, userId: string | 
       setIsLoading(true);
 
       try {
-        // Fetch all stats in parallel
         const [auditsResult, tasksResult, myTasksResult] = await Promise.all([
           supabase
             .from('content_audits')

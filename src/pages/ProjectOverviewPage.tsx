@@ -159,26 +159,21 @@ export function ProjectOverviewPage() {
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               Content Analyzer
-              {audit && (
-                <Badge variant={audit.scores.overall >= 80 ? 'default' : audit.scores.overall >= 60 ? 'secondary' : 'destructive'}>
-                  {audit.scores.overall}%
-                </Badge>
-              )}
             </CardTitle>
             <CardDescription>
               Audit and optimize your content for SEO
               {audit && (
-                <p className="mt-2 text-xs">
-                  Last audit: <span className="font-medium">{audit.url}</span>
-                  <br />
-                  <span className="text-muted-foreground">{formatDistanceToNow(new Date(audit.createdAt), { addSuffix: true })}</span>
-                </p>
+              <div>
+                <div className="mt-2 text-sm">
+                  Last audit:  <div className="font-medium">{audit.url}</div>
+                </div>
+                </div>
               )}
             </CardDescription>
           </CardHeader>
           <CardContent>
             {audit && (
-              <div className="grid grid-cols-2 gap-2 mb-4 text-sm">
+              <div className="grid grid-cols-2 gap-y-2 gap-x-[4.5rem] mb-4 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Content:</span>
                   <span className="font-medium">{audit.scores.content}%</span>

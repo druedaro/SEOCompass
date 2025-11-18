@@ -7,20 +7,17 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    // Parse and validate request
     const { url, extract_rules, return_html = false, render_js = true } = await req.json();
 
     if (!url || typeof url !== 'string') {
       throw new Error('Valid URL is required');
     }
 
-    // Get configuration from environment
     const scrapingBeeApiKey = Deno.env.get('SCRAPINGBEE_API_KEY');
     if (!scrapingBeeApiKey) {
       throw new Error('ScrapingBee API key not configured');
@@ -28,7 +25,6 @@ serve(async (req) => {
 
     const scrapingBeeBaseUrl = Deno.env.get('SCRAPINGBEE_BASE_URL') || 'https://app.scrapingbee.com/api/v1/';
 
-    // Initialize service and perform scraping
     const scrapingService = new ScrapingBeeService({
       apiKey: scrapingBeeApiKey,
       baseUrl: scrapingBeeBaseUrl,
