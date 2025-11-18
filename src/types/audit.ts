@@ -24,3 +24,17 @@ export interface AuditHistoryEntry {
   on_page_score: number;
   recommendations?: Recommendation[];
 }
+
+export interface SEOScores {
+  overall: number;
+  content: number;
+  meta: number;
+  onPage: number;
+  technical: number;
+}
+
+export interface LatestAudit {
+  url: string;
+  createdAt: string;
+  scores: SEOScores;
+}

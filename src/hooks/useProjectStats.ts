@@ -1,11 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/config/supabase';
-
-interface ProjectStats {
-  pagesAudited: number;
-  openTasks: number;
-  myPendingTasks: number;
-}
+import type { ProjectStats } from '@/types/stats';
 
 export function useProjectStats(projectId: string | undefined, userId: string | undefined) {
   const [stats, setStats] = useState<ProjectStats>({
@@ -27,21 +22,21 @@ export function useProjectStats(projectId: string | undefined, userId: string | 
             .from('content_audits')
             .select('*', { count: 'exact', head: true })
             .eq('project_id', projectId),
-          
+
           supabase
             .from('tasks')
             .select('*', { count: 'exact', head: true })
             .eq('project_id', projectId)
             .neq('status', 'completed')
             .neq('status', 'cancelled'),
-          
+
           userId
             ? supabase
-                .from('tasks')
-                .select('*', { count: 'exact', head: true })
-                .eq('project_id', projectId)
-                .eq('assigned_to', userId)
-                .in('status', ['todo', 'in_progress'])
+              .from('tasks')
+              .select('*', { count: 'exact', head: true })
+              .eq('project_id', projectId)
+              .eq('assigned_to', userId)
+              .in('status', ['todo', 'in_progress'])
             : Promise.resolve({ count: 0 }),
         ]);
 
