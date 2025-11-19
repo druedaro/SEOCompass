@@ -1,13 +1,6 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
-
-interface PaginationProps {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-  totalItems?: number;
-  pageSize?: number;
-}
+import type { PaginationProps } from '@/types/componentTypes';
 
 export function Pagination({
   currentPage,

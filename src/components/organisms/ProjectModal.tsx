@@ -8,21 +8,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/atoms/Dialog';
+} from '@/components/molecules/Dialog';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { Textarea } from '@/components/atoms/Textarea';
 import { Label } from '@/components/atoms/Label';
 import { useProject } from '@/hooks/useProject';
-import type { Project } from '@/types/domain';
-import { projectSchema, ProjectFormData } from '@/schemas/projectSchema';
-
-interface ProjectModalProps {
-  open: boolean;
-  onClose: () => void;
-  project?: Project;
-  mode?: 'create' | 'edit';
-}
+import { projectSchema } from '@/schemas/projectSchema';
+import type { ProjectFormData } from '@/types/schemas';
+import type { ProjectModalProps } from '@/types/componentTypes';
+import { showSuccessToast } from '@/lib/toast';
 
 export function ProjectModal({ open, onClose, project, mode = 'create' }: ProjectModalProps) {
   const { createProject, updateProject } = useProject();
@@ -46,11 +41,13 @@ export function ProjectModal({ open, onClose, project, mode = 'create' }: Projec
   const onSubmit = async (data: ProjectFormData) => {
     try {
       setIsSubmitting(true);
-      
+
       if (mode === 'edit' && project) {
         await updateProject(project.id, data);
+        showSuccessToast('Project updated successfully!');
       } else {
         await createProject(data.name, data.description, data.domain);
+        showSuccessToast('Project created successfully!');
       }
 
       reset();

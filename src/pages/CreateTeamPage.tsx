@@ -3,34 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft } from 'lucide-react';
-import { GoogleMap, Marker } from '@react-google-maps/api';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { Label } from '@/components/atoms/Label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
-import { LocationAutocomplete } from '@/components/molecules/LocationAutocomplete';
-import { useGoogleMaps } from '@/hooks/useGoogleMaps';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/Card';
+import { LocationPicker } from '@/components/organisms/LocationPicker';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
-import { createTeamSchema, CreateTeamFormData } from '@/schemas/teamSchema';
-
-const mapContainerStyle = {
-  width: '100%',
-  height: '300px',
-};
-
-const defaultCenter = {
-  lat: 37.7749,
-  lng: -122.4194,
-};
+import { createTeamSchema } from '@/schemas/teamSchema';
+import type { CreateTeamFormData } from '@/types/schemas';
 
 export default function CreateTeamPage() {
   const navigate = useNavigate();
   const { createTeam } = useWorkspace();
-  const { isLoaded } = useGoogleMaps();
   const [isLoading, setIsLoading] = useState(false);
   const [location, setLocation] = useState('');
-  const [mapCenter, setMapCenter] = useState(defaultCenter);
-  const [markerPosition, setMarkerPosition] = useState<google.maps.LatLngLiteral | null>(null);
 
   const {
     register,
@@ -55,17 +41,6 @@ export default function CreateTeamPage() {
   const handleLocationChange = (value: string) => {
     setLocation(value);
     setValue('location', value);
-  };
-
-  const handlePlaceSelect = (place: google.maps.places.PlaceResult) => {
-    if (place.geometry?.location) {
-      const lat = place.geometry.location.lat();
-      const lng = place.geometry.location.lng();
-      const newCenter = { lat, lng };
-      
-      setMapCenter(newCenter);
-      setMarkerPosition(newCenter);
-    }
   };
 
   return (
@@ -114,39 +89,13 @@ export default function CreateTeamPage() {
               )}
             </div>
 
-            <LocationAutocomplete
+            <LocationPicker
               value={location}
               onChange={handleLocationChange}
-              onPlaceSelect={handlePlaceSelect}
               label="Location (Optional)"
               placeholder="San Francisco, CA"
               disabled={isLoading}
             />
-
-            {isLoaded && (
-              <div className="space-y-2">
-                <Label>Map Preview</Label>
-                <div className="rounded-lg overflow-hidden border">
-                  <GoogleMap
-                    mapContainerStyle={mapContainerStyle}
-                    center={mapCenter}
-                    zoom={markerPosition ? 13 : 10}
-                    options={{
-                      disableDefaultUI: false,
-                      zoomControl: true,
-                      mapTypeControl: false,
-                      streetViewControl: false,
-                      fullscreenControl: false,
-                    }}
-                  >
-                    {markerPosition && <Marker position={markerPosition} />}
-                  </GoogleMap>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Select a location to see it on the map
-                </p>
-              </div>
-            )}
 
             <div className="flex gap-3 pt-4">
               <Button

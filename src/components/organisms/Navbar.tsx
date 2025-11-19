@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { LogOut } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { LogOut, CheckSquare, FileText } from 'lucide-react';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { Button } from '@/components/atoms/Button';
 import { Avatar } from '@/components/atoms/Avatar';
 import {
@@ -10,13 +10,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/molecules/DropdownMenu';
-import { TeamSelector } from '@/components/organisms/TeamSelector';
+import { TeamSelector } from '@/components/molecules/TeamSelector';
 import { CreateTeamDialog } from '@/components/organisms/CreateTeamDialog';
 import { useAuth } from '@/hooks/useAuth';
 
 export function Navbar() {
   const { user, profile, signOut } = useAuth();
   const [showCreateTeamDialog, setShowCreateTeamDialog] = useState(false);
+  const location = useLocation();
+  const params = useParams<{ id: string }>();
+
+
+  const projectId = params.id || location.pathname.match(/\/projects\/([^/]+)/)?.[1];
+  const isInProject = projectId && location.pathname.includes('/projects/');
 
   const getInitials = (name?: string) => {
     if (!name) return user?.email?.[0].toUpperCase() || '?';
@@ -30,7 +36,7 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="border-b bg-white/80 backdrop-blur-md shadow-sm">
+      <nav className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur-md shadow-sm">
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-6">
@@ -42,6 +48,23 @@ export function Navbar() {
               </Link>
 
               <TeamSelector onCreateTeam={() => setShowCreateTeamDialog(true)} />
+
+              {isInProject && projectId && (
+                <div className="hidden md:flex items-center gap-2">
+                  <Link to={`/dashboard/projects/${projectId}/actions`}>
+                    <Button variant="ghost" size="sm" className="gap-2">
+                      <CheckSquare className="h-4 w-4" />
+                      Action Center
+                    </Button>
+                  </Link>
+                  <Link to={`/dashboard/projects/${projectId}/content`}>
+                    <Button variant="ghost" size="sm" className="gap-2">
+                      <FileText className="h-4 w-4" />
+                      Content Analyzer
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </div>
 
             <div className="flex items-center gap-4">
@@ -76,9 +99,9 @@ export function Navbar() {
         </div>
       </nav>
 
-      <CreateTeamDialog 
-        open={showCreateTeamDialog} 
-        onOpenChange={setShowCreateTeamDialog} 
+      <CreateTeamDialog
+        open={showCreateTeamDialog}
+        onOpenChange={setShowCreateTeamDialog}
       />
     </>
   );

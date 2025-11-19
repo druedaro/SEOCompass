@@ -7,15 +7,11 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/atoms/Select';
-import { TaskFilters as TaskFiltersType, TaskStatus } from '@/services/taskService';
+} from '@/components/molecules/Select';
+import type { TaskStatus } from '@/types/task';
 import { STATUS_OPTIONS } from '@/constants/tasks';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
-
-interface TaskFiltersProps {
-  filters: TaskFiltersType;
-  onFiltersChange: (filters: TaskFiltersType) => void;
-}
+import type { TaskFiltersProps } from '@/types/componentTypes';
 
 export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
   const { teamMembers } = useWorkspace();
@@ -75,8 +71,8 @@ export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
         <Select
           value={
             filters.assigned_to === undefined ? 'all' :
-            filters.assigned_to === null ? 'unassigned' :
-            filters.assigned_to
+              filters.assigned_to === null ? 'unassigned' :
+                filters.assigned_to
           }
           onValueChange={handleAssigneeChange}
         >

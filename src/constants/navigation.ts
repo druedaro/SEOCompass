@@ -1,11 +1,5 @@
 import { LayoutDashboard, Users, Settings } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
-
-export interface NavigationItem {
-  name: string;
-  href: string;
-  icon: LucideIcon;
-}
+import type { NavigationItem } from '@/types/navigation';
 
 export const DASHBOARD_NAVIGATION: NavigationItem[] = [
   {

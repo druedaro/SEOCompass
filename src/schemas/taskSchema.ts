@@ -1,13 +1,14 @@
 import * as z from 'zod';
+import { sanitizedString } from './common';
 
 export const taskSchema = z.object({
-  title: z.string().min(1, 'Title is required').max(200, 'Title must be less than 200 characters'),
-  description: z.string().optional(),
+  title: sanitizedString.pipe(z.string().min(1, 'Title is required').max(200, 'Title must be less than 200 characters')),
+  description: sanitizedString.pipe(z.string().max(500)).optional(),
   priority: z.enum(['low', 'medium', 'high', 'urgent']).default('medium'),
   status: z.enum(['todo', 'in_progress', 'completed', 'cancelled']).default('todo'),
   due_date: z.string().optional(),
-  audit_reference: z.string().optional(),
-  assigned_to: z.string().optional(),
+  audit_reference: sanitizedString.pipe(z.string()).optional(),
+  assigned_to: sanitizedString.pipe(z.string()).optional(),
 });
 
-export type TaskFormData = z.infer<typeof taskSchema>;
+

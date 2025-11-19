@@ -1,7 +1,7 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Settings, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/Card';
 import { ProjectUrlsList } from '@/components/organisms/ProjectUrlsList';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useContentAnalyzer } from '@/hooks/useContentAnalyzer';

@@ -8,7 +8,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/atoms/Dialog';
+} from '@/components/molecules/Dialog';
 import {
   Form,
   FormControl,
@@ -26,23 +26,14 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/atoms/Select';
+} from '@/components/molecules/Select';
 import { DatePicker } from '@/components/molecules/DatePicker';
-import { createTask, updateTask, CreateTaskInput, Task } from '@/services/taskService';
+import { createTask, updateTask, type CreateTaskInput } from '@/services/task/taskService';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { PRIORITY_OPTIONS, STATUS_OPTIONS } from '@/constants/tasks';
-import { taskSchema, TaskFormData } from '@/schemas/taskSchema';
-
-interface CreateTaskModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  projectId: string;
-  onTaskCreated: () => void;
-  auditReference?: string;
-  initialTitle?: string;
-  initialDescription?: string;
-  taskToEdit?: Task | null;
-}
+import { taskSchema } from '@/schemas/taskSchema';
+import type { TaskFormData } from '@/types/schemas';
+import type { CreateTaskModalProps } from '@/types/componentTypes';
 
 export function CreateTaskModal({
   open,
@@ -57,7 +48,7 @@ export function CreateTaskModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const { teamMembers } = useWorkspace();
-  
+
   const isEditing = !!taskToEdit;
 
   const form = useForm<TaskFormData>({
@@ -105,7 +96,7 @@ export function CreateTaskModal({
     setIsSubmitting(true);
     try {
       const assignedToValue = data.assigned_to === 'unassigned' ? undefined : data.assigned_to;
-      
+
       const input: CreateTaskInput = {
         ...data,
         project_id: projectId,
@@ -118,7 +109,7 @@ export function CreateTaskModal({
       } else {
         await createTask(input);
       }
-      
+
       onTaskCreated();
       onOpenChange(false);
       form.reset({

@@ -1,4 +1,4 @@
-import type { TaskPriority, TaskStatus } from '@/services/taskService';
+import type { TaskPriority, TaskStatus } from '@/services/task/taskService';
 
 export const PRIORITY_OPTIONS = [
   { value: 'low', label: 'Low' },
@@ -46,12 +46,12 @@ export const PRIORITY_CONFIG: Record<
 
 export const STATUS_CONFIG: Record<
   TaskStatus,
-  { label: string; className: string }
+  { label: string; className: string; color: string }
 > = {
-  todo: { label: 'To Do', className: 'bg-gray-100 text-gray-800' },
-  in_progress: { label: 'In Progress', className: 'bg-blue-100 text-blue-800' },
-  completed: { label: 'Completed', className: 'bg-green-100 text-green-800' },
-  cancelled: { label: 'Cancelled', className: 'bg-gray-100 text-gray-800' },
+  todo: { label: 'To Do', className: 'bg-gray-100 text-gray-800', color: '#9ca3af' },
+  in_progress: { label: 'In Progress', className: 'bg-blue-100 text-blue-800', color: '#3b82f6' },
+  completed: { label: 'Completed', className: 'bg-green-100 text-green-800', color: '#10b981' },
+  cancelled: { label: 'Cancelled', className: 'bg-gray-100 text-gray-800', color: '#6b7280' },
 };
 
 export const TASKS_PER_PAGE = 15;

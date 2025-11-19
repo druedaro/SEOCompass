@@ -3,10 +3,7 @@ import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { roleOptions } from '@/schemas/authSchema';
 import type { UserRole } from '@/types/domain';
-
-interface RoleSelectionModalProps {
-  onSelectRole: (role: UserRole, fullName: string) => Promise<void>;
-}
+import type { RoleSelectionModalProps } from '@/types/componentTypes';
 
 export function RoleSelectionModal({ onSelectRole }: RoleSelectionModalProps) {
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
