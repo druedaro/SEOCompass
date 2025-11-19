@@ -1,4 +1,4 @@
-export interface ScrapingBeeResponse {
+export interface ScrapingSeoResponse {
   url: string;
   title: string;
   meta_description?: string;

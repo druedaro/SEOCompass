@@ -1,43 +1,21 @@
 /**
- * Servicio para interactuar con la API de ScrapingBee
+ * Servicio para interactuar con la API de Scraping (ScrapingSeo)
  */
+import type {
+  ScrapingSeoConfig,
+  ScrapingSeoRequest,
+  ScrapingSeoResponse,
+  ScrapingSeoHtmlResponse
+} from '../../../src/types/scraping.ts';
 
-interface ScrapingBeeConfig {
-  apiKey: string;
-  baseUrl: string;
-}
+export class ScrapingSeoService {
+  private config: ScrapingSeoConfig;
 
-interface ScrapingBeeRequest {
-  url: string;
-  extractRules?: Record<string, unknown>;
-  returnHtml?: boolean;
-  renderJs?: boolean;
-}
-
-interface ScrapingBeeResponse {
-  url: string;
-  title: string;
-  meta_description?: string;
-  h1?: string;
-  status_code: number;
-  redirect_url?: string;
-}
-
-interface ScrapingBeeHtmlResponse {
-  html: string;
-  final_url: string;
-  status_code: number;
-  headers: Record<string, string>;
-}
-
-export class ScrapingBeeService {
-  private config: ScrapingBeeConfig;
-
-  constructor(config: ScrapingBeeConfig) {
+  constructor(config: ScrapingSeoConfig) {
     this.config = config;
   }
 
-  private buildUrl(request: ScrapingBeeRequest): URL {
+  private buildUrl(request: ScrapingSeoRequest): URL {
     const url = new URL(this.config.baseUrl);
     url.searchParams.set('api_key', this.config.apiKey);
     url.searchParams.set('url', request.url);
@@ -56,12 +34,12 @@ export class ScrapingBeeService {
     return url;
   }
 
-  async scrape(request: ScrapingBeeRequest): Promise<ScrapingBeeResponse | ScrapingBeeHtmlResponse> {
+  async scrape(request: ScrapingSeoRequest): Promise<ScrapingSeoResponse | ScrapingSeoHtmlResponse> {
     const url = this.buildUrl(request);
     const response = await fetch(url.toString());
 
     if (!response.ok) {
-      throw new Error(`ScrapingBee API error: ${response.status} ${response.statusText}`);
+      throw new Error(`ScrapingSeo API error: ${response.status} ${response.statusText}`);
     }
 
     if (request.returnHtml) {
@@ -77,7 +55,7 @@ export class ScrapingBeeService {
       };
     }
 
-    const data = await response.json() as ScrapingBeeResponse;
+    const data = await response.json() as ScrapingSeoResponse;
     return data;
   }
 }

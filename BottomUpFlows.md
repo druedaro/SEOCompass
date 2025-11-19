@@ -135,19 +135,6 @@ const { currentTeam, teamMembers } = useWorkspace();
 
 ---
 
-## 8. Preguntas tipo examen oral
-
-- ¿Cómo viaja la información desde la edge function hasta el componente presentacional?
-- ¿Por qué se usan hooks para encapsular la lógica de negocio?
-- ¿Qué ventajas aporta la separación Service → Hook → Page → Component?
-- ¿Cómo se gestiona el estado global en el proyecto?
-- ¿Qué patrón de diseño se sigue en la arquitectura de componentes?
-- ¿Por qué no se usan servicios directamente en los componentes?
-- ¿Cómo se conecta el contexto de usuario con los componentes de equipo?
-- ¿Qué responsabilidad tiene la edge function en el flujo de scraping?
-
----
-
 ## 9. Recomendaciones de mejora y refactorización
 
 **El proyecto está bien estructurado y sigue buenas prácticas de separación de responsabilidades.**
@@ -209,3 +196,19 @@ const { currentTeam, teamMembers } = useWorkspace();
 ---
 
 **Actualizado:** 18 de noviembre de 2025
+
+
+Buena pregunta. La API Key de Google Maps (VITE_GOOGLE_MAPS_API_KEY) sí se expone en el frontend, pero es seguro porque funciona diferente:
+
+Restricción por Dominio (Referrer):
+En la consola de Google Cloud, tú configuras esa clave para que solo funcione si la petición viene de tudominio.com (o localhost mientras desarrollas).
+Si alguien te la roba y la pone en su web hacker.com, Google la bloqueará porque el origen no coincide.
+Naturaleza del Servicio:
+Google Maps necesita cargar el mapa directamente en el navegador del usuario para ser interactivo. No puedes "proxear" un mapa interactivo fácilmente a través de un servidor.
+Resumen:
+
+ScrapingBee: Clave privada. Si te la roban, la usan desde cualquier sitio. -> Necesita Edge Function.
+Google Maps: Clave pública (pero restringida). Si te la roban, no les sirve de nada. -> Puede ir en el Frontend.
+
+
+React Router para crear rutas declarativas, useRef para manejar referencias sin volver a renderizar, Context para compartir datos entre componentes y nuestro propio estado global sin librerías externas.

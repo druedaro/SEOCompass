@@ -5,6 +5,12 @@ export type { SEOScoreBreakdown, ScoreCalculationInput, ValidationResult };
 
 
 
+function calculateProgressScore(current: number | undefined, target: number): number {
+  const value = current ?? 0;
+  if (value >= target) return 100;
+  return Math.round((value / target) * 100);
+}
+
 function calculateCategoryScores(input: ScoreCalculationInput): {
   meta: number;
   content: number;
@@ -21,15 +27,19 @@ function calculateCategoryScores(input: ScoreCalculationInput): {
     input.headingHierarchyValidation.score * 0.20 +
     input.contentLengthValidation.score * 0.50;
 
+
   const canonicalScore = input.canonicalValidation?.score ?? 85;
   const structuredDataScore = input.hasStructuredData ? 100 : 0;
+
   const technicalScore =
     canonicalScore * 0.3 +
     structuredDataScore * 0.3 +
     input.imagesValidation.score * 0.4;
 
-  const internalLinksScore = Math.min(100, (input.internalLinks ?? 0) * 10);
-  const externalLinksScore = Math.min(100, (input.externalLinks ?? 0) * 20);
+
+  const internalLinksScore = calculateProgressScore(input.internalLinks, 10);
+  const externalLinksScore = calculateProgressScore(input.externalLinks, 5);
+
   const onPageScore = internalLinksScore * 0.6 + externalLinksScore * 0.4;
 
   return {
@@ -64,10 +74,10 @@ export function calculateSEOScore(input: ScoreCalculationInput): SEOScoreBreakdo
     totalScore += 50 * SEO_WEIGHTS.STRUCTURED_DATA;
   }
 
-  const internalLinksScore = Math.min(100, (input.internalLinks ?? 0) * 10);
+  const internalLinksScore = calculateProgressScore(input.internalLinks, 10);
   totalScore += internalLinksScore * SEO_WEIGHTS.INTERNAL_LINKS;
 
-  const externalLinksScore = Math.min(100, (input.externalLinks ?? 0) * 20);
+  const externalLinksScore = calculateProgressScore(input.externalLinks, 5);
   totalScore += externalLinksScore * SEO_WEIGHTS.EXTERNAL_LINKS;
 
   if (input.linksValidation) {

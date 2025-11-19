@@ -1,5 +1,5 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { ScrapingBeeService } from './ScrapingBeeService.ts';
+import { ScrapingSeoService } from './ScrapingSeoService.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -18,16 +18,16 @@ serve(async (req) => {
       throw new Error('Valid URL is required');
     }
 
-    const scrapingBeeApiKey = Deno.env.get('SCRAPINGBEE_API_KEY');
-    if (!scrapingBeeApiKey) {
-      throw new Error('ScrapingBee API key not configured');
+    const scrapingSeoApiKey = Deno.env.get('SCRAPINGBEE_API_KEY');
+    if (!scrapingSeoApiKey) {
+      throw new Error('ScrapingSeo API key not configured');
     }
 
-    const scrapingBeeBaseUrl = Deno.env.get('SCRAPINGBEE_BASE_URL') || 'https://app.scrapingbee.com/api/v1/';
+    const scrapingSeoBaseUrl = Deno.env.get('SCRAPINGBEE_BASE_URL') || 'https://app.scrapingbee.com/api/v1/';
 
-    const scrapingService = new ScrapingBeeService({
-      apiKey: scrapingBeeApiKey,
-      baseUrl: scrapingBeeBaseUrl,
+    const scrapingService = new ScrapingSeoService({
+      apiKey: scrapingSeoApiKey,
+      baseUrl: scrapingSeoBaseUrl,
     });
 
     const data = await scrapingService.scrape({
