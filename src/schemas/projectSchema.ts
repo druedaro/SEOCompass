@@ -7,4 +7,4 @@ export const projectSchema = z.object({
   domain: z.string().url('Please enter a valid URL').or(z.literal('')).optional(),
 });
 
-export type ProjectFormData = z.infer<typeof projectSchema>;
+

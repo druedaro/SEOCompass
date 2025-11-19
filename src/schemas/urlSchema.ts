@@ -13,4 +13,4 @@ export const projectUrlSchema = z.object({
   label: sanitizedString.pipe(z.string().max(100, 'Label must be less than 100 characters')).optional(),
 });
 
-export type ProjectUrlFormData = z.infer<typeof projectUrlSchema>;
+

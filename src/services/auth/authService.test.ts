@@ -1,12 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { signUp, signIn, signOut, getSession, getCurrentUser, signInWithGoogle, resetPassword, updatePassword } from './authService';
-import type { LoginFormData, RegisterFormData } from '@/schemas/authSchema';
+import { signUp, signIn, signOut } from './authService';
+import type { LoginFormData, RegisterFormData } from '@/types/schemas';
 import {
   mockSupabaseAuth,
   mockSupabaseFrom,
   resetSupabaseMocks,
   createSuccessResponse,
-  createErrorResponse,
   createQueryBuilder,
 } from '@/__mocks__/supabase';
 

@@ -1,9 +1,5 @@
-import type { ValidationResult, SEOScoreBreakdown, ScoreCalculationInput } from '@/types/seoTypes';
+import type { SEOScoreBreakdown, ScoreCalculationInput } from '@/types/seoTypes';
 import { SEO_WEIGHTS } from '@/constants/seo';
-
-export type { SEOScoreBreakdown, ScoreCalculationInput, ValidationResult };
-
-
 
 function calculateProgressScore(current: number | undefined, target: number): number {
   const value = current ?? 0;
@@ -27,7 +23,6 @@ function calculateCategoryScores(input: ScoreCalculationInput): {
     input.headingHierarchyValidation.score * 0.20 +
     input.contentLengthValidation.score * 0.50;
 
-
   const canonicalScore = input.canonicalValidation?.score ?? 85;
   const structuredDataScore = input.hasStructuredData ? 100 : 0;
 
@@ -35,7 +30,6 @@ function calculateCategoryScores(input: ScoreCalculationInput): {
     canonicalScore * 0.3 +
     structuredDataScore * 0.3 +
     input.imagesValidation.score * 0.4;
-
 
   const internalLinksScore = calculateProgressScore(input.internalLinks, 10);
   const externalLinksScore = calculateProgressScore(input.externalLinks, 5);
@@ -49,7 +43,6 @@ function calculateCategoryScores(input: ScoreCalculationInput): {
     onPage: Math.round(onPageScore),
   };
 }
-
 
 export function calculateSEOScore(input: ScoreCalculationInput): SEOScoreBreakdown {
   let totalScore = 0;

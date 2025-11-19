@@ -9,7 +9,8 @@ import { Label } from '@/components/atoms/Label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/Card';
 import { LocationPicker } from '@/components/organisms/LocationPicker';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
-import { createTeamSchema, CreateTeamFormData } from '@/schemas/teamSchema';
+import { createTeamSchema } from '@/schemas/teamSchema';
+import type { CreateTeamFormData } from '@/types/schemas';
 
 export default function CreateTeamPage() {
   const navigate = useNavigate();

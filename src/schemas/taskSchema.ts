@@ -11,4 +11,4 @@ export const taskSchema = z.object({
   assigned_to: sanitizedString.pipe(z.string()).optional(),
 });
 
-export type TaskFormData = z.infer<typeof taskSchema>;
+

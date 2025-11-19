@@ -12,8 +12,6 @@ export const loginSchema = z.object({
     .min(6, 'Password must be at least 6 characters'),
 });
 
-export type LoginFormData = z.infer<typeof loginSchema>;
-
 export const registerSchema = z.object({
   fullName: sanitizedString
     .pipe(
@@ -43,6 +41,6 @@ export const registerSchema = z.object({
   path: ['confirmPassword'],
 });
 
-export type RegisterFormData = z.infer<typeof registerSchema>;
+
 
 export { ROLE_OPTIONS as roleOptions };

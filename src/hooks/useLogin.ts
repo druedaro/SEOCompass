@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signIn, signInWithGoogle } from '@/services/auth/authService';
-import type { LoginFormData } from '@/schemas/authSchema';
+import type { LoginFormData } from '@/types/schemas';
 
 export function useLogin() {
     const navigate = useNavigate();

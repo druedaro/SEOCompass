@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signUp, signInWithGoogle } from '@/services/auth/authService';
-import type { RegisterFormData } from '@/schemas/authSchema';
+import type { RegisterFormData } from '@/types/schemas';
 
 export function useRegister() {
     const navigate = useNavigate();

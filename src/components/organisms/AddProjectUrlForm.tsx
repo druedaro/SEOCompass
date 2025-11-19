@@ -4,7 +4,8 @@ import { Plus } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { Label } from '@/components/atoms/Label';
-import { projectUrlSchema, ProjectUrlFormData } from '@/schemas/urlSchema';
+import { projectUrlSchema } from '@/schemas/urlSchema';
+import type { ProjectUrlFormData } from '@/types/schemas';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/Card';
 
 import type { AddProjectUrlFormProps } from '@/types/componentTypes';

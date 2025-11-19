@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { scrapeByProjectUrlId } from '@/services/contentScraping/contentScrapingService';
 import { supabase } from '@/config/supabase';
 import { analyzeContent } from '@/features/seo/analyzer/analyzer';
-import type { SEOScoreBreakdown } from '@/features/seo/scoreCalculator/scoreCalculator';
-import type { Recommendation } from '@/features/seo/recommendationsEngine/recommendationsEngine';
+import type { SEOScoreBreakdown, Recommendation } from '@/types/seoTypes';
 import { showErrorToast, showSuccessToast, showInfoToast } from '@/lib/toast';
 
 async function saveAuditResults(

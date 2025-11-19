@@ -10,7 +10,8 @@ import { LocationPicker } from '@/components/organisms/LocationPicker';
 import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
-import { updateTeamSchema, UpdateTeamFormData } from '@/schemas/teamSchema';
+import { updateTeamSchema } from '@/schemas/teamSchema';
+import type { UpdateTeamFormData } from '@/types/schemas';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
 
 export default function TeamSettingsPage() {

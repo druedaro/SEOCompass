@@ -13,5 +13,4 @@ export const updateTeamSchema = z.object({
   location: sanitizedString.pipe(z.string().max(200)).optional(),
 });
 
-export type CreateTeamFormData = z.infer<typeof createTeamSchema>;
-export type UpdateTeamFormData = z.infer<typeof updateTeamSchema>;
+

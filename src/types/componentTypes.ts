@@ -1,9 +1,29 @@
 import type { ReactNode } from 'react';
 import type { FieldPath, FieldValues } from 'react-hook-form';
+import { DayPicker } from 'react-day-picker';
 import type { Task, TaskFilters, TaskPriority } from './task';
 import type { Project } from './project';
 import type { ProjectUrl } from './projectUrl';
 import type { Recommendation } from './seoTypes';
+
+import { badgeVariants } from '@/components/atoms/Badge';
+import { buttonVariants } from '@/components/atoms/Button';
+import type { VariantProps } from 'class-variance-authority';
+
+export interface BadgeProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+  VariantProps<typeof badgeVariants> { }
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+}
+
+export interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> { }
+
+export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
 
 export interface AvatarProps {

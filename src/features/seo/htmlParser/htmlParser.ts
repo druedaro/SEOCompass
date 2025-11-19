@@ -1,7 +1,5 @@
 import type { ParsedMetadata, ParsedHeading, ParsedImage, ParsedLink, ParsedContent } from '@/types/seoTypes';
 
-export type { ParsedMetadata, ParsedHeading, ParsedImage, ParsedLink, ParsedContent };
-
 function parseHTML(html: string): Document {
   const parser = new DOMParser();
   return parser.parseFromString(html, 'text/html');

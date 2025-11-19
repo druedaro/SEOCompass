@@ -3,7 +3,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { loginSchema, type LoginFormData } from '@/schemas/authSchema';
+import { loginSchema } from '@/schemas/authSchema';
+import type { LoginFormData } from '@/types/schemas';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import {

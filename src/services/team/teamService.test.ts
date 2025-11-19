@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createTeam, getTeamById, updateTeam, getTeamMembers, deleteTeam } from './teamService';
+import { createTeam, getTeamById, deleteTeam } from './teamService';
 import {
   mockSupabaseAuth,
   mockSupabaseFrom,

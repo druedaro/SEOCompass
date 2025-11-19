@@ -17,7 +17,7 @@ export type {
 } from './seoTypes';
 export type { AuthContextType, AuthProviderProps, WorkspaceContextType, ProjectContextType } from './context';
 export type { ScrapingSeoResponse } from './edgeFunction';
-export type { ValidationResults } from './hooks';
+export type { ValidationResults } from './seoTypes';
 export type {
   DeleteConfirmationDialogProps,
   EmptyStateProps,

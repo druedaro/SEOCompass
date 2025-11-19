@@ -1,4 +1,4 @@
-import { parseHTMLContent, type ParsedContent } from '../htmlParser/htmlParser';
+import { parseHTMLContent } from '../htmlParser/htmlParser';
 import {
     validateTitle,
     validateDescription,
@@ -12,19 +12,16 @@ import {
     validateHreflang,
     validateRobotsMeta,
 } from '../validators/validators';
-import { calculateSEOScore, type SEOScoreBreakdown } from '../scoreCalculator/scoreCalculator';
-import { generateRecommendations, type Recommendation } from '../recommendationsEngine/recommendationsEngine';
+import { calculateSEOScore } from '../scoreCalculator/scoreCalculator';
+import { generateRecommendations } from '../recommendationsEngine/recommendationsEngine';
 import type { ScrapedContent } from '@/services/contentScraping/contentScrapingService';
-import type { ValidationResults } from '@/types/hooks';
-
-export interface AnalysisResult {
-    parsedContent: ParsedContent;
-    validations: ValidationResults;
-    scores: SEOScoreBreakdown;
-    recommendations: Recommendation[];
-    h1s: string[];
-    errors: { has404: boolean; hasServer: boolean };
-}
+import type {
+    ParsedContent,
+    SEOScoreBreakdown,
+    Recommendation,
+    ValidationResults,
+    AnalysisResult
+} from '@/types/seoTypes';
 
 function extractH1Texts(parsedContent: ParsedContent): string[] {
     return parsedContent.headings

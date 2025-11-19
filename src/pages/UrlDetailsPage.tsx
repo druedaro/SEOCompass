@@ -8,7 +8,7 @@ import { AuditResultsTable } from '@/components/organisms/AuditResultsTable';
 import { CreateTaskModal } from '@/components/organisms/CreateTaskModal';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useUrlDetails } from '@/hooks/useUrlDetails';
-import type { Recommendation } from '@/features/seo/recommendationsEngine';
+import type { Recommendation } from '@/types/seoTypes';
 
 export function UrlDetailsPage() {
   const { projectId, urlId } = useParams<{ projectId: string; urlId: string }>();
@@ -38,104 +38,104 @@ export function UrlDetailsPage() {
   return (
     <DashboardLayout>
       <div className="container mx-auto py-8 px-4">
-      <div className="max-w-6xl mx-auto space-y-8">
-        <div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate(`/dashboard/projects/${projectId}/content`)}
-            className="mb-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Content Analyzer
-          </Button>
+        <div className="max-w-6xl mx-auto space-y-8">
+          <div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate(`/dashboard/projects/${projectId}/content`)}
+              className="mb-4"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Content Analyzer
+            </Button>
 
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold">{projectUrl.label || 'Untitled URL'}</h1>
-            <p className="text-muted-foreground break-all">{projectUrl.url}</p>
+            <div className="space-y-2">
+              <h1 className="text-3xl font-bold">{projectUrl.label || 'Untitled URL'}</h1>
+              <p className="text-muted-foreground break-all">{projectUrl.url}</p>
+            </div>
           </div>
+
+          {auditHistory.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Audit History</CardTitle>
+                <CardDescription>
+                  Performance trend over time (last 30 audits)
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <AuditHistoryChart projectUrlId={urlId!} urlLabel={projectUrl.label || projectUrl.url} />
+              </CardContent>
+            </Card>
+          )}
+
+          {latestAudit && (
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Latest Audit Results</CardTitle>
+                    <CardDescription>
+                      Last audited: {new Date(latestAudit.created_at).toLocaleString()}
+                    </CardDescription>
+                  </div>
+                  <Button size="sm" onClick={() => setCreateTaskModalOpen(true)}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Task
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <AuditResultsTable
+                  recommendations={latestAudit.recommendations || []}
+                  overallScore={latestAudit.overall_score}
+                  categoryScores={{
+                    meta: latestAudit.meta_score,
+                    content: latestAudit.content_score,
+                    technical: latestAudit.technical_score,
+                    onPage: latestAudit.on_page_score,
+                  }}
+                  urlLabel={projectUrl?.url || ''}
+                  onAddTask={(recommendation) => {
+                    setSelectedRecommendation(recommendation);
+                    setCreateTaskModalOpen(true);
+                  }}
+                />
+              </CardContent>
+            </Card>
+          )}
+
+          {auditHistory.length === 0 && (
+            <Card>
+              <CardContent className="py-12 text-center">
+                <p className="text-muted-foreground">
+                  No audits performed yet for this URL.
+                </p>
+                <Link to={`/dashboard/projects/${projectId}/content`}>
+                  <Button className="mt-4">
+                    Run First Audit
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
-        {auditHistory.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Audit History</CardTitle>
-              <CardDescription>
-                Performance trend over time (last 30 audits)
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <AuditHistoryChart projectUrlId={urlId!} urlLabel={projectUrl.label || projectUrl.url} />
-            </CardContent>
-          </Card>
-        )}
-
-        {latestAudit && (
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Latest Audit Results</CardTitle>
-                  <CardDescription>
-                    Last audited: {new Date(latestAudit.created_at).toLocaleString()}
-                  </CardDescription>
-                </div>
-                <Button size="sm" onClick={() => setCreateTaskModalOpen(true)}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Task
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <AuditResultsTable
-                recommendations={latestAudit.recommendations || []}
-                overallScore={latestAudit.overall_score}
-                categoryScores={{
-                  meta: latestAudit.meta_score,
-                  content: latestAudit.content_score,
-                  technical: latestAudit.technical_score,
-                  onPage: latestAudit.on_page_score,
-                }}
-                urlLabel={projectUrl?.url || ''}
-                onAddTask={(recommendation) => {
-                  setSelectedRecommendation(recommendation);
-                  setCreateTaskModalOpen(true);
-                }}
-              />
-            </CardContent>
-          </Card>
-        )}
-
-        {auditHistory.length === 0 && (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <p className="text-muted-foreground">
-                No audits performed yet for this URL.
-              </p>
-              <Link to={`/dashboard/projects/${projectId}/content`}>
-                <Button className="mt-4">
-                  Run First Audit
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
+        {projectId && (
+          <CreateTaskModal
+            open={createTaskModalOpen}
+            onOpenChange={setCreateTaskModalOpen}
+            projectId={projectId}
+            onTaskCreated={() => {
+              setCreateTaskModalOpen(false);
+            }}
+            auditReference={`URL: ${projectUrl?.url}`}
+            initialTitle={selectedRecommendation?.title || ''}
+            initialDescription={selectedRecommendation?.description || ''}
+          />
         )}
       </div>
-
-      {projectId && (
-        <CreateTaskModal
-          open={createTaskModalOpen}
-          onOpenChange={setCreateTaskModalOpen}
-          projectId={projectId}
-          onTaskCreated={() => {
-            setCreateTaskModalOpen(false);
-          }}
-          auditReference={`URL: ${projectUrl?.url}`}
-          initialTitle={selectedRecommendation?.title || ''}
-          initialDescription={selectedRecommendation?.description || ''}
-        />
-      )}
-    </div>
     </DashboardLayout>
   );
 }

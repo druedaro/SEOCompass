@@ -14,7 +14,8 @@ import { Input } from '@/components/atoms/Input';
 import { Label } from '@/components/atoms/Label';
 import { LocationPicker } from '@/components/organisms/LocationPicker';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
-import { createTeamSchema, CreateTeamFormData } from '@/schemas/teamSchema';
+import { createTeamSchema } from '@/schemas/teamSchema';
+import type { CreateTeamFormData } from '@/types/schemas';
 import { showSuccessToast } from '@/lib/toast';
 import type { CreateTeamDialogProps } from '@/types/componentTypes';
 

@@ -106,3 +106,28 @@ export interface RecommendationInput {
   has404Error?: boolean;
   hasServerError?: boolean;
 }
+
+export interface ValidationResults {
+  titleValidation: ValidationResult;
+  descriptionValidation: ValidationResult;
+  urlValidation: ValidationResult;
+  h1Validation: ValidationResult;
+  headingHierarchyValidation: ValidationResult;
+  imagesValidation: ValidationResult;
+  contentLengthValidation: ValidationResult;
+  canonicalValidation: ValidationResult;
+  linksValidation: ValidationResult;
+  hreflangValidation: ValidationResult;
+  robotsValidation: ValidationResult;
+  internalLinks: number;
+  externalLinks: number;
+}
+
+export interface AnalysisResult {
+  parsedContent: ParsedContent;
+  validations: ValidationResults;
+  scores: SEOScoreBreakdown;
+  recommendations: Recommendation[];
+  h1s: string[];
+  errors: { has404: boolean; hasServer: boolean };
+}

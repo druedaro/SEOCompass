@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { createTask, getTaskById, deleteTask } from './taskService';
 import {
-  mockSupabaseAuth,
+
   mockSupabaseFrom,
   resetSupabaseMocks,
   createSuccessResponse,
@@ -19,7 +19,7 @@ describe('Task Service - Moscow Method Tests', () => {
       project_id: 'project-123',
       title: 'Test Task',
       description: 'A test task',
-      status: 'pending',
+      status: 'todo',
       priority: 'medium',
       created_at: new Date().toISOString(),
     };
@@ -36,7 +36,7 @@ describe('Task Service - Moscow Method Tests', () => {
       project_id: 'project-123',
       title: 'Test Task',
       description: 'A test task',
-      status: 'pending',
+      status: 'todo',
       priority: 'medium',
     });
 
@@ -48,7 +48,7 @@ describe('Task Service - Moscow Method Tests', () => {
       id: 'task-123',
       project_id: 'project-123',
       title: 'Test Task',
-      status: 'pending',
+      status: 'todo',
       created_at: new Date().toISOString(),
     };
 

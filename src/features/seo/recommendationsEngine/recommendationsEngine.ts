@@ -1,8 +1,6 @@
 import type { ValidationResult, Recommendation, RecommendationInput } from '@/types/seoTypes';
 import { SEO_RECOMMENDATIONS } from '@/constants/seo';
 
-export type { Recommendation };
-
 export function generateRecommendations(input: RecommendationInput): Recommendation[] {
   const technicalRecs = getTechnicalRecommendations(input);
   const metaRecs = getMetaRecommendations(input);

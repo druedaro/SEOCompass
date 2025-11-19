@@ -1,8 +1,6 @@
 import { SEO_LIMITS, SEO_MESSAGES } from '@/constants/seo';
 import type { ValidationResult } from '@/types/seoTypes';
 
-export type { ValidationResult };
-
 export function validateTitle(title: string | null | undefined): ValidationResult {
   const issues: string[] = [];
   const warnings: string[] = [];
@@ -127,7 +125,7 @@ export function validateHeadingHierarchy(headings: Array<{ level: number }>): Va
     return { isValid: false, issues: [SEO_MESSAGES.HEADINGS.NONE], warnings, score: 0 };
   }
 
- 
+
   if (headings[0].level > 1) {
     warnings.push(SEO_MESSAGES.HEADINGS.HIERARCHY_SKIP(0, headings[0].level));
     score -= 15;
@@ -136,7 +134,7 @@ export function validateHeadingHierarchy(headings: Array<{ level: number }>): Va
   for (let i = 1; i < headings.length; i++) {
     const currentLevel = headings[i].level;
     const prevLevel = headings[i - 1].level;
-    
+
     if (currentLevel > prevLevel + 1) {
       warnings.push(SEO_MESSAGES.HEADINGS.HIERARCHY_SKIP(prevLevel, currentLevel));
       score -= 10;

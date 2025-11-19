@@ -9,8 +9,8 @@ import {
   TableRow,
 } from '@/components/molecules/Table';
 import { Card } from '@/components/molecules/Card';
-import { AlertCircle, AlertTriangle, Info, Plus } from 'lucide-react';
-import type { Recommendation } from '@/features/seo/recommendationsEngine';
+import { AlertTriangle, Info, Plus, AlertCircle } from 'lucide-react';
+import type { Recommendation } from '@/types/seoTypes';
 import { CATEGORY_STYLES } from '@/constants/seo';
 import type { AuditResultsTableProps } from '@/types/componentTypes';
 
@@ -159,9 +159,9 @@ export function AuditResultsTable({
                   <TableCell className="text-sm">{recommendation.action}</TableCell>
                   <TableCell>
                     {recommendation.severity !== 'info' && (
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
+                      <Button
+                        size="sm"
+                        variant="outline"
                         onClick={() => onAddTask?.(recommendation)}
                         disabled={!onAddTask}
                       >
