@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { getUserTeams, getTeamMembers, createTeam as createTeamService, updateTeam as updateTeamService, deleteTeam as deleteTeamService, removeTeamMember as removeTeamMemberService, leaveTeam as leaveTeamService, isTeamOwner as isTeamOwnerService } from '@/services/team/teamService';
+import { getUserTeams, getTeamMembers, createTeam as createTeamService, updateTeam as updateTeamService, deleteTeam as deleteTeamService, removeTeamMember as removeTeamMemberService, leaveTeam as leaveTeamService } from '@/services/team/teamService';
 import type { Team, TeamMember } from '@/types/team';
 import type { WorkspaceContextType } from '@/types/context';
 import { useAuth } from '@/hooks/useAuth';
@@ -12,7 +12,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
   const [teams, setTeams] = useState<Team[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
-  
+
   const [isLoadingTeams, setIsLoadingTeams] = useState(false);
   const [isLoadingMembers, setIsLoadingMembers] = useState(false);
   const [teamsError, setTeamsError] = useState<string | null>(null);
@@ -22,18 +22,18 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   const isOwner = currentTeam?.user_id === user?.id;
 
   const refreshTeams = async () => {
-    if (!user) return; 
-    
+    if (!user) return;
+
     setIsLoadingTeams(true);
     setTeamsError(null);
     try {
       const data = await getUserTeams();
       setTeams(data);
-      
+
       if (!currentTeam && data.length > 0) {
         setCurrentTeam(data[0]);
       }
-      
+
       if (currentTeam && !data.find(t => t.id === currentTeam.id)) {
         setCurrentTeam(data.length > 0 ? data[0] : null);
       }
@@ -50,7 +50,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
 
   const refreshMembers = async () => {
     if (!currentTeam) return;
-    
+
     setIsLoadingMembers(true);
     setMembersError(null);
     try {
@@ -119,18 +119,15 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     if (!currentTeam) throw new Error('No team selected');
     const leftTeamId = currentTeam.id;
     await leaveTeamService(leftTeamId);
-    
+
     const updatedTeams = await getUserTeams();
     setTeams(updatedTeams);
-    
+
     const remainingTeams = updatedTeams.filter((t) => t.id !== leftTeamId);
     setCurrentTeam(remainingTeams.length > 0 ? remainingTeams[0] : null);
   };
 
-  const isTeamOwner = async (): Promise<boolean> => {
-    if (!currentTeam) return false;
-    return await isTeamOwnerService(currentTeam.id);
-  };
+
 
   const switchTeam = async (teamId: string) => {
     const team = teams.find(t => t.id === teamId);
@@ -156,7 +153,6 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     deleteTeam,
     removeTeamMember,
     leaveTeam,
-    isTeamOwner,
     isOwner,
     switchTeam,
   };

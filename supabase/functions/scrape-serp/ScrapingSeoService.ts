@@ -2,7 +2,6 @@
 import type {
   ScrapingSeoConfig,
   ScrapingSeoRequest,
-  ScrapingSeoResponse,
   ScrapingSeoHtmlResponse
 } from '../../../src/types/scraping.ts';
 
@@ -25,14 +24,12 @@ export class ScrapingSeoService {
       url.searchParams.set('block_resources', 'false');
     }
 
-    if (request.extractRules) {
-      url.searchParams.set('extract_rules', JSON.stringify(request.extractRules));
-    }
+
 
     return url;
   }
 
-  async scrape(request: ScrapingSeoRequest): Promise<ScrapingSeoResponse | ScrapingSeoHtmlResponse> {
+  async scrape(request: ScrapingSeoRequest): Promise<ScrapingSeoHtmlResponse> {
     const url = this.buildUrl(request);
     const response = await fetch(url.toString());
 
@@ -40,20 +37,15 @@ export class ScrapingSeoService {
       throw new Error(`ScrapingSeo API error: ${response.status} ${response.statusText}`);
     }
 
-    if (request.returnHtml) {
-      const html = await response.text();
-      const finalUrl = response.headers.get('spb-final-url') || request.url;
-      const statusCode = parseInt(response.headers.get('spb-status-code') || '200');
+    const html = await response.text();
+    const finalUrl = response.headers.get('spb-final-url') || request.url;
+    const statusCode = parseInt(response.headers.get('spb-status-code') || '200');
 
-      return {
-        html,
-        final_url: finalUrl,
-        status_code: statusCode,
-        headers: Object.fromEntries(response.headers.entries()),
-      };
-    }
-
-    const data = await response.json() as ScrapingSeoResponse;
-    return data;
+    return {
+      html,
+      final_url: finalUrl,
+      status_code: statusCode,
+      headers: Object.fromEntries(response.headers.entries()),
+    };
   }
 }

@@ -33,7 +33,7 @@ export interface WorkspaceContextType {
   deleteTeam: (teamId: string) => Promise<void>;
   removeTeamMember: (memberId: string) => Promise<void>;
   leaveTeam: () => Promise<void>;
-  isTeamOwner: () => Promise<boolean>;
+
   isOwner: boolean;
   switchTeam: (teamId: string) => Promise<void>;
 }

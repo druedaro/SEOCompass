@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { url, extract_rules, return_html = false, render_js = true } = await req.json();
+    const { url, render_js = true } = await req.json();
 
     if (!url || typeof url !== 'string') {
       throw new Error('Valid URL is required');
@@ -32,8 +32,7 @@ serve(async (req) => {
 
     const data = await scrapingService.scrape({
       url,
-      extractRules: extract_rules,
-      returnHtml: return_html,
+
       renderJs: render_js,
     });
 

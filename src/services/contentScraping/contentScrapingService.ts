@@ -9,13 +9,13 @@ export async function scrapeByProjectUrlId(
   options: ScrapeOptions = {}
 ): Promise<ScrapedContent> {
   const projectUrl = await getProjectUrlById(projectUrlId);
-  
+
   if (!projectUrl) {
     throw new Error('Project URL not found');
   }
 
   const scrapedData = await scrapeUrl(projectUrl.url, options);
-  
+
   return {
     ...scrapedData,
     projectUrlId,
@@ -29,7 +29,6 @@ export async function scrapeUrl(
   const { data, error } = await supabase.functions.invoke('scrape-serp', {
     body: {
       url,
-      return_html: true,
       render_js: options.renderJs ?? true,
     },
   });

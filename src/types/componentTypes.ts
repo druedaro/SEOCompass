@@ -13,7 +13,7 @@ export interface AvatarProps {
 
 
 export interface LocationAutocompleteProps {
-  value: string;
+  value?: string;
   onChange: (value: string) => void;
   onPlaceSelect?: (place: google.maps.places.PlaceResult) => void;
   label?: string;
@@ -146,11 +146,26 @@ export interface ProjectUrlsListProps {
 }
 
 export interface LocationPickerProps {
-  value: string;
+  value?: string;
   onChange: (value: string) => void;
+  className?: string;
   label?: string;
   placeholder?: string;
   disabled?: boolean;
+}
+
+export interface AddProjectUrlFormProps {
+  onAdd: (url: string, label: string) => Promise<boolean | void>;
+  isAdding: boolean;
+  currentCount: number;
+  maxCount: number;
+}
+
+
+
+export interface ProjectUrlsTableProps {
+  urls: ProjectUrl[];
+  onDelete: (id: string) => void;
 }
 
 export interface TaskCalendarProps {

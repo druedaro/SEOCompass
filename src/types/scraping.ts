@@ -5,18 +5,8 @@ export interface ScrapingSeoConfig {
 
 export interface ScrapingSeoRequest {
     url: string;
-    extractRules?: Record<string, unknown>;
-    returnHtml?: boolean;
-    renderJs?: boolean;
-}
 
-export interface ScrapingSeoResponse {
-    url: string;
-    title: string;
-    meta_description?: string;
-    h1?: string;
-    status_code: number;
-    redirect_url?: string;
+    renderJs?: boolean;
 }
 
 export interface ScrapingSeoHtmlResponse {

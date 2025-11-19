@@ -101,7 +101,7 @@ export function calculateSEOScore(input: ScoreCalculationInput): SEOScoreBreakdo
   const categoryScores = calculateCategoryScores(input);
 
   return {
-    overall: Math.round(totalScore),
+    overall: Math.min(100, Math.round(totalScore)),
     meta: categoryScores.meta,
     content: categoryScores.content,
     technical: categoryScores.technical,
