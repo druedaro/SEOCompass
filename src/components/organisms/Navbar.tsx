@@ -19,7 +19,7 @@ export function Navbar() {
   const [showCreateTeamDialog, setShowCreateTeamDialog] = useState(false);
   const location = useLocation();
   const params = useParams<{ id: string }>();
-  
+
   // Detectar si estamos en una página de proyecto y obtener el ID
   const projectId = params.id || location.pathname.match(/\/projects\/([^/]+)/)?.[1];
   const isInProject = projectId && location.pathname.includes('/projects/');
@@ -48,9 +48,9 @@ export function Navbar() {
               </Link>
 
               <TeamSelector onCreateTeam={() => setShowCreateTeamDialog(true)} />
-              
+
               {isInProject && projectId && (
-                <div className="flex items-center gap-2">
+                <div className="hidden md:flex items-center gap-2">
                   <Link to={`/dashboard/projects/${projectId}/actions`}>
                     <Button variant="ghost" size="sm" className="gap-2">
                       <CheckSquare className="h-4 w-4" />
@@ -99,9 +99,9 @@ export function Navbar() {
         </div>
       </nav>
 
-      <CreateTeamDialog 
-        open={showCreateTeamDialog} 
-        onOpenChange={setShowCreateTeamDialog} 
+      <CreateTeamDialog
+        open={showCreateTeamDialog}
+        onOpenChange={setShowCreateTeamDialog}
       />
     </>
   );

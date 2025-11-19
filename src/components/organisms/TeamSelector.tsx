@@ -19,7 +19,7 @@ export function TeamSelector({ onCreateTeam }: TeamSelectorProps) {
         value={currentTeam?.id || ''}
         onValueChange={(value: string) => switchTeam(value)}
       >
-        <SelectTrigger className="w-[200px]">
+        <SelectTrigger className="w-[140px] md:w-[200px]">
           <SelectValue placeholder="Select a team" />
         </SelectTrigger>
         <SelectContent>

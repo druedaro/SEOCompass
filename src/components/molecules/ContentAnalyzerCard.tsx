@@ -15,9 +15,12 @@ export function ContentAnalyzerCard({ projectId, audit }: ContentAnalyzerCardPro
                 <CardDescription>
                     Audit and optimize your content for SEO
                     {audit && (
-                        <div>
-                            <div className="mt-2 text-sm">
-                                Last audit:  <div className="font-medium">{audit.url}</div>
+                        <div className="mt-2 text-sm flex items-center justify-between">
+                            <div className="truncate mr-2">
+                                Last audit: <span className="font-medium">{audit.url}</span>
+                            </div>
+                            <div className="font-bold bg-primary text-primary-foreground px-2 py-0.5 rounded text-xs whitespace-nowrap">
+                                {audit.scores.overall}%
                             </div>
                         </div>
                     )}

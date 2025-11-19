@@ -65,7 +65,7 @@ export function ProjectOverviewPage() {
             Back to Projects
           </Button>
 
-          <div className="flex items-start justify-between">
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
             <div>
               <h1 className="text-4xl font-bold">{currentProject.name}</h1>
               {currentProject.domain && (
@@ -82,10 +82,11 @@ export function ProjectOverviewPage() {
                 Created {timeAgo}
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 w-full md:w-auto">
               <Button
                 variant="outline"
                 onClick={() => navigate(`/dashboard/projects/${projectId}/settings`)}
+                className="flex-1 md:flex-none"
               >
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
@@ -93,6 +94,7 @@ export function ProjectOverviewPage() {
               <Button
                 variant="outline"
                 onClick={() => navigate(`/dashboard/projects/${projectId}/urls`)}
+                className="flex-1 md:flex-none"
               >
                 <LinkIcon className="h-4 w-4 mr-2" />
                 Manage URLs

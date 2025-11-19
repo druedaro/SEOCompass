@@ -1,3 +1,5 @@
+import type { LatestAudit } from './audit';
+
 export interface ProjectStatsOverviewProps {
     stats: {
         pagesAudited: number;
@@ -12,13 +14,5 @@ export interface ActionCenterCardProps {
 
 export interface ContentAnalyzerCardProps {
     projectId: string;
-    audit?: {
-        url: string;
-        scores: {
-            content: number;
-            meta: number;
-            onPage: number;
-            technical: number;
-        };
-    } | null;
+    audit?: LatestAudit | null;
 }
