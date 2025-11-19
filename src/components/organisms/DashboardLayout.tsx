@@ -25,7 +25,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <div className="flex flex-1 relative">
         {!isInsideProject && (
           <>
-            {/* Mobile Menu Button */}
+
             <div className="md:hidden absolute top-4 left-4 z-40">
               <Button
                 variant="outline"
@@ -36,7 +36,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               </Button>
             </div>
 
-            {/* Mobile Sidebar Overlay */}
+
             {mobileMenuOpen && (
               <div
                 className="fixed inset-0 bg-background/80 backdrop-blur-sm z-30 md:hidden"
@@ -44,7 +44,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               />
             )}
 
-            {/* Mobile Sidebar */}
+
             <aside className={cn(
               "fixed inset-y-0 left-0 z-40 w-64 border-r bg-background p-4 transition-transform duration-300 ease-in-out md:hidden",
               mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
@@ -84,7 +84,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               </nav>
             </aside>
 
-            {/* Desktop Sidebar */}
+
             <aside className="hidden md:block w-64 border-r bg-muted/10 p-4">
               <nav className="space-y-1 px-3 py-4">
                 {DASHBOARD_NAVIGATION.map((item) => {

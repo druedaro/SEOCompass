@@ -20,7 +20,7 @@ export function Navbar() {
   const location = useLocation();
   const params = useParams<{ id: string }>();
 
-  // Detectar si estamos en una página de proyecto y obtener el ID
+
   const projectId = params.id || location.pathname.match(/\/projects\/([^/]+)/)?.[1];
   const isInProject = projectId && location.pathname.includes('/projects/');
 

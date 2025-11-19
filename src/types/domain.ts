@@ -1,4 +1,3 @@
-// Re-export all types for backward compatibility
 export type { UserRole, Profile } from './user';
 export type { Team, TeamMember } from './team';
 export type { Project } from './project';

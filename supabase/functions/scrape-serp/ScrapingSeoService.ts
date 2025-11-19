@@ -1,6 +1,4 @@
-/**
- * Servicio para interactuar con la API de Scraping (ScrapingSeo)
- */
+
 import type {
   ScrapingSeoConfig,
   ScrapingSeoRequest,

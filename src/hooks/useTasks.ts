@@ -36,7 +36,7 @@ export function useTasks(projectId?: string, filters: TaskFiltersType = {}, page
 
   useEffect(() => {
     fetchTasks();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [projectId, filters, page]);
 
   return { tasks, totalTasks, totalPages, isLoading, reload: fetchTasks };

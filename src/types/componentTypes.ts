@@ -5,13 +5,13 @@ import type { Project } from './project';
 import type { ProjectUrl } from './projectUrl';
 import type { Recommendation } from './seoTypes';
 
-// Atom Component Props
+
 export interface AvatarProps {
   children: ReactNode;
   className?: string;
 }
 
-// Molecule Component Props
+
 export interface LocationAutocompleteProps {
   value: string;
   onChange: (value: string) => void;
@@ -73,7 +73,7 @@ export type FormFieldContextValue<
   name: TName;
 };
 
-// Organism Component Props
+
 export interface RoleSelectionModalProps {
   onSelectRole: (role: import('./user').UserRole, fullName: string) => Promise<void>;
 }
