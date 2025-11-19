@@ -1,4 +1,4 @@
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
+import { Card, CardDescription, CardHeader, CardTitle } from '@/components/molecules/Card';
 import { FEATURES_DATA } from '@/constants/landing';
 
 export function FeaturesSection() {

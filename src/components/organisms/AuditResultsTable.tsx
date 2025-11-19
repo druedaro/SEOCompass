@@ -7,24 +7,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/atoms/Table';
-import { Card } from '@/components/atoms/Card';
+} from '@/components/molecules/Table';
+import { Card } from '@/components/molecules/Card';
 import { AlertCircle, AlertTriangle, Info, Plus } from 'lucide-react';
 import type { Recommendation } from '@/features/seo/recommendationsEngine';
 import { CATEGORY_STYLES } from '@/constants/seo';
-
-interface AuditResultsTableProps {
-  recommendations: Recommendation[];
-  overallScore: number;
-  categoryScores: {
-    meta: number;
-    content: number;
-    technical: number;
-    onPage: number;
-  };
-  onAddTask?: (recommendation: Recommendation) => void;
-  urlLabel?: string;
-}
+import type { AuditResultsTableProps } from '@/types/componentTypes';
 
 function getSeverityBadge(severity: 'critical' | 'warning' | 'info') {
   switch (severity) {
@@ -137,7 +125,7 @@ export function AuditResultsTable({
         </Badge>
       </div>
 
-      <Card>
+      <Card className="max-h-[600px] overflow-y-auto">
         <Table>
           <TableHeader>
             <TableRow>

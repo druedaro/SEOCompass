@@ -1,19 +1,10 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { ScrapingSeoService } from './ScrapingSeoService.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
-
-interface ScrapingBeeResponse {
-  url: string;
-  title: string;
-  meta_description?: string;
-  h1?: string;
-  status_code: number;
-  redirect_url?: string;
-}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -21,55 +12,29 @@ serve(async (req) => {
   }
 
   try {
-    const { url, extract_rules, return_html = false, render_js = true } = await req.json();
+    const { url, render_js = true } = await req.json();
 
-    if (!url) {
-      throw new Error('URL is required');
+    if (!url || typeof url !== 'string') {
+      throw new Error('Valid URL is required');
     }
 
-    const scrapingBeeApiKey = Deno.env.get('SCRAPINGBEE_API_KEY');
-    if (!scrapingBeeApiKey) {
-      throw new Error('ScrapingBee API key not configured');
+    const scrapingSeoApiKey = Deno.env.get('SCRAPINGBEE_API_KEY');
+    if (!scrapingSeoApiKey) {
+      throw new Error('ScrapingSeo API key not configured');
     }
 
-    const scrapingBeeUrl = new URL('https://app.scrapingbee.com/api/v1/');
-    scrapingBeeUrl.searchParams.set('api_key', scrapingBeeApiKey);
-    scrapingBeeUrl.searchParams.set('url', url);
-    
-    if (render_js) {
-      scrapingBeeUrl.searchParams.set('render_js', 'true');
-      scrapingBeeUrl.searchParams.set('wait', '3000');
-      scrapingBeeUrl.searchParams.set('block_ads', 'true');
-      scrapingBeeUrl.searchParams.set('block_resources', 'false');
-    }
-    
-    if (extract_rules) {
-      scrapingBeeUrl.searchParams.set('extract_rules', JSON.stringify(extract_rules));
-    }
+    const scrapingSeoBaseUrl = Deno.env.get('SCRAPINGBEE_BASE_URL') || 'https://app.scrapingbee.com/api/v1/';
 
-    const response = await fetch(scrapingBeeUrl.toString());
+    const scrapingService = new ScrapingSeoService({
+      apiKey: scrapingSeoApiKey,
+      baseUrl: scrapingSeoBaseUrl,
+    });
 
-    if (!response.ok) {
-      throw new Error(`ScrapingBee API error: ${response.status} ${response.statusText}`);
-    }
+    const data = await scrapingService.scrape({
+      url,
 
-    if (return_html) {
-      const html = await response.text();
-      const finalUrl = response.headers.get('spb-final-url') || url; //fix para redirects en sitemaps
-      const statusCode = parseInt(response.headers.get('spb-status-code') || '200');
-      
-      return new Response(JSON.stringify({
-        html,
-        final_url: finalUrl,
-        status_code: statusCode,
-        headers: Object.fromEntries(response.headers.entries()),
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
-      });
-    }
-
-    const data = await response.json() as ScrapingBeeResponse;
+      renderJs: render_js,
+    });
 
     return new Response(JSON.stringify(data), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

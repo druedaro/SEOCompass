@@ -1,6 +1,6 @@
 import { MapPin, RefreshCw, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/Card';
 import { Avatar } from '@/components/atoms/Avatar';
 import { Badge } from '@/components/atoms/Badge';
 import { Button } from '@/components/atoms/Button';

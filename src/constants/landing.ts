@@ -6,8 +6,8 @@ import {
   FolderPlus,
   Search,
   AlertTriangle,
-  type LucideIcon,
 } from 'lucide-react';
+import type { Feature, Step } from '@/types/landing';
 
 export const HERO_DATA = {
   badge: {
@@ -33,12 +33,6 @@ export const HERO_DATA = {
   ],
 };
 
-export interface Feature {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-}
-
 export const FEATURES_DATA: Feature[] = [
   {
     icon: FileSearch,
@@ -63,13 +57,6 @@ export const FEATURES_DATA: Feature[] = [
     description: 'Analyze hreflang tags and optimize for international SEO.',
   },
 ];
-
-export interface Step {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-  number: string;
-}
 
 export const STEPS_DATA: Step[] = [
   {

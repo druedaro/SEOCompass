@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { GoogleMap, Marker } from '@react-google-maps/api';
 import {
   Dialog,
   DialogContent,
@@ -9,29 +8,20 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/atoms/Dialog';
+} from '@/components/molecules/Dialog';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { Label } from '@/components/atoms/Label';
-import { LocationAutocomplete } from '@/components/molecules/LocationAutocomplete';
+import { LocationPicker } from '@/components/organisms/LocationPicker';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
-import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { createTeamSchema, CreateTeamFormData } from '@/schemas/teamSchema';
-import { DEFAULT_MAP_CENTER, MAP_CONTAINER_STYLE } from '@/constants/maps';
-
-interface CreateTeamDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
+import { showSuccessToast } from '@/lib/toast';
+import type { CreateTeamDialogProps } from '@/types/componentTypes';
 
 export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) {
   const { createTeam } = useWorkspace();
-  const { isLoaded } = useGoogleMaps();
   const [isLoading, setIsLoading] = useState(false);
   const [location, setLocation] = useState('');
-  
-  const [mapCenter, setMapCenter] = useState(DEFAULT_MAP_CENTER);
-  const [markerPosition, setMarkerPosition] = useState<google.maps.LatLngLiteral | null>(null);
 
   const {
     register,
@@ -47,24 +37,12 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
     setIsLoading(true);
     try {
       await createTeam({ ...data, location });
+      showSuccessToast('Team created successfully!');
       reset();
       setLocation('');
-      setMapCenter(DEFAULT_MAP_CENTER);
-      setMarkerPosition(null);
       onOpenChange(false);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handlePlaceSelect = (place: google.maps.places.PlaceResult) => {
-    if (place.geometry?.location) {
-      const lat = place.geometry.location.lat();
-      const lng = place.geometry.location.lng();
-      const newCenter = { lat, lng };
-      
-      setMapCenter(newCenter);
-      setMarkerPosition(newCenter);
     }
   };
 
@@ -105,34 +83,13 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
             )}
           </div>
 
-          <LocationAutocomplete
+          <LocationPicker
             value={location}
             onChange={setLocation}
-            onPlaceSelect={handlePlaceSelect}
             label="Location (Optional)"
             placeholder="San Francisco, CA"
             disabled={isLoading}
           />
-
-          {isLoaded && markerPosition && (
-            <div className="space-y-2">
-              <Label>Map Preview</Label>
-              <div className="rounded-lg overflow-hidden border">
-                <GoogleMap
-                  mapContainerStyle={MAP_CONTAINER_STYLE}
-                  center={mapCenter}
-                  zoom={12}
-                  options={{
-                    streetViewControl: false,
-                    mapTypeControl: false,
-                    fullscreenControl: false,
-                  }}
-                >
-                  <Marker position={markerPosition} />
-                </GoogleMap>
-              </div>
-            </div>
-          )}
 
           <DialogFooter>
             <Button

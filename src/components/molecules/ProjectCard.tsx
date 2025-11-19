@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/atoms/Card';
+import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/molecules/Card';
 import { Button } from '@/components/atoms/Button';
 import { MoreVertical, Calendar } from 'lucide-react';
 import {
@@ -8,15 +8,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/molecules/DropdownMenu';
-import type { Project } from '@/types/domain';
+import type { ProjectCardProps } from '@/types/componentTypes';
 import { formatDistanceToNow } from 'date-fns';
-
-interface ProjectCardProps {
-  project: Project;
-  onSelect?: () => void;
-  onEdit?: () => void;
-  onDelete?: () => void;
-}
 
 export function ProjectCard({ project, onSelect, onEdit, onDelete }: ProjectCardProps) {
   const createdDate = new Date(project.created_at);

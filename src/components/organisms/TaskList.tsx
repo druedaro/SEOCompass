@@ -8,7 +8,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/atoms/Table';
+} from '@/components/molecules/Table';
 import { Badge } from '@/components/atoms/Badge';
 import { PriorityBadge } from '@/components/molecules/PriorityBadge';
 import {
@@ -20,15 +20,10 @@ import {
 } from '@/components/molecules/DropdownMenu';
 import { Button } from '@/components/atoms/Button';
 import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
-import { Task, deleteTask, startTask, completeTask } from '@/services/taskService';
+import { Task, deleteTask, startTask, completeTask } from '@/services/task/taskService';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { STATUS_CONFIG } from '@/constants/tasks';
-
-interface TaskListProps {
-  tasks: Task[];
-  onTaskUpdate: () => void;
-  onTaskEdit: (task: Task) => void;
-}
+import type { TaskListProps } from '@/types/componentTypes';
 
 export function TaskList({ tasks, onTaskUpdate, onTaskEdit }: TaskListProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -80,7 +75,7 @@ export function TaskList({ tasks, onTaskUpdate, onTaskEdit }: TaskListProps) {
 
   return (
     <>
-      <div className="rounded-md border">
+      <div className="rounded-md border max-h-[600px] overflow-y-auto">
         <Table>
           <TableHeader>
             <TableRow>

@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import { ROLE_OPTIONS } from '@/constants/roles';
 
+import { sanitizedString } from './common';
+
 export const loginSchema = z.object({
-  email: z
-    .string()
-    .min(1, 'Email is required')
-    .email('Invalid email format'),
+  email: sanitizedString
+    .pipe(z.string().min(1, 'Email is required').email('Invalid email format')),
   password: z
     .string()
     .min(1, 'Password is required')
@@ -15,15 +15,15 @@ export const loginSchema = z.object({
 export type LoginFormData = z.infer<typeof loginSchema>;
 
 export const registerSchema = z.object({
-  fullName: z
-    .string()
-    .min(1, 'Full name is required')
-    .min(3, 'Full name must be at least 3 characters')
-    .max(100, 'Full name must be less than 100 characters'),
-  email: z
-    .string()
-    .min(1, 'Email is required')
-    .email('Invalid email format'),
+  fullName: sanitizedString
+    .pipe(
+      z.string()
+        .min(1, 'Full name is required')
+        .min(3, 'Full name must be at least 3 characters')
+        .max(100, 'Full name must be less than 100 characters')
+    ),
+  email: sanitizedString
+    .pipe(z.string().min(1, 'Email is required').email('Invalid email format')),
   password: z
     .string()
     .min(1, 'Password is required')
