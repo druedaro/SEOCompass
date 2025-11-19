@@ -3,7 +3,7 @@ import { Plus, ArrowLeft, List, Calendar } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/atoms/Button';
 import { TaskList } from '@/components/organisms/TaskList';
-import { TaskFilters } from '@/components/organisms/TaskFilters';
+import { TaskFilters } from '@/components/molecules/TaskFilters';
 import { Pagination } from '@/components/molecules/Pagination';
 import { CreateTaskModal } from '@/components/organisms/CreateTaskModal';
 import { EmptyState } from '@/components/molecules/EmptyState';

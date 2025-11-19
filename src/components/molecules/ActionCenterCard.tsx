@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/Card';
 import { Badge } from '@/components/atoms/Badge';
 import { Button } from '@/components/atoms/Button';
 import type { ActionCenterCardProps } from '@/types/dashboard';

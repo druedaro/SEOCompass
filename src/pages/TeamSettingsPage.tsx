@@ -5,7 +5,7 @@ import { Save, Trash2, LogOut } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { Label } from '@/components/atoms/Label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/Card';
 import { LocationPicker } from '@/components/organisms/LocationPicker';
 import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';

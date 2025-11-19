@@ -7,7 +7,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/atoms/AlertDialog';
+} from '@/components/molecules/AlertDialog';
 import type { DeleteConfirmationDialogProps } from '@/types/componentTypes';
 
 export function DeleteConfirmationDialog({

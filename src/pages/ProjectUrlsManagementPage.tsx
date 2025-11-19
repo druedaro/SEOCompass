@@ -14,8 +14,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/atoms/Table';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
+} from '@/components/molecules/Table';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/Card';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
 import { useProjectUrls } from '@/hooks/useProjectUrls';

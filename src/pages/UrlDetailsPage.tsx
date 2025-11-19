@@ -2,7 +2,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
 import { ArrowLeft, Plus } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/Card';
 import { AuditHistoryChart } from '@/components/organisms/AuditHistoryChart';
 import { AuditResultsTable } from '@/components/organisms/AuditResultsTable';
 import { CreateTaskModal } from '@/components/organisms/CreateTaskModal';

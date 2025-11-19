@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/Card';
 import type { ProjectStatsOverviewProps } from '@/types/dashboard';
 
 export function ProjectStatsOverview({ stats }: ProjectStatsOverviewProps) {

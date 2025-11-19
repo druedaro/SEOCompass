@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/molecules/DropdownMenu';
-import { TeamSelector } from '@/components/organisms/TeamSelector';
+import { TeamSelector } from '@/components/molecules/TeamSelector';
 import { CreateTeamDialog } from '@/components/organisms/CreateTeamDialog';
 import { useAuth } from '@/hooks/useAuth';
 

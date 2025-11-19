@@ -7,7 +7,7 @@ import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { Textarea } from '@/components/atoms/Textarea';
 import { Label } from '@/components/atoms/Label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/Card';
 import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
 import { useProject } from '@/hooks/useProject';
 import { useWorkspace } from '@/contexts/WorkspaceContext';

@@ -7,7 +7,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/atoms/Select';
+} from '@/components/molecules/Select';
 import type { TaskStatus } from '@/services/task/taskService';
 import { STATUS_OPTIONS } from '@/constants/tasks';
 import { useWorkspace } from '@/contexts/WorkspaceContext';

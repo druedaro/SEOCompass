@@ -6,7 +6,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/atoms/Select';
+} from '@/components/molecules/Select';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import type { TeamSelectorProps } from '@/types/componentTypes';
 

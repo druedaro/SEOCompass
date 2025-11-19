@@ -2,14 +2,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { ArrowLeft, Settings, Link as LinkIcon } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/Card';
 import { useProject } from '@/hooks/useProject';
 import { useAuth } from '@/hooks/useAuth';
 import { useProjectStats } from '@/hooks/useProjectStats';
 import { useLatestAudit } from '@/hooks/useLatestAudit';
 import { formatDistanceToNow } from 'date-fns';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
-import { ProjectStatsOverview } from '@/components/molecules/ProjectStatsOverview';
+import { ProjectStatsOverview } from '@/components/organisms/ProjectStatsOverview';
 import { ContentAnalyzerCard } from '@/components/molecules/ContentAnalyzerCard';
 import { ActionCenterCard } from '@/components/molecules/ActionCenterCard';
 

@@ -8,7 +8,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/atoms/Table';
+} from '@/components/molecules/Table';
 import { Badge } from '@/components/atoms/Badge';
 import { PriorityBadge } from '@/components/molecules/PriorityBadge';
 import {

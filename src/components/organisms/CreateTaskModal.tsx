@@ -8,7 +8,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/atoms/Dialog';
+} from '@/components/molecules/Dialog';
 import {
   Form,
   FormControl,
@@ -26,7 +26,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/atoms/Select';
+} from '@/components/molecules/Select';
 import { DatePicker } from '@/components/molecules/DatePicker';
 import { createTask, updateTask, type CreateTaskInput } from '@/services/task/taskService';
 import { useWorkspace } from '@/contexts/WorkspaceContext';

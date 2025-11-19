@@ -7,8 +7,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/atoms/Table';
-import { Card } from '@/components/atoms/Card';
+} from '@/components/molecules/Table';
+import { Card } from '@/components/molecules/Card';
 import { AlertCircle, AlertTriangle, Info, Plus } from 'lucide-react';
 import type { Recommendation } from '@/features/seo/recommendationsEngine';
 import { CATEGORY_STYLES } from '@/constants/seo';

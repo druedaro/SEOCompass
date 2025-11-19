@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/atoms/Dialog';
+} from '@/components/molecules/Dialog';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { Textarea } from '@/components/atoms/Textarea';

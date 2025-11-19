@@ -6,7 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { Label } from '@/components/atoms/Label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms/Card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/Card';
 import { LocationPicker } from '@/components/organisms/LocationPicker';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { createTeamSchema, CreateTeamFormData } from '@/schemas/teamSchema';

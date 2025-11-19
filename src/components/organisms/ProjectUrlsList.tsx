@@ -8,7 +8,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/atoms/Table';
+} from '@/components/molecules/Table';
 import type { ProjectUrlsListProps } from '@/types/componentTypes';
 
 export function ProjectUrlsList({
