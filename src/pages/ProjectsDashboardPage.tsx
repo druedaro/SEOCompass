@@ -8,7 +8,7 @@ import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmat
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useProject } from '@/hooks/useProject';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
-import type { Project } from '@/types/domain';
+import type { Project } from '@/types/project';
 import { showErrorToast } from '@/lib/toast';
 
 export function ProjectsDashboardPage() {

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { roleOptions } from '@/schemas/authSchema';
-import type { UserRole } from '@/types/domain';
+import type { UserRole } from '@/types/user';
 import type { RoleSelectionModalProps } from '@/types/componentTypes';
 
 export function RoleSelectionModal({ onSelectRole }: RoleSelectionModalProps) {

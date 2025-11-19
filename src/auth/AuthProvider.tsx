@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/config/supabase';
 import { signOut } from '@/services/auth/authService';
-import type { Profile, UserRole } from '@/types/domain';
+import type { Profile, UserRole } from '@/types/user';
 import { AuthContext } from './AuthContext';
 import { RoleSelectionModal } from '@/components/organisms/RoleSelectionModal';
 import type { AuthProviderProps } from '@/types/context';

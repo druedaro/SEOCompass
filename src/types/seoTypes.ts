@@ -58,7 +58,7 @@ export interface SEOScoreBreakdown {
   onPage: number;
 }
 
-interface BaseValidationResults {
+export interface ScoreCalculationInput {
   titleValidation: ValidationResult;
   descriptionValidation: ValidationResult;
   urlValidation: ValidationResult;
@@ -75,8 +75,6 @@ interface BaseValidationResults {
   externalLinks?: number;
 }
 
-export type ScoreCalculationInput = BaseValidationResults;
-
 export interface Recommendation {
   id: string;
   category: 'meta' | 'content' | 'technical' | 'links' | 'images';
@@ -87,7 +85,7 @@ export interface Recommendation {
   priority: number;
 }
 
-export interface RecommendationInput extends BaseValidationResults {
+export interface RecommendationInput extends ScoreCalculationInput {
   title?: string | null;
   description?: string | null;
   h1s?: string[];

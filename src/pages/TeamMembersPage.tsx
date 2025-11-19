@@ -9,7 +9,7 @@ import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmat
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { useAuth } from '@/hooks/useAuth';
 import toast from 'react-hot-toast';
-import type { TeamMember } from '@/types/domain';
+import type { TeamMember } from '@/types/team';
 
 export default function TeamMembersPage() {
   const { user } = useAuth();
