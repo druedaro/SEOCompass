@@ -4,14 +4,7 @@ import { Label } from '@/components/atoms/Label';
 import { LocationAutocomplete } from '@/components/molecules/LocationAutocomplete';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { DEFAULT_MAP_CENTER, MAP_CONTAINER_STYLE } from '@/constants/maps';
-
-interface LocationPickerProps {
-    value: string;
-    onChange: (value: string) => void;
-    label?: string;
-    placeholder?: string;
-    disabled?: boolean;
-}
+import type { LocationPickerProps } from '@/types/componentTypes';
 
 export function LocationPicker({
     value,

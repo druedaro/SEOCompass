@@ -1,14 +1,11 @@
-import { useEffect, useState, useRef, ReactNode } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/config/supabase';
 import { signOut } from '@/services/auth/authService';
 import type { Profile, UserRole } from '@/types/domain';
 import { AuthContext } from './AuthContext';
 import { RoleSelectionModal } from '@/components/organisms/RoleSelectionModal';
-
-interface AuthProviderProps {
-  children: ReactNode;
-}
+import type { AuthProviderProps } from '@/types/context';
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
@@ -22,10 +19,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (isFetchingProfileRef.current) {
       return;
     }
-    
+
     try {
       isFetchingProfileRef.current = true;
-      
+
       const { data: profileData, error } = await supabase
         .from('profiles')
         .select('*')
@@ -34,7 +31,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       if (!profileData && !error) {
         const { data: { user } } = await supabase.auth.getUser();
-        
+
         if (user) {
           const { data: newProfile, error: insertError } = await supabase
             .from('profiles')
@@ -56,7 +53,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setProfile(null);
       } else {
         setProfile(profileData);
-        
+
         if (profileData && !profileData.role) {
           setShowRoleModal(true);
         }
@@ -72,34 +69,34 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const initAuth = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        
+
         setSession(session);
         setUser(session?.user ?? null);
-        
+
         if (session?.user) {
-          fetchProfile(session.user.id).catch(() => {});
+          fetchProfile(session.user.id).catch(() => { });
         }
-        
+
         setLoading(false);
       } catch {
         setLoading(false);
       }
     };
-    
+
     initAuth();
-    
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'INITIAL_SESSION') {
         return;
       }
-      
+
       setSession(session);
       setUser(session?.user ?? null);
-      
+
       if (session?.user && event === 'SIGNED_IN') {
-        fetchProfile(session.user.id).catch(() => {});
+        fetchProfile(session.user.id).catch(() => { });
       } else if (!session?.user) {
         setProfile(null);
       }
@@ -119,10 +116,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const handleRoleSelection = async (role: UserRole, fullName: string) => {
     if (!user) return;
-    
+
     const { error } = await supabase
       .from('profiles')
-      .update({ 
+      .update({
         role,
         full_name: fullName,
       })

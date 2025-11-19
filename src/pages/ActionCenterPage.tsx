@@ -80,109 +80,109 @@ export function ActionCenterPage() {
   return (
     <DashboardLayout>
       <div className="container mx-auto py-8">
-      {currentProject && (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => navigate(`/dashboard/projects/${currentProject.id}`)}
-          className="mb-4"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Project
-        </Button>
-      )}
-      
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold">Action Center</h1>
-          <p className="text-muted-foreground mt-1">
-            Manage your SEO tasks and track progress
-          </p>
+        {currentProject && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(`/dashboard/projects/${currentProject.id}`)}
+            className="mb-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Project
+          </Button>
+        )}
+
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-3xl font-bold">Action Center</h1>
+            <p className="text-muted-foreground mt-1">
+              Manage your SEO tasks and track progress
+            </p>
+          </div>
+          <Button onClick={() => setCreateModalOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            New Task
+          </Button>
         </div>
-        <Button onClick={() => setCreateModalOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          New Task
-        </Button>
-      </div>
 
-      <div className="flex items-center gap-2 mb-6">
-        <Button
-          variant={activeTab === 'list' ? 'default' : 'outline'}
-          onClick={() => setActiveTab('list')}
-          className="gap-2"
-        >
-          <List className="h-4 w-4" />
-          Tasks
-        </Button>
-        <Button
-          variant={activeTab === 'calendar' ? 'default' : 'outline'}
-          onClick={() => setActiveTab('calendar')}
-          className="gap-2"
-        >
-          <Calendar className="h-4 w-4" />
-          Calendar
-        </Button>
-      </div>
+        <div className="flex items-center gap-2 mb-6">
+          <Button
+            variant={activeTab === 'list' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('list')}
+            className="gap-2"
+          >
+            <List className="h-4 w-4" />
+            Tasks
+          </Button>
+          <Button
+            variant={activeTab === 'calendar' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('calendar')}
+            className="gap-2"
+          >
+            <Calendar className="h-4 w-4" />
+            Calendar
+          </Button>
+        </div>
 
-      {activeTab === 'list' && (
-        <>
-          <TaskFilters
-            filters={filters}
-            onFiltersChange={handleFiltersChange}
-          />
-
-          {tasks.length === 0 ? (
-            <EmptyState
-              icon={Plus}
-              title={activeFiltersCount > 0 ? "No tasks found" : "No tasks yet"}
-              description={
-                activeFiltersCount > 0
-                  ? "No tasks match the selected filters. Try adjusting your filters."
-                  : "Create your first task to start tracking your SEO improvements and fixes."
-              }
-              actionLabel={activeFiltersCount > 0 ? undefined : "Create Task"}
-              onAction={activeFiltersCount > 0 ? undefined : () => setCreateModalOpen(true)}
+        {activeTab === 'list' && (
+          <>
+            <TaskFilters
+              filters={filters}
+              onFiltersChange={handleFiltersChange}
             />
-          ) : (
-            <>
-              <TaskList
-                tasks={tasks}
-                onTaskUpdate={() => {}}
-                onTaskEdit={handleTaskEdit}
-              />
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-                totalItems={totalTasks}
-                pageSize={15}
-              />
-            </>
-          )}
-        </>
-      )}
 
-      {activeTab === 'calendar' && (
-        <TaskCalendar
-          tasks={tasks}
-          onTaskClick={handleTaskEdit}
-          onDateSelect={() => {
-            setCreateModalOpen(true);
+            {tasks.length === 0 ? (
+              <EmptyState
+                icon={Plus}
+                title={activeFiltersCount > 0 ? "No tasks found" : "No tasks yet"}
+                description={
+                  activeFiltersCount > 0
+                    ? "No tasks match the selected filters. Try adjusting your filters."
+                    : "Create your first task to start tracking your SEO improvements and fixes."
+                }
+                actionLabel={activeFiltersCount > 0 ? undefined : "Create Task"}
+                onAction={activeFiltersCount > 0 ? undefined : () => setCreateModalOpen(true)}
+              />
+            ) : (
+              <>
+                <TaskList
+                  tasks={tasks}
+                  onTaskUpdate={reload}
+                  onTaskEdit={handleTaskEdit}
+                />
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                  totalItems={totalTasks}
+                  pageSize={15}
+                />
+              </>
+            )}
+          </>
+        )}
+
+        {activeTab === 'calendar' && (
+          <TaskCalendar
+            tasks={tasks}
+            onTaskClick={handleTaskEdit}
+            onDateSelect={() => {
+              setCreateModalOpen(true);
+            }}
+          />
+        )}
+
+        <CreateTaskModal
+          open={createModalOpen}
+          onOpenChange={(open) => {
+            setCreateModalOpen(open);
+            if (!open) setTaskToEdit(null);
           }}
+          projectId={currentProject.id}
+          onTaskCreated={reload}
+          taskToEdit={taskToEdit}
         />
-      )}
-
-      <CreateTaskModal
-        open={createModalOpen}
-        onOpenChange={(open) => {
-          setCreateModalOpen(open);
-          if (!open) setTaskToEdit(null);
-        }}
-        projectId={currentProject.id}
-        onTaskCreated={reload}
-        taskToEdit={taskToEdit}
-      />
-    </div>
+      </div>
     </DashboardLayout>
   );
 }

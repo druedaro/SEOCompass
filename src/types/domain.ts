@@ -20,9 +20,6 @@ export type { AuthContextType, AuthProviderProps, WorkspaceContextType, ProjectC
 export type { ScrapingBeeResponse } from './edgeFunction';
 export type { ValidationResults } from './hooks';
 export type {
-  InputProps,
-  ButtonProps,
-  BadgeProps,
   DeleteConfirmationDialogProps,
   EmptyStateProps,
   FormFieldContextValue,

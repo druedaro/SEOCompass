@@ -6,24 +6,10 @@ import type { ProjectUrl } from './projectUrl';
 import type { Recommendation } from './seoTypes';
 
 // Atom Component Props
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
-
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
-  size?: 'default' | 'sm' | 'lg' | 'icon';
-  asChild?: boolean;
-}
-
-export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: 'default' | 'secondary' | 'destructive' | 'outline';
-}
-
 export interface AvatarProps {
   children: ReactNode;
   className?: string;
 }
-
-export type CalendarProps = React.ComponentProps<any>;
 
 // Molecule Component Props
 export interface LocationAutocompleteProps {
@@ -157,4 +143,22 @@ export interface ProjectUrlsListProps {
   onAudit: (urlId: string) => void;
   isAuditing?: boolean;
   currentAuditingUrlId?: string;
+}
+
+export interface LocationPickerProps {
+  value: string;
+  onChange: (value: string) => void;
+  label?: string;
+  placeholder?: string;
+  disabled?: boolean;
+}
+
+export interface TaskCalendarProps {
+  tasks: Task[];
+  onTaskClick?: (task: Task) => void;
+  onDateSelect?: (start: Date, end: Date) => void;
+}
+
+export interface ProtectedRouteProps {
+  children: ReactNode;
 }

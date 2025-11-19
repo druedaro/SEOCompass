@@ -6,12 +6,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import type { EventClickArg, DateSelectArg } from '@fullcalendar/core';
 import type { Task } from '@/types/task';
 import { STATUS_CONFIG } from '@/constants/tasks';
-
-interface TaskCalendarProps {
-  tasks: Task[];
-  onTaskClick?: (task: Task) => void;
-  onDateSelect?: (start: Date, end: Date) => void;
-}
+import type { TaskCalendarProps } from '@/types/componentTypes';
 
 export function TaskCalendar({ tasks, onTaskClick, onDateSelect }: TaskCalendarProps) {
   const calendarRef = useRef<FullCalendar>(null);

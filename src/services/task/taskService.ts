@@ -1,126 +1,116 @@
 import { supabase } from '@/config/supabase';
 import { TASKS_PER_PAGE } from '@/constants/tasks';
-import type { Task, TaskPriority, TaskStatus, CreateTaskInput, UpdateTaskInput, TaskFilters, PaginatedTasksResponse } from '@/types/task';
+import type { Task, TaskPriority, TaskStatus, CreateTaskInput, UpdateTaskInput, TaskFilters, PaginatedTasksResponse, TaskInsertData } from '@/types/task';
 
 export type { Task, TaskPriority, TaskStatus, CreateTaskInput, UpdateTaskInput, TaskFilters, PaginatedTasksResponse };
 
 export async function getTasksByProject(
-    projectId: string,
-    filters?: TaskFilters,
-    page: number = 1
-  ): Promise<PaginatedTasksResponse> {
-    const from = (page - 1) * TASKS_PER_PAGE;
-    const to = from + TASKS_PER_PAGE - 1;
+  projectId: string,
+  filters?: TaskFilters,
+  page: number = 1
+): Promise<PaginatedTasksResponse> {
+  const from = (page - 1) * TASKS_PER_PAGE;
+  const to = from + TASKS_PER_PAGE - 1;
 
-    let query = supabase
-      .from('tasks')
-      .select('*', { count: 'exact' })
-      .eq('project_id', projectId);
+  let query = supabase
+    .from('tasks')
+    .select('*', { count: 'exact' })
+    .eq('project_id', projectId);
 
-    if (filters?.status) {
-      query = query.eq('status', filters.status);
+  if (filters?.status) {
+    query = query.eq('status', filters.status);
+  }
+  if (filters?.priority) {
+    query = query.eq('priority', filters.priority);
+  }
+  if (filters?.assigned_to !== undefined) {
+    if (filters.assigned_to === null) {
+      query = query.is('assigned_to', null);
+    } else {
+      query = query.eq('assigned_to', filters.assigned_to);
     }
-    if (filters?.priority) {
-      query = query.eq('priority', filters.priority);
-    }
-    if (filters?.assigned_to !== undefined) {
-      if (filters.assigned_to === null) {
-        query = query.is('assigned_to', null);
-      } else {
-        query = query.eq('assigned_to', filters.assigned_to);
-      }
-    }
-    if (filters?.overdue) {
-      const now = new Date().toISOString();
-      query = query
-        .lt('due_date', now)
-        .neq('status', 'completed');
-    }
-
+  }
+  if (filters?.overdue) {
+    const now = new Date().toISOString();
     query = query
-      .order('created_at', { ascending: false })
-      .range(from, to);
+      .lt('due_date', now)
+      .neq('status', 'completed');
+  }
 
-    const { data, error, count } = await query;
+  query = query
+    .order('created_at', { ascending: false })
+    .range(from, to);
 
-    if (error) throw error;
+  const { data, error, count } = await query;
 
-    const total = count || 0;
-    const totalPages = Math.ceil(total / TASKS_PER_PAGE);
+  if (error) throw error;
 
-    return {
-      tasks: data || [],
-      total,
-      page,
-      pageSize: TASKS_PER_PAGE,
-      totalPages,
+  const total = count || 0;
+  const totalPages = Math.ceil(total / TASKS_PER_PAGE);
+
+  return {
+    tasks: data || [],
+    total,
+    page,
+    pageSize: TASKS_PER_PAGE,
+    totalPages,
   };
 }
 
 export async function getTaskById(taskId: string): Promise<Task | null> {
-    const { data, error } = await supabase
-      .from('tasks')
-      .select('*')
-      .eq('id', taskId)
-      .single();
+  const { data, error } = await supabase
+    .from('tasks')
+    .select('*')
+    .eq('id', taskId)
+    .single();
 
-    if (error) throw error;
+  if (error) throw error;
   return data;
 }
 
 export async function createTask(input: CreateTaskInput): Promise<Task> {
-    interface TaskInsertData {
-      title: string;
-      description: string | null;
-      priority: TaskPriority;
-      status: TaskStatus;
-      project_id: string;
-      due_date?: string;
-      audit_reference?: string;
-      assigned_to?: string;
-    }
 
-    const taskData: TaskInsertData = {
-      title: input.title,
-      description: input.description || null,
-      priority: input.priority || 'medium',
-      status: input.status || 'todo',
-      project_id: input.project_id,
-    };
+  const taskData: TaskInsertData = {
+    title: input.title,
+    description: input.description || null,
+    priority: input.priority || 'medium',
+    status: input.status || 'todo',
+    project_id: input.project_id,
+  };
 
-    if (input.due_date) taskData.due_date = input.due_date;
-    if (input.audit_reference) taskData.audit_reference = input.audit_reference;
-    if (input.assigned_to) taskData.assigned_to = input.assigned_to;
+  if (input.due_date) taskData.due_date = input.due_date;
+  if (input.audit_reference) taskData.audit_reference = input.audit_reference;
+  if (input.assigned_to) taskData.assigned_to = input.assigned_to;
 
-    const { data, error } = await supabase
-      .from('tasks')
-      .insert([taskData])
-      .select()
-      .single();
+  const { data, error } = await supabase
+    .from('tasks')
+    .insert([taskData])
+    .select()
+    .single();
 
-    if (error) throw error;
+  if (error) throw error;
   return data;
 }
 
 export async function updateTask(taskId: string, input: UpdateTaskInput): Promise<Task> {
-    const updateData: Record<string, string | null | undefined> = { ...input };
-    if ('assigned_to' in input && input.assigned_to === undefined) {
-      updateData.assigned_to = null;
-    }
+  const updateData: Record<string, string | null | undefined> = { ...input };
+  if ('assigned_to' in input && input.assigned_to === undefined) {
+    updateData.assigned_to = null;
+  }
 
-    const { data, error } = await supabase
-      .from('tasks')
-      .update(updateData)
-      .eq('id', taskId)
-      .select()
-      .single();
+  const { data, error } = await supabase
+    .from('tasks')
+    .update(updateData)
+    .eq('id', taskId)
+    .select()
+    .single();
 
-    if (error) throw error;
+  if (error) throw error;
   return data;
 }
 
 export async function deleteTask(taskId: string): Promise<void> {
-    const { error } = await supabase.from('tasks').delete().eq('id', taskId);
+  const { error } = await supabase.from('tasks').delete().eq('id', taskId);
   if (error) throw error;
 }
 

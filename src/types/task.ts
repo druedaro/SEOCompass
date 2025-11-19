@@ -52,3 +52,14 @@ export interface PaginatedTasksResponse {
   pageSize: number;
   totalPages: number;
 }
+
+export interface TaskInsertData {
+  title: string;
+  description: string | null;
+  priority: TaskPriority;
+  status: TaskStatus;
+  project_id: string;
+  due_date?: string;
+  audit_reference?: string;
+  assigned_to?: string;
+}

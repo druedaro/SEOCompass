@@ -1,19 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/config/supabase';
-
-interface SEOScores {
-  overall: number;
-  content: number;
-  meta: number;
-  onPage: number;
-  technical: number;
-}
-
-interface LatestAudit {
-  url: string;
-  createdAt: string;
-  scores: SEOScores;
-}
+import type { LatestAudit } from '@/types/audit';
 
 export function useLatestAudit(projectId: string | undefined) {
   const [audit, setAudit] = useState<LatestAudit | null>(null);
