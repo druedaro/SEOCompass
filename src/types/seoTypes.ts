@@ -58,7 +58,7 @@ export interface SEOScoreBreakdown {
   onPage: number;
 }
 
-export interface ScoreCalculationInput {
+interface BaseValidationResults {
   titleValidation: ValidationResult;
   descriptionValidation: ValidationResult;
   urlValidation: ValidationResult;
@@ -75,6 +75,8 @@ export interface ScoreCalculationInput {
   externalLinks?: number;
 }
 
+export type ScoreCalculationInput = BaseValidationResults;
+
 export interface Recommendation {
   id: string;
   category: 'meta' | 'content' | 'technical' | 'links' | 'images';
@@ -85,24 +87,12 @@ export interface Recommendation {
   priority: number;
 }
 
-export interface RecommendationInput {
-  titleValidation: ValidationResult;
+export interface RecommendationInput extends BaseValidationResults {
   title?: string | null;
-  descriptionValidation: ValidationResult;
   description?: string | null;
-  urlValidation: ValidationResult;
-  h1Validation: ValidationResult;
   h1s?: string[];
-  headingHierarchyValidation: ValidationResult;
-  imagesValidation: ValidationResult;
   images?: Array<{ src: string; alt: string | null }>;
-  contentLengthValidation: ValidationResult;
   wordCount?: number;
-  canonicalValidation?: ValidationResult;
-  robotsValidation?: ValidationResult;
-  hasStructuredData?: boolean;
-  internalLinks?: number;
-  externalLinks?: number;
   has404Error?: boolean;
   hasServerError?: boolean;
 }
@@ -119,6 +109,7 @@ export interface ValidationResults {
   linksValidation: ValidationResult;
   hreflangValidation: ValidationResult;
   robotsValidation: ValidationResult;
+  hasStructuredData?: boolean;
   internalLinks: number;
   externalLinks: number;
 }

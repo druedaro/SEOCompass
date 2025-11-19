@@ -71,8 +71,8 @@ export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
         <Select
           value={
             filters.assigned_to === undefined ? 'all' :
-            filters.assigned_to === null ? 'unassigned' :
-            filters.assigned_to
+              filters.assigned_to === null ? 'unassigned' :
+                filters.assigned_to
           }
           onValueChange={handleAssigneeChange}
         >

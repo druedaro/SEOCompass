@@ -123,7 +123,7 @@ export default function TeamMembersPage() {
                   const isCurrentUser = member.user_id === user?.id;
                   const isMemberOwner = member.user_id === currentTeam.user_id;
                   const canDelete = isOwner && !isCurrentUser;
-                  
+
                   return (
                     <div
                       key={member.user_id}

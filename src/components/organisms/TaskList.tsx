@@ -119,7 +119,7 @@ export function TaskList({ tasks, onTaskUpdate, onTaskEdit }: TaskListProps) {
                     <span
                       className={
                         new Date(task.due_date) < new Date() &&
-                        task.status !== 'completed'
+                          task.status !== 'completed'
                           ? 'text-red-600 font-medium'
                           : ''
                       }

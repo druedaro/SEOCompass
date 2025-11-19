@@ -1,13 +1,6 @@
 import { Trash2, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/molecules/Table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/molecules/Table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/Card';
 
 

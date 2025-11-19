@@ -1,14 +1,7 @@
 import { Play, ExternalLink, Eye } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
 import { Link, useParams } from 'react-router-dom';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/molecules/Table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/molecules/Table';
 import type { ProjectUrlsListProps } from '@/types/componentTypes';
 
 export function ProjectUrlsList({
@@ -18,7 +11,7 @@ export function ProjectUrlsList({
   currentAuditingUrlId,
 }: ProjectUrlsListProps) {
   const { projectId } = useParams<{ projectId: string }>();
-  
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -47,7 +40,7 @@ export function ProjectUrlsList({
           <TableBody>
             {urls.map((url) => {
               const isCurrentlyAuditing = isAuditing && currentAuditingUrlId === url.id;
-              
+
               return (
                 <TableRow key={url.id}>
                   <TableCell className="font-medium">

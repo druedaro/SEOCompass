@@ -10,8 +10,8 @@ import { useLatestAudit } from '@/hooks/useLatestAudit';
 import { formatDistanceToNow } from 'date-fns';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { ProjectStatsOverview } from '@/components/organisms/ProjectStatsOverview';
-import { ContentAnalyzerCard } from '@/components/molecules/ContentAnalyzerCard';
-import { ActionCenterCard } from '@/components/molecules/ActionCenterCard';
+import { ContentAnalyzerCard } from '@/components/organisms/ContentAnalyzerCard';
+import { ActionCenterCard } from '@/components/organisms/ActionCenterCard';
 
 export function ProjectOverviewPage() {
   const { projectId } = useParams<{ projectId: string }>();

@@ -32,7 +32,6 @@ serve(async (req) => {
 
     const data = await scrapingService.scrape({
       url,
-
       renderJs: render_js,
     });
 

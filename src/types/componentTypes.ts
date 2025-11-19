@@ -20,17 +20,14 @@ export interface ButtonProps
   asChild?: boolean;
 }
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> { }
+export type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
-
 
 export interface AvatarProps {
   children: ReactNode;
   className?: string;
 }
-
 
 export interface LocationAutocompleteProps {
   value?: string;
@@ -92,7 +89,6 @@ export type FormFieldContextValue<
 > = {
   name: TName;
 };
-
 
 export interface RoleSelectionModalProps {
   onSelectRole: (role: import('./user').UserRole, fullName: string) => Promise<void>;
@@ -180,8 +176,6 @@ export interface AddProjectUrlFormProps {
   currentCount: number;
   maxCount: number;
 }
-
-
 
 export interface ProjectUrlsTableProps {
   urls: ProjectUrl[];

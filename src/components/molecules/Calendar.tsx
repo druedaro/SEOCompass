@@ -1,9 +1,7 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { DayPicker } from "react-day-picker"
-
 import { cn } from "@/lib/utils"
-
 import { CalendarProps } from "@/types/componentTypes"
 
 function Calendar({
