@@ -115,6 +115,7 @@ A collaborative web platform designed for small SEO teams and freelancers to man
 
 ### State Management & Routing
 ![React Router](https://img.shields.io/badge/React_Router-7.9-CA4245?style=flat&logo=reactrouter&logoColor=white)
+![React Context API](https://img.shields.io/badge/Context_API-61DAFB?style=flat&logo=react&logoColor=white)
 
 ### Forms & Validation
 ![React Hook Form](https://img.shields.io/badge/React_Hook_Form-7.64-EC5990?style=flat&logo=reacthookform&logoColor=white)
@@ -128,11 +129,13 @@ A collaborative web platform designed for small SEO teams and freelancers to man
 ![class-variance-authority](https://img.shields.io/badge/CVA-0.7-6366F1?style=flat)
 ![clsx](https://img.shields.io/badge/clsx-2.1-3B82F6?style=flat)
 ![tailwind-merge](https://img.shields.io/badge/tailwind--merge-3.3-06B6D4?style=flat)
+![DOMPurify](https://img.shields.io/badge/DOMPurify-3.3-FF6B6B?style=flat)
 
 ### Data Visualization & Date
 ![Recharts](https://img.shields.io/badge/Recharts-2.14-22B5BF?style=flat)
 ![date-fns](https://img.shields.io/badge/date--fns-4.1-770C56?style=flat)
 ![React Day Picker](https://img.shields.io/badge/React_Day_Picker-9.11-E74C3C?style=flat)
+![FullCalendar](https://img.shields.io/badge/FullCalendar-6.1-4285F4?style=flat)
 
 ### Testing & Quality
 ![Vitest](https://img.shields.io/badge/Vitest-3.2-6E9F18?style=flat&logo=vitest&logoColor=white)

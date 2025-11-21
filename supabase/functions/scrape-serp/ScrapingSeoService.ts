@@ -19,7 +19,7 @@ export class ScrapingSeoService {
 
     if (request.renderJs !== false) {
       url.searchParams.set('render_js', 'true');
-      url.searchParams.set('wait', '3000');
+      url.searchParams.set('wait_browser', 'networkidle');
       url.searchParams.set('block_ads', 'true');
       url.searchParams.set('block_resources', 'false');
     }
