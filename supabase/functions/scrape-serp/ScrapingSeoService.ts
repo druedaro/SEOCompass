@@ -24,8 +24,6 @@ export class ScrapingSeoService {
       url.searchParams.set('block_resources', 'false');
     }
 
-
-
     return url;
   }
 
