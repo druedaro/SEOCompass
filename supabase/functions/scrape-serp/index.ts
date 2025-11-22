@@ -18,16 +18,19 @@ serve(async (req) => {
       throw new Error('Valid URL is required');
     }
 
-    const scrapingSeoApiKey = Deno.env.get('SCRAPINGBEE_API_KEY');
-    if (!scrapingSeoApiKey) {
-      throw new Error('ScrapingSeo API key not configured');
+    const scrapingApiKey = Deno.env.get('SCRAPING_API_KEY');
+    if (!scrapingApiKey) {
+      throw new Error('Scraping API key not configured');
     }
 
-    const scrapingSeoBaseUrl = Deno.env.get('SCRAPINGBEE_BASE_URL') || 'https://app.scrapingbee.com/api/v1/';
+    const scrapingApiBaseUrl = Deno.env.get('SCRAPING_API_BASE_URL');
+    if (!scrapingApiBaseUrl) {
+      throw new Error('Scraping API base URL not configured');
+    }
 
     const scrapingService = new ScrapingSeoService({
-      apiKey: scrapingSeoApiKey,
-      baseUrl: scrapingSeoBaseUrl,
+      apiKey: scrapingApiKey,
+      baseUrl: scrapingApiBaseUrl,
     });
 
     const data = await scrapingService.scrape({
