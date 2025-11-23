@@ -280,3 +280,10 @@ export function validateRobotsMeta(robotsMeta: string | null): ValidationResult 
 
   return { isValid: false, issues, warnings, score: 0 };
 }
+
+export function validateHttpStatus(scrapedContent: { statusCode: number }): { has404: boolean; hasServer: boolean } {
+  return {
+    has404: scrapedContent.statusCode === 404,
+    hasServer: scrapedContent.statusCode >= 500,
+  };
+}
