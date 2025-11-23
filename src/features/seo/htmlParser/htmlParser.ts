@@ -163,3 +163,14 @@ export function parseHTMLContent(html: string, baseUrl: string): ParsedContent {
     structuredDataTypes: structuredData.types,
   };
 }
+export function extractH1Texts(parsedContent: ParsedContent): string[] {
+  return parsedContent.headings
+    .filter((h) => h.level === 1)
+    .map((h) => h.text);
+}
+
+export function countLinks(parsedContent: ParsedContent): { internal: number; external: number } {
+  const internal = parsedContent.links.filter((link) => link.isInternal).length;
+  const external = parsedContent.links.filter((link) => link.isExternal).length;
+  return { internal, external };
+}
