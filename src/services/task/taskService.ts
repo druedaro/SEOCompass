@@ -121,3 +121,27 @@ export async function completeTask(taskId: string): Promise<Task> {
 export async function startTask(taskId: string): Promise<Task> {
   return updateTask(taskId, { status: 'in_progress' });
 }
+
+export async function getOpenTasksCount(projectId: string): Promise<number> {
+  const { count, error } = await supabase
+    .from('tasks')
+    .select('*', { count: 'exact', head: true })
+    .eq('project_id', projectId)
+    .neq('status', 'completed')
+    .neq('status', 'cancelled');
+
+  if (error) throw error;
+  return count || 0;
+}
+
+export async function getUserPendingTasksCount(projectId: string, userId: string): Promise<number> {
+  const { count, error } = await supabase
+    .from('tasks')
+    .select('*', { count: 'exact', head: true })
+    .eq('project_id', projectId)
+    .eq('assigned_to', userId)
+    .in('status', ['todo', 'in_progress']);
+
+  if (error) throw error;
+  return count || 0;
+}
