@@ -1,8 +1,8 @@
 import { supabase } from '@/config/supabase';
 import { getProjectUrlById } from '../projectUrls/projectUrlsService';
-import type { ScrapedContent, ScrapeOptions, AuditHistoryEntry } from '@/types/audit';
+import type { ScrapedContent, ScrapeOptions } from '@/types/audit';
 
-export type { ScrapedContent, ScrapeOptions, AuditHistoryEntry };
+export type { ScrapedContent, ScrapeOptions };
 
 export async function scrapeByProjectUrlId(
   projectUrlId: string,
@@ -66,16 +66,4 @@ export async function checkUrlStatus(url: string): Promise<{
       finalUrl: url,
     };
   }
-}
-
-export async function getAuditHistory(projectUrlId: string): Promise<AuditHistoryEntry[]> {
-  const { data, error } = await supabase
-    .from('content_audits')
-    .select('id, created_at, overall_score, meta_score, content_score, technical_score, on_page_score, recommendations')
-    .eq('project_url_id', projectUrlId)
-    .order('created_at', { ascending: true })
-    .limit(30);
-
-  if (error) throw new Error('Failed to fetch audit history');
-  return data || [];
 }

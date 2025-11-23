@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { getAuditHistory, type AuditHistoryEntry } from '@/services/contentScraping/contentScrapingService';
+import { getAuditHistory } from '@/services/contentAudit/contentAuditService';
+import type { AuditHistoryEntry } from '@/types/audit';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/Card';
 import type { AuditHistoryChartProps } from '@/types/componentTypes';
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { scrapeByProjectUrlId } from '@/services/contentScraping/contentScrapingService';
-import { supabase } from '@/config/supabase';
+import { saveAuditResults } from '@/services/contentAudit/contentAuditService';
 import { showErrorToast, showSuccessToast, showInfoToast } from '@/lib/toast';
 import { parseHTMLContent, extractH1Texts, countLinks } from '@/features/seo/htmlParser/htmlParser';
 import {
@@ -19,33 +19,7 @@ import {
 } from '@/features/seo/validators/validators';
 import { calculateSEOScore } from '@/features/seo/scoreCalculator/scoreCalculator';
 import { generateRecommendations } from '@/features/seo/recommendationsEngine/recommendationsEngine';
-import type {
-  SEOScoreBreakdown,
-  Recommendation,
-  ValidationResults
-} from '@/types/seoTypes';
-
-async function saveAuditResults(
-  projectId: string,
-  projectUrlId: string,
-  url: string,
-  scores: SEOScoreBreakdown,
-  recommendations: Recommendation[]
-): Promise<void> {
-  const { error } = await supabase.from('content_audits').insert({
-    project_id: projectId,
-    project_url_id: projectUrlId,
-    url,
-    overall_score: scores.overall,
-    meta_score: scores.meta,
-    content_score: scores.content,
-    technical_score: scores.technical,
-    on_page_score: scores.onPage,
-    recommendations,
-  });
-
-  if (error) throw error;
-}
+import type { ValidationResults } from '@/types/seoTypes';
 
 export function useContentAnalyzer(projectId?: string) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);

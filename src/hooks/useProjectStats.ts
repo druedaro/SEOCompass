@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/config/supabase';
+import { getProjectAuditStats } from '@/services/contentAudit/contentAuditService';
 import type { ProjectStats } from '@/types/stats';
 
 export function useProjectStats(projectId: string | undefined, userId: string | undefined) {
@@ -17,11 +18,8 @@ export function useProjectStats(projectId: string | undefined, userId: string | 
       setIsLoading(true);
 
       try {
-        const [auditsResult, tasksResult, myTasksResult] = await Promise.all([
-          supabase
-            .from('content_audits')
-            .select('*', { count: 'exact', head: true })
-            .eq('project_id', projectId),
+        const [pagesAudited, tasksResult, myTasksResult] = await Promise.all([
+          getProjectAuditStats(projectId),
 
           supabase
             .from('tasks')
@@ -41,7 +39,7 @@ export function useProjectStats(projectId: string | undefined, userId: string | 
         ]);
 
         setStats({
-          pagesAudited: auditsResult.count || 0,
+          pagesAudited,
           openTasks: tasksResult.count || 0,
           myPendingTasks: myTasksResult.count || 0,
         });

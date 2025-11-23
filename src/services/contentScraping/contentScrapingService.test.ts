@@ -1,9 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
-  mockSupabaseFrom,
   resetSupabaseMocks,
-  createSuccessResponse,
-  createQueryBuilder,
 } from '@/__mocks__/supabase';
 
 const mockInvoke = vi.hoisted(() => vi.fn());
@@ -13,11 +10,10 @@ vi.mock('@/config/supabase', () => ({
     functions: {
       invoke: mockInvoke,
     },
-    from: mockSupabaseFrom,
   },
 }));
 
-const { scrapeUrl, checkUrlStatus, getAuditHistory } =
+const { scrapeUrl, checkUrlStatus } =
   await import('@/services/contentScraping/contentScrapingService');
 
 describe('Content Scraping Service - Moscow Method Tests', () => {
@@ -63,29 +59,5 @@ describe('Content Scraping Service - Moscow Method Tests', () => {
 
     expect(result.statusCode).toBe(200);
     expect(result.finalUrl).toBe('https://example.com');
-  });
-
-  it('should get audit history successfully', async () => {
-    const mockAudits = [
-      {
-        id: 'audit-1',
-        project_url_id: 'url-123',
-        overall_score: 85,
-        created_at: new Date().toISOString(),
-      },
-    ];
-
-    const selectBuilder = createQueryBuilder();
-    selectBuilder.select.mockReturnValueOnce(selectBuilder);
-    selectBuilder.eq.mockReturnValueOnce(selectBuilder);
-    selectBuilder.order.mockReturnValueOnce(selectBuilder);
-    selectBuilder.limit.mockResolvedValueOnce(
-      createSuccessResponse(mockAudits)
-    );
-    mockSupabaseFrom.mockReturnValueOnce(selectBuilder);
-
-    const result = await getAuditHistory('url-123');
-
-    expect(result).toEqual(mockAudits);
   });
 });
