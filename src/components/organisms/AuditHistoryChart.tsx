@@ -1,29 +1,9 @@
-import { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { getAuditHistory } from '@/services/contentAudit/contentAuditService';
-import type { AuditHistoryEntry } from '@/types/audit';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/Card';
 import type { AuditHistoryChartProps } from '@/types/componentTypes';
 
-export function AuditHistoryChart({ projectUrlId, urlLabel }: AuditHistoryChartProps) {
-  const [history, setHistory] = useState<AuditHistoryEntry[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    loadHistory();
-  }, [projectUrlId]);
-
-  const loadHistory = async () => {
-    setIsLoading(true);
-    try {
-      const data = await getAuditHistory(projectUrlId);
-      setHistory(data);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const chartData = history.map((entry) => ({
+export function AuditHistoryChart({ auditHistory, urlLabel, isLoading }: AuditHistoryChartProps) {
+  const chartData = auditHistory.map((entry) => ({
     date: new Date(entry.created_at).toLocaleDateString('es-ES', {
       month: 'short',
       day: 'numeric',
@@ -48,7 +28,7 @@ export function AuditHistoryChart({ projectUrlId, urlLabel }: AuditHistoryChartP
     );
   }
 
-  if (history.length === 0) {
+  if (auditHistory.length === 0) {
     return (
       <Card>
         <CardHeader>
@@ -66,7 +46,7 @@ export function AuditHistoryChart({ projectUrlId, urlLabel }: AuditHistoryChartP
     <Card>
       <CardHeader>
         <CardTitle>Audit History</CardTitle>
-        <CardDescription>{urlLabel} - Last {history.length} audits</CardDescription>
+        <CardDescription>{urlLabel} - Last {auditHistory.length} audits</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>

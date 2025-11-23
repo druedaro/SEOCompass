@@ -100,8 +100,9 @@ export interface TaskFiltersProps {
 }
 
 export interface AuditHistoryChartProps {
-  projectUrlId: string;
+  auditHistory: import('@/types/audit').AuditHistoryEntry[];
   urlLabel: string;
+  isLoading: boolean;
 }
 
 export interface CreateTeamDialogProps {

@@ -28,7 +28,8 @@ import {
   SelectValue,
 } from '@/components/molecules/Select';
 import { DatePicker } from '@/components/molecules/DatePicker';
-import { createTask, updateTask, type CreateTaskInput } from '@/services/task/taskService';
+import { useTaskActions } from '@/hooks/useTaskActions';
+import type { CreateTaskInput } from '@/services/task/taskService';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { PRIORITY_OPTIONS, STATUS_OPTIONS } from '@/constants/tasks';
 import { taskSchema } from '@/schemas/taskSchema';
@@ -48,6 +49,7 @@ export function CreateTaskModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const { teamMembers } = useWorkspace();
+  const { createTask, updateTask } = useTaskActions();
 
   const isEditing = !!taskToEdit;
 

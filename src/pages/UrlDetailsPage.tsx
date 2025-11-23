@@ -65,7 +65,11 @@ export function UrlDetailsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <AuditHistoryChart projectUrlId={urlId!} urlLabel={projectUrl.label || projectUrl.url} />
+                <AuditHistoryChart 
+                  auditHistory={auditHistory} 
+                  urlLabel={projectUrl.label || projectUrl.url}
+                  isLoading={isLoading}
+                />
               </CardContent>
             </Card>
           )}

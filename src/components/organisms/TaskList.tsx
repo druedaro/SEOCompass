@@ -20,7 +20,8 @@ import {
 } from '@/components/molecules/DropdownMenu';
 import { Button } from '@/components/atoms/Button';
 import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
-import { Task, deleteTask, startTask, completeTask } from '@/services/task/taskService';
+import { useTaskActions } from '@/hooks/useTaskActions';
+import type { Task } from '@/services/task/taskService';
 import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { STATUS_CONFIG } from '@/constants/tasks';
 import type { TaskListProps } from '@/types/componentTypes';
@@ -30,6 +31,7 @@ export function TaskList({ tasks, onTaskUpdate, onTaskEdit }: TaskListProps) {
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const { teamMembers } = useWorkspace();
+  const { deleteTask: deleteTaskAction, startTask, completeTask } = useTaskActions();
 
   const getAssigneeName = (userId: string | null) => {
     if (!userId) return 'Unassigned';
@@ -47,7 +49,7 @@ export function TaskList({ tasks, onTaskUpdate, onTaskEdit }: TaskListProps) {
 
     setIsDeleting(true);
     try {
-      await deleteTask(taskToDelete.id);
+      await deleteTaskAction(taskToDelete.id);
       onTaskUpdate();
       setDeleteDialogOpen(false);
       setTaskToDelete(null);
