@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { AuthProvider } from '@/auth/AuthProvider';
+import { AuthProvider } from '@/auth/AuthContext';
 import { WorkspaceProvider } from '@/contexts/WorkspaceContext';
 import { ProjectProvider } from '@/contexts/ProjectContext';
 import { ProtectedRoute } from '@/routes/ProtectedRoute';
