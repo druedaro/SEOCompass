@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/molecules/Select';
-import { useWorkspace } from '@/contexts/WorkspaceContext';
+import { useWorkspace } from '@/hooks/useWorkspace';
 import type { TeamSelectorProps } from '@/types/componentTypes';
 
 export function TeamSelector({ onCreateTeam }: TeamSelectorProps) {

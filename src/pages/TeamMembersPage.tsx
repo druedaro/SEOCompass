@@ -6,7 +6,7 @@ import { Badge } from '@/components/atoms/Badge';
 import { Button } from '@/components/atoms/Button';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
-import { useWorkspace } from '@/contexts/WorkspaceContext';
+import { useWorkspace } from '@/hooks/useWorkspace';
 import { useAuth } from '@/hooks/useAuth';
 import toast from 'react-hot-toast';
 import type { TeamMember } from '@/types/team';

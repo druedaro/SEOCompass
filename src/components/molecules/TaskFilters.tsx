@@ -10,7 +10,7 @@ import {
 } from '@/components/molecules/Select';
 import type { TaskStatus } from '@/services/task/taskService';
 import { STATUS_OPTIONS } from '@/constants/tasks';
-import { useWorkspace } from '@/contexts/WorkspaceContext';
+import { useWorkspace } from '@/hooks/useWorkspace';
 import type { TaskFiltersProps } from '@/types/componentTypes';
 
 export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {

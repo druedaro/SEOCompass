@@ -13,7 +13,7 @@ import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { Label } from '@/components/atoms/Label';
 import { LocationPicker } from '@/components/organisms/LocationPicker';
-import { useWorkspace } from '@/contexts/WorkspaceContext';
+import { useWorkspace } from '@/hooks/useWorkspace';
 import { createTeamSchema } from '@/schemas/teamSchema';
 import type { CreateTeamFormData } from '@/types/schemas';
 import { showSuccessToast } from '@/lib/toast';

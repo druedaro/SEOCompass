@@ -22,7 +22,7 @@ import { Button } from '@/components/atoms/Button';
 import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
 import { useTaskActions } from '@/hooks/useTaskActions';
 import type { Task } from '@/services/task/taskService';
-import { useWorkspace } from '@/contexts/WorkspaceContext';
+import { useWorkspace } from '@/hooks/useWorkspace';
 import { STATUS_CONFIG } from '@/constants/tasks';
 import type { TaskListProps } from '@/types/componentTypes';
 

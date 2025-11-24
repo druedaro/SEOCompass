@@ -2,7 +2,7 @@ import { createContext, useState, useEffect } from 'react';
 import { getProjectsByTeam, createProject as createProjectService, updateProject as updateProjectService, deleteProject as deleteProjectService } from '@/services/project/projectService';
 import type { Project } from '@/types/project';
 import type { ProjectContextType } from '@/types/context';
-import { useWorkspace } from '@/contexts/WorkspaceContext';
+import { useWorkspace } from '@/hooks/useWorkspace';
 
 export const ProjectContext = createContext<ProjectContextType | null>(null);
 

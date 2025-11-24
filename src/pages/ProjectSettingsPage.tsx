@@ -10,7 +10,7 @@ import { Label } from '@/components/atoms/Label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/Card';
 import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
 import { useProject } from '@/hooks/useProject';
-import { useWorkspace } from '@/contexts/WorkspaceContext';
+import { useWorkspace } from '@/hooks/useWorkspace';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { projectSchema } from '@/schemas/projectSchema';
 import type { ProjectFormData } from '@/types/schemas';

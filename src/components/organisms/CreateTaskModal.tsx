@@ -30,7 +30,7 @@ import {
 import { DatePicker } from '@/components/molecules/DatePicker';
 import { useTaskActions } from '@/hooks/useTaskActions';
 import type { CreateTaskInput } from '@/services/task/taskService';
-import { useWorkspace } from '@/contexts/WorkspaceContext';
+import { useWorkspace } from '@/hooks/useWorkspace';
 import { PRIORITY_OPTIONS, STATUS_OPTIONS } from '@/constants/tasks';
 import { taskSchema } from '@/schemas/taskSchema';
 import type { TaskFormData } from '@/types/schemas';

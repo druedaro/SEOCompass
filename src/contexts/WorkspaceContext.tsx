@@ -1,11 +1,11 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect } from 'react';
 import { getUserTeams, getTeamMembers, createTeam as createTeamService, updateTeam as updateTeamService, deleteTeam as deleteTeamService, removeTeamMember as removeTeamMemberService, leaveTeam as leaveTeamService } from '@/services/team/teamService';
 import type { Team, TeamMember } from '@/types/team';
 import type { WorkspaceContextType } from '@/types/context';
 import { useAuth } from '@/hooks/useAuth';
 import { showErrorToast } from '@/lib/toast';
 
-const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefined);
+export const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefined);
 
 export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
@@ -162,12 +162,4 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
       {children}
     </WorkspaceContext.Provider>
   );
-}
-
-export function useWorkspace() {
-  const context = useContext(WorkspaceContext);
-  if (context === undefined) {
-    throw new Error('useWorkspace must be used within a WorkspaceProvider');
-  }
-  return context;
 }

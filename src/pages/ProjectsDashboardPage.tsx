@@ -7,7 +7,7 @@ import { ProjectModal } from '@/components/organisms/ProjectModal';
 import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useProject } from '@/hooks/useProject';
-import { useWorkspace } from '@/contexts/WorkspaceContext';
+import { useWorkspace } from '@/hooks/useWorkspace';
 import type { Project } from '@/types/project';
 import { showErrorToast } from '@/lib/toast';
 

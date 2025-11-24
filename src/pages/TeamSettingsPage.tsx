@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { LocationPicker } from '@/components/organisms/LocationPicker';
 import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
-import { useWorkspace } from '@/contexts/WorkspaceContext';
+import { useWorkspace } from '@/hooks/useWorkspace';
 import { updateTeamSchema } from '@/schemas/teamSchema';
 import type { UpdateTeamFormData } from '@/types/schemas';
 import { showErrorToast, showSuccessToast } from '@/lib/toast';
