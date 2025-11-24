@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState, useRef } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/config/supabase';
-import { signOut } from '@/services/auth/authService';
+import { signOut, getOrCreateProfile, updateUserProfile } from '@/services/auth/authService';
 import type { Profile, UserRole } from '@/types/user';
 import type { AuthContextType, AuthProviderProps } from '@/types/context';
 import { RoleSelectionModal } from '@/components/organisms/RoleSelectionModal';
@@ -24,40 +24,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       isFetchingProfileRef.current = true;
 
-      const { data: profileData, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('user_id', userId)
-        .maybeSingle();
+      const { data: { user } } = await supabase.auth.getUser();
+      const profileData = await getOrCreateProfile(userId, user?.email || '');
 
-      if (!profileData && !error) {
-        const { data: { user } } = await supabase.auth.getUser();
+      setProfile(profileData);
 
-        if (user) {
-          const { data: newProfile, error: insertError } = await supabase
-            .from('profiles')
-            .insert({
-              user_id: userId,
-              email: user.email || '',
-            })
-            .select()
-            .single();
-
-          if (insertError) {
-            setProfile(null);
-          } else {
-            setProfile(newProfile);
-            setShowRoleModal(true);
-          }
-        }
-      } else if (error) {
-        setProfile(null);
-      } else {
-        setProfile(profileData);
-
-        if (profileData && !profileData.role) {
-          setShowRoleModal(true);
-        }
+      if (profileData && !profileData.role) {
+        setShowRoleModal(true);
       }
     } catch {
       setProfile(null);
@@ -118,16 +91,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const handleRoleSelection = async (role: UserRole, fullName: string) => {
     if (!user) return;
 
-    const { error } = await supabase
-      .from('profiles')
-      .update({
-        role,
-        full_name: fullName,
-      })
-      .eq('user_id', user.id);
-
-    if (error) throw error;
-
+    await updateUserProfile(user.id, { role, full_name: fullName });
     await fetchProfile(user.id);
     setShowRoleModal(false);
   };

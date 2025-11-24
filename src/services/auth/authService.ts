@@ -103,3 +103,43 @@ export async function updatePassword(newPassword: string) {
 
   if (error) throw error;
 }
+
+export async function getOrCreateProfile(userId: string, email: string) {
+  const { data: profile, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  if (!profile && !error) {
+    const { data: newProfile, error: insertError } = await supabase
+      .from('profiles')
+      .insert({
+        user_id: userId,
+        email: email,
+      })
+      .select()
+      .single();
+
+    if (insertError) throw insertError;
+    return newProfile;
+  }
+
+  if (error) throw error;
+  return profile;
+}
+
+export async function updateUserProfile(
+  userId: string,
+  updates: { role?: UserRole; full_name?: string }
+) {
+  const { data, error } = await supabase
+    .from('profiles')
+    .update(updates)
+    .eq('user_id', userId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
