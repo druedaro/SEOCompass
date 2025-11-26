@@ -28,17 +28,18 @@ export function ProjectUrlsList({
           </p>
         </div>
       ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Label</TableHead>
-              <TableHead>URL</TableHead>
-              <TableHead>Added</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {urls.map((url) => {
+        <div className="max-h-[600px] overflow-y-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Label</TableHead>
+                <TableHead>URL</TableHead>
+                <TableHead>Added</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {urls.map((url) => {
               const isCurrentlyAuditing = isAuditing && currentAuditingUrlId === url.id;
 
               return (
@@ -101,6 +102,7 @@ export function ProjectUrlsList({
             })}
           </TableBody>
         </Table>
+        </div>
       )}
     </div>
   );

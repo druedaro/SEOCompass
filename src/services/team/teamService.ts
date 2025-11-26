@@ -25,7 +25,7 @@ export async function getUserTeams(): Promise<Team[]> {
   const { data, error } = await supabase
     .from('teams')
     .select('*')
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: true });
 
   if (error) return [];
   return data as Team[];
