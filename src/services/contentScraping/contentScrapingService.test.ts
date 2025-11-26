@@ -22,7 +22,7 @@ describe('Content Scraping Service - Moscow Method Tests', () => {
     mockInvoke.mockClear();
   });
 
-  it('should scrape URL successfully', async () => {
+  it('MUST HAVE: should scrape URL successfully', async () => {
     const mockScrapedData = {
       html: '<html><body>Test Content</body></html>',
       status_code: 200,
@@ -45,12 +45,22 @@ describe('Content Scraping Service - Moscow Method Tests', () => {
     });
   });
 
-  it('should check URL status successfully', async () => {
+  it('MUST HAVE: should handle scraping errors correctly', async () => {
+    mockInvoke.mockResolvedValue({
+      data: null,
+      error: { message: 'Scraping service unavailable' },
+    });
+
+    await expect(scrapeUrl('https://example.com')).rejects.toThrow('Scraping error: Scraping service unavailable');
+  });
+
+  it('MUST HAVE: should check URL status and detect redirects', async () => {
     mockInvoke.mockResolvedValue({
       data: {
         status_code: 200,
-        final_url: 'https://example.com',
-        html: '<html></html>' // Added html property as it is required by scrapeUrl
+        final_url: 'https://example.com/redirected',
+        html: '<html></html>',
+        headers: {},
       },
       error: null,
     });
@@ -58,6 +68,8 @@ describe('Content Scraping Service - Moscow Method Tests', () => {
     const result = await checkUrlStatus('https://example.com');
 
     expect(result.statusCode).toBe(200);
-    expect(result.finalUrl).toBe('https://example.com');
+    expect(result.accessible).toBe(true);
+    expect(result.redirected).toBe(true);
+    expect(result.finalUrl).toBe('https://example.com/redirected');
   });
 });
