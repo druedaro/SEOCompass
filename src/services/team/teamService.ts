@@ -1,22 +1,7 @@
 import { supabase } from '@/config/supabase';
 import type { Team, TeamMember } from '@/types/team';
 import type { CreateTeamFormData, UpdateTeamFormData } from '@/types/schemas';
-
-async function checkTeamOwnership(teamId: string): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Not authenticated');
-
-  const { data: team } = await supabase
-    .from('teams')
-    .select('user_id')
-    .eq('id', teamId)
-    .single();
-
-  if (!team) throw new Error('Team not found');
-  if (team.user_id !== user.id) {
-    throw new Error('Only the team owner can perform this action');
-  }
-}
+import { authorizationService } from '@/services/auth/authorizationService';
 
 export async function getUserTeams(): Promise<Team[]> {
   const { data: { user } } = await supabase.auth.getUser();
@@ -72,7 +57,7 @@ export async function updateTeam(teamId: string, teamData: UpdateTeamFormData): 
 }
 
 export async function deleteTeam(teamId: string): Promise<void> {
-  await checkTeamOwnership(teamId);
+  await authorizationService.requireTeamOwnership(teamId);
 
   const { error } = await supabase
     .from('teams')
@@ -115,7 +100,7 @@ export async function getTeamMembers(teamId: string): Promise<TeamMember[]> {
 }
 
 export async function removeTeamMember(teamId: string, memberId: string): Promise<void> {
-  await checkTeamOwnership(teamId);
+  await authorizationService.requireTeamOwnership(teamId);
 
   const { error } = await supabase
     .from('team_members')

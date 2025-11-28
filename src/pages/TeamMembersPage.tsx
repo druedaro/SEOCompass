@@ -1,44 +1,28 @@
 import { MapPin, RefreshCw, Trash2 } from 'lucide-react';
-import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/Card';
 import { Avatar } from '@/components/atoms/Avatar';
 import { Badge } from '@/components/atoms/Badge';
 import { Button } from '@/components/atoms/Button';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
-import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
-import { useWorkspace } from '@/hooks/useWorkspace';
+import { useDeleteConfirmation } from '@/hooks/useDeleteConfirmation';
+import { useTeam } from '@/hooks/useTeam';
+import { useTeamMembers } from '@/hooks/useTeamMembers';
 import { useAuth } from '@/hooks/useAuth';
 import toast from 'react-hot-toast';
 import type { TeamMember } from '@/types/team';
 
-export default function TeamMembersPage() {
+export function TeamMembersPage() {
   const { user } = useAuth();
-  const { currentTeam, teamMembers, isLoadingMembers, refreshMembers, removeTeamMember, isOwner } = useWorkspace();
-  const [memberToDelete, setMemberToDelete] = useState<TeamMember | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const handleDeleteMember = (member: TeamMember) => {
-    setMemberToDelete(member);
-  };
-
-  const confirmDeleteMember = async () => {
-    if (!memberToDelete) return;
-
-    setIsDeleting(true);
-    try {
-      await removeTeamMember(memberToDelete.id);
+  const { currentTeam, isOwner } = useTeam();
+  const { teamMembers, isLoadingMembers, refreshMembers, removeTeamMember } = useTeamMembers();
+  
+  const deleteConfirmation = useDeleteConfirmation<TeamMember>({
+    onConfirm: async (member) => {
+      await removeTeamMember(member.id);
       toast.success('Team member removed successfully');
-      setMemberToDelete(null);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to remove team member');
-    } finally {
-      setIsDeleting(false);
-    }
-  };
-
-  const cancelDeleteMember = () => {
-    setMemberToDelete(null);
-  };
+    },
+    itemName: 'team member',
+  });
 
   const getInitials = (name?: string) => {
     if (!name) return '?';
@@ -161,7 +145,7 @@ export default function TeamMembersPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleDeleteMember(member)}
+                            onClick={() => deleteConfirmation.open(member)}
                             className="text-destructive hover:text-destructive hover:bg-destructive/10"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -176,13 +160,9 @@ export default function TeamMembersPage() {
           </CardContent>
         </Card>
 
-        <DeleteConfirmationDialog
-          open={!!memberToDelete}
-          onOpenChange={cancelDeleteMember}
-          onConfirm={confirmDeleteMember}
+        <deleteConfirmation.DialogComponent
           title="Remove Team Member"
-          description={`Are you sure you want to remove ${memberToDelete?.profile?.full_name || 'this member'} from the team?`}
-          isLoading={isDeleting}
+          description={deleteConfirmation.itemToDelete ? `Are you sure you want to remove ${deleteConfirmation.itemToDelete.profile?.full_name || 'this member'} from the team?` : ''}
         />
       </div>
     </DashboardLayout>

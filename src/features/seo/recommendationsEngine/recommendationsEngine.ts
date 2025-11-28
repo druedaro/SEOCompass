@@ -24,28 +24,26 @@ export function generateRecommendations(input: RecommendationInput): Recommendat
 function getTechnicalRecommendations(input: RecommendationInput): Omit<Recommendation, 'id'>[] {
   const recs: Omit<Recommendation, 'id'>[] = [];
 
-  if (input.has404Error) {
-    recs.push({
-      category: 'technical',
-      severity: 'critical',
-      title: SEO_RECOMMENDATIONS.ERROR_404.title,
-      description: SEO_RECOMMENDATIONS.ERROR_404.description,
-      action: SEO_RECOMMENDATIONS.ERROR_404.action,
-      priority: 10,
-    });
-  }
+  // HTTP Errors
+  const httpErrors = [
+    { condition: input.has404Error, key: 'ERROR_404' as const },
+    { condition: input.hasServerError, key: 'ERROR_5XX' as const },
+  ];
 
-  if (input.hasServerError) {
-    recs.push({
-      category: 'technical',
-      severity: 'critical',
-      title: SEO_RECOMMENDATIONS.ERROR_5XX.title,
-      description: SEO_RECOMMENDATIONS.ERROR_5XX.description,
-      action: SEO_RECOMMENDATIONS.ERROR_5XX.action,
-      priority: 10,
-    });
-  }
+  httpErrors.forEach(({ condition, key }) => {
+    if (condition) {
+      recs.push({
+        category: 'technical',
+        severity: 'critical',
+        title: SEO_RECOMMENDATIONS[key].title,
+        description: SEO_RECOMMENDATIONS[key].description,
+        action: SEO_RECOMMENDATIONS[key].action,
+        priority: 10,
+      });
+    }
+  });
 
+  // URL validation
   recs.push(...getIssueRecommendations(
     input.urlValidation,
     'technical',
@@ -53,6 +51,7 @@ function getTechnicalRecommendations(input: RecommendationInput): Omit<Recommend
     SEO_RECOMMENDATIONS.URL.action
   ));
 
+  // Canonical validation
   if (input.canonicalValidation) {
     recs.push(...getIssueRecommendations(
       input.canonicalValidation,
@@ -71,6 +70,7 @@ function getTechnicalRecommendations(input: RecommendationInput): Omit<Recommend
     });
   }
 
+  // Robots validation
   if (input.robotsValidation) {
     recs.push(...getIssueRecommendations(
       input.robotsValidation,
@@ -80,6 +80,7 @@ function getTechnicalRecommendations(input: RecommendationInput): Omit<Recommend
     ));
   }
 
+  // Structured Data
   if (!input.hasStructuredData) {
     recs.push({
       category: 'technical',
@@ -106,19 +107,19 @@ function getTechnicalRecommendations(input: RecommendationInput): Omit<Recommend
 function getMetaRecommendations(input: RecommendationInput): Omit<Recommendation, 'id'>[] {
   const recs: Omit<Recommendation, 'id'>[] = [];
 
-  recs.push(...getIssueRecommendations(
-    input.titleValidation,
-    'meta',
-    SEO_RECOMMENDATIONS.TITLE.title,
-    SEO_RECOMMENDATIONS.TITLE.action
-  ));
+  const metaValidations = [
+    { validation: input.titleValidation, key: 'TITLE' as const },
+    { validation: input.descriptionValidation, key: 'DESCRIPTION' as const },
+  ];
 
-  recs.push(...getIssueRecommendations(
-    input.descriptionValidation,
-    'meta',
-    SEO_RECOMMENDATIONS.DESCRIPTION.title,
-    SEO_RECOMMENDATIONS.DESCRIPTION.action
-  ));
+  metaValidations.forEach(({ validation, key }) => {
+    recs.push(...getIssueRecommendations(
+      validation,
+      'meta',
+      SEO_RECOMMENDATIONS[key].title,
+      SEO_RECOMMENDATIONS[key].action
+    ));
+  });
 
   return recs;
 }

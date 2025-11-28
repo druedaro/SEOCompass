@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/config/supabase';
+import { handleAsyncOperation } from '@/lib/asyncHandler';
 
 export function AuthCallbackPage() {
   const navigate = useNavigate();
@@ -8,23 +9,29 @@ export function AuthCallbackPage() {
 
   useEffect(() => {
     const handleCallback = async () => {
-      try {
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      await handleAsyncOperation(
+        async () => {
+          const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
-        if (sessionError) {
-          setError('Error al verificar tu email. Por favor intenta de nuevo.');
-          return;
-        }
+          if (sessionError) {
+            setError('Error al verificar tu email. Por favor intenta de nuevo.');
+            return;
+          }
 
-        if (session) {
-          setTimeout(() => navigate('/dashboard'), 1000);
-        } else {
-          setTimeout(() => navigate('/auth/login'), 2000);
+          if (session) {
+            setTimeout(() => navigate('/dashboard'), 1000);
+          } else {
+            setTimeout(() => navigate('/auth/login'), 2000);
+          }
+        },
+        {
+          showSuccessToast: false,
+          onError: () => {
+            setError('Error al procesar la confirmación. Por favor intenta iniciar sesión.');
+            setTimeout(() => navigate('/auth/login'), 3000);
+          }
         }
-      } catch {
-        setError('Error al procesar la confirmación. Por favor intenta iniciar sesión.');
-        setTimeout(() => navigate('/auth/login'), 3000);
-      }
+      );
     };
 
     handleCallback();

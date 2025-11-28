@@ -29,8 +29,9 @@ import {
 } from '@/components/molecules/Select';
 import { DatePicker } from '@/components/molecules/DatePicker';
 import { useTaskActions } from '@/hooks/useTaskActions';
+import { handleAsyncOperation } from '@/lib/asyncHandler';
 import type { CreateTaskInput } from '@/services/task/taskService';
-import { useWorkspace } from '@/hooks/useWorkspace';
+import { useTeamMembers } from '@/hooks/useTeamMembers';
 import { PRIORITY_OPTIONS, STATUS_OPTIONS } from '@/constants/tasks';
 import { taskSchema } from '@/schemas/taskSchema';
 import type { TaskFormData } from '@/types/schemas';
@@ -48,7 +49,7 @@ export function CreateTaskModal({
 }: CreateTaskModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
-  const { teamMembers } = useWorkspace();
+  const { teamMembers } = useTeamMembers();
   const { createTask, updateTask } = useTaskActions();
 
   const isEditing = !!taskToEdit;
@@ -95,37 +96,40 @@ export function CreateTaskModal({
   }, [open, taskToEdit, auditReference, initialTitle, initialDescription, form]);
 
   const onSubmit = async (data: TaskFormData) => {
-    setIsSubmitting(true);
-    try {
-      const assignedToValue = data.assigned_to === 'unassigned' ? undefined : data.assigned_to;
+    await handleAsyncOperation(
+      async () => {
+        const assignedToValue = data.assigned_to === 'unassigned' ? undefined : data.assigned_to;
 
-      const input: CreateTaskInput = {
-        ...data,
-        project_id: projectId,
-        due_date: selectedDate?.toISOString(),
-        assigned_to: assignedToValue,
-      };
+        const input: CreateTaskInput = {
+          ...data,
+          project_id: projectId,
+          due_date: selectedDate?.toISOString(),
+          assigned_to: assignedToValue,
+        };
 
-      if (isEditing && taskToEdit) {
-        await updateTask(taskToEdit.id, input);
-      } else {
-        await createTask(input);
+        if (isEditing && taskToEdit) {
+          await updateTask(taskToEdit.id, input);
+        } else {
+          await createTask(input);
+        }
+
+        onTaskCreated();
+        onOpenChange(false);
+        form.reset({
+          title: '',
+          description: '',
+          priority: 'medium',
+          status: 'todo',
+          audit_reference: '',
+          assigned_to: 'unassigned',
+        });
+        setSelectedDate(undefined);
+      },
+      {
+        setLoading: setIsSubmitting,
+        successMessage: isEditing ? 'Task updated successfully!' : 'Task created successfully!',
       }
-
-      onTaskCreated();
-      onOpenChange(false);
-      form.reset({
-        title: '',
-        description: '',
-        priority: 'medium',
-        status: 'todo',
-        audit_reference: '',
-        assigned_to: 'unassigned',
-      });
-      setSelectedDate(undefined);
-    } finally {
-      setIsSubmitting(false);
-    }
+    );
   };
 
   return (

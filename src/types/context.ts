@@ -1,6 +1,6 @@
 import type { User, Session } from '@supabase/supabase-js';
 import type { Profile } from './user';
-import type { Team, TeamMember } from './team';
+import type { Team } from './team';
 import type { Project } from './project';
 import type { ReactNode } from 'react';
 
@@ -22,19 +22,11 @@ export interface WorkspaceContextType {
   teams: Team[];
   isLoadingTeams: boolean;
   teamsError: string | null;
+  isOwner: boolean;
   refreshTeams: () => Promise<void>;
-  teamMembers: TeamMember[];
-  isLoadingMembers: boolean;
-  membersError: string | null;
-  refreshMembers: () => Promise<void>;
-  currentUserMember: TeamMember | null;
   createTeam: (data: { name: string; description?: string; location?: string }) => Promise<Team>;
   updateTeam: (teamId: string, data: { name?: string; description?: string; location?: string }) => Promise<Team>;
   deleteTeam: (teamId: string) => Promise<void>;
-  removeTeamMember: (memberId: string) => Promise<void>;
-  leaveTeam: () => Promise<void>;
-
-  isOwner: boolean;
   switchTeam: (teamId: string) => Promise<void>;
 }
 

@@ -1,10 +1,4 @@
-import { useContext } from 'react';
+import { createContextHook } from '@/lib/contextFactory';
 import { WorkspaceContext } from '@/contexts/WorkspaceContext';
 
-export function useWorkspace() {
-  const context = useContext(WorkspaceContext);
-  if (context === undefined) {
-    throw new Error('useWorkspace must be used within a WorkspaceProvider');
-  }
-  return context;
-}
+export const useWorkspace = createContextHook(WorkspaceContext, 'useWorkspace', 'WorkspaceProvider');

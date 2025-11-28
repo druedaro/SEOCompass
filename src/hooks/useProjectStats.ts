@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getProjectAuditStats } from '@/services/contentAudit/contentAuditService';
 import { getOpenTasksCount, getUserPendingTasksCount } from '@/services/task/taskService';
+import { handleAsyncOperation } from '@/lib/asyncHandler';
 import type { ProjectStats } from '@/types/stats';
 
 export function useProjectStats(projectId: string | undefined, userId: string | undefined) {
@@ -15,25 +16,22 @@ export function useProjectStats(projectId: string | undefined, userId: string | 
     if (!projectId) return;
 
     const fetchStats = async () => {
-      setIsLoading(true);
+      await handleAsyncOperation(
+        async () => {
+          const [pagesAudited, openTasks, myPendingTasks] = await Promise.all([
+            getProjectAuditStats(projectId),
+            getOpenTasksCount(projectId),
+            userId ? getUserPendingTasksCount(projectId, userId) : Promise.resolve(0),
+          ]);
 
-      try {
-        const [pagesAudited, openTasks, myPendingTasks] = await Promise.all([
-          getProjectAuditStats(projectId),
-          getOpenTasksCount(projectId),
-          userId ? getUserPendingTasksCount(projectId, userId) : Promise.resolve(0),
-        ]);
-
-        setStats({
-          pagesAudited,
-          openTasks,
-          myPendingTasks,
-        });
-      } catch (error) {
-        console.error('Error fetching project stats:', error);
-      } finally {
-        setIsLoading(false);
-      }
+          setStats({ pagesAudited, openTasks, myPendingTasks });
+        },
+        {
+          setLoading: setIsLoading,
+          showSuccessToast: false,
+          errorMessage: 'Error fetching project stats',
+        }
+      );
     };
 
     fetchStats();

@@ -13,14 +13,14 @@ import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { Label } from '@/components/atoms/Label';
 import { LocationPicker } from '@/components/organisms/LocationPicker';
-import { useWorkspace } from '@/hooks/useWorkspace';
+import { useTeam } from '@/hooks/useTeam';
+import { handleAsyncOperation } from '@/lib/asyncHandler';
 import { createTeamSchema } from '@/schemas/teamSchema';
 import type { CreateTeamFormData } from '@/types/schemas';
-import { showSuccessToast } from '@/lib/toast';
 import type { CreateTeamDialogProps } from '@/types/componentTypes';
 
 export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) {
-  const { createTeam } = useWorkspace();
+  const { createTeam } = useTeam();
   const [isLoading, setIsLoading] = useState(false);
   const [location, setLocation] = useState('');
 
@@ -35,16 +35,18 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
   });
 
   const onSubmit = async (data: CreateTeamFormData) => {
-    setIsLoading(true);
-    try {
-      await createTeam({ ...data, location });
-      showSuccessToast('Team created successfully!');
-      reset();
-      setLocation('');
-      onOpenChange(false);
-    } finally {
-      setIsLoading(false);
-    }
+    await handleAsyncOperation(
+      async () => {
+        await createTeam({ ...data, location });
+        reset();
+        setLocation('');
+        onOpenChange(false);
+      },
+      {
+        setLoading: setIsLoading,
+        successMessage: 'Team created successfully!',
+      }
+    );
   };
 
   return (

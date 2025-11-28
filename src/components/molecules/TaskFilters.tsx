@@ -10,11 +10,11 @@ import {
 } from '@/components/molecules/Select';
 import type { TaskStatus } from '@/services/task/taskService';
 import { STATUS_OPTIONS } from '@/constants/tasks';
-import { useWorkspace } from '@/hooks/useWorkspace';
+import { useTeamMembers } from '@/hooks/useTeamMembers';
 import type { TaskFiltersProps } from '@/types/componentTypes';
 
 export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
-  const { teamMembers } = useWorkspace();
+  const { teamMembers } = useTeamMembers();
   const hasActiveFilters = Object.keys(filters).length > 0;
 
   const handleStatusChange = (status: string) => {

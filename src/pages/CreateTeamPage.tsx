@@ -8,13 +8,14 @@ import { Input } from '@/components/atoms/Input';
 import { Label } from '@/components/atoms/Label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/Card';
 import { LocationPicker } from '@/components/organisms/LocationPicker';
-import { useWorkspace } from '@/hooks/useWorkspace';
+import { useTeam } from '@/hooks/useTeam';
+import { handleAsyncOperation } from '@/lib/asyncHandler';
 import { createTeamSchema } from '@/schemas/teamSchema';
 import type { CreateTeamFormData } from '@/types/schemas';
 
-export default function CreateTeamPage() {
+export function CreateTeamPage() {
   const navigate = useNavigate();
-  const { createTeam } = useWorkspace();
+  const { createTeam } = useTeam();
   const [isLoading, setIsLoading] = useState(false);
   const [location, setLocation] = useState('');
 
@@ -29,13 +30,16 @@ export default function CreateTeamPage() {
   });
 
   const onSubmit = async (data: CreateTeamFormData) => {
-    setIsLoading(true);
-    try {
-      await createTeam({ ...data, location });
-      navigate('/dashboard');
-    } finally {
-      setIsLoading(false);
-    }
+    await handleAsyncOperation(
+      async () => {
+        await createTeam({ ...data, location });
+        navigate('/dashboard');
+      },
+      {
+        setLoading: setIsLoading,
+        successMessage: 'Team created successfully!',
+      }
+    );
   };
 
   const handleLocationChange = (value: string) => {

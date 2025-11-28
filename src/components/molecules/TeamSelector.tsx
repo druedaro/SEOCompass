@@ -7,11 +7,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/molecules/Select';
-import { useWorkspace } from '@/hooks/useWorkspace';
+import { useTeam } from '@/hooks/useTeam';
 import type { TeamSelectorProps } from '@/types/componentTypes';
 
 export function TeamSelector({ onCreateTeam }: TeamSelectorProps) {
-  const { currentTeam, teams, switchTeam } = useWorkspace();
+  const { currentTeam, teams, switchTeam } = useTeam();
 
   return (
     <div className="flex items-center gap-2">

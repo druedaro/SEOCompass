@@ -1,15 +1,15 @@
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Settings, ArrowLeft } from 'lucide-react';
+import { useParams, Link } from 'react-router-dom';
+import { Settings } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
+import { BackButton } from '@/components/atoms/BackButton';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/Card';
 import { ProjectUrlsList } from '@/components/organisms/ProjectUrlsList';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useContentAnalyzer } from '@/hooks/useContentAnalyzer';
 import { useProjectUrls } from '@/hooks/useProjectUrls';
 
-export default function ContentAnalyzerPage() {
+export function ContentAnalyzerPage() {
   const { projectId } = useParams<{ projectId: string }>();
-  const navigate = useNavigate();
   const { urls, isLoading: isLoadingUrls } = useProjectUrls(projectId);
   const { isAnalyzing, currentAuditingUrlId, analyzePageByUrlId } = useContentAnalyzer(projectId);
 
@@ -27,17 +27,7 @@ export default function ContentAnalyzerPage() {
     <DashboardLayout>
       <div className="container mx-auto py-8 px-4">
         <div className="max-w-6xl mx-auto space-y-8">
-          {projectId && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate(`/dashboard/projects/${projectId}`)}
-              className="mb-4"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Project
-            </Button>
-          )}
+          {projectId && <BackButton />}
 
           <div className="space-y-2">
             <h1 className="text-3xl font-bold tracking-tight">Content & On-Page Analyzer</h1>

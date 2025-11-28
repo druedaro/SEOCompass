@@ -1,10 +1,4 @@
-import { useContext } from 'react';
+import { createContextHook } from '@/lib/contextFactory';
 import { ProjectContext } from '@/contexts/ProjectContext';
 
-export function useProject() {
-  const context = useContext(ProjectContext);
-  if (!context) {
-    throw new Error('useProject must be used within a ProjectProvider');
-  }
-  return context;
-}
+export const useProject = createContextHook(ProjectContext, 'useProject', 'ProjectProvider');

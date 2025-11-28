@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
+import { handleAsyncOperation } from '@/lib/asyncHandler';
 import { roleOptions } from '@/schemas/authSchema';
 import type { UserRole } from '@/types/user';
 import type { RoleSelectionModalProps } from '@/types/componentTypes';
@@ -13,12 +14,15 @@ export function RoleSelectionModal({ onSelectRole }: RoleSelectionModalProps) {
   const handleSubmit = async () => {
     if (!selectedRole || !fullName.trim()) return;
     
-    setIsSubmitting(true);
-    try {
-      await onSelectRole(selectedRole, fullName.trim());
-    } finally {
-      setIsSubmitting(false);
-    }
+    await handleAsyncOperation(
+      async () => {
+        await onSelectRole(selectedRole, fullName.trim());
+      },
+      {
+        setLoading: setIsSubmitting,
+        showSuccessToast: false,
+      }
+    );
   };  return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">

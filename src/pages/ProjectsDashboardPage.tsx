@@ -4,36 +4,42 @@ import { Plus } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
 import { ProjectCard } from '@/components/molecules/ProjectCard';
 import { ProjectModal } from '@/components/organisms/ProjectModal';
-import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
+import { useDeleteConfirmation } from '@/hooks/useDeleteConfirmation';
+import { handleAsyncOperation } from '@/lib/asyncHandler';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
 import { useProject } from '@/hooks/useProject';
-import { useWorkspace } from '@/hooks/useWorkspace';
+import { useTeam } from '@/hooks/useTeam';
 import type { Project } from '@/types/project';
-import { showErrorToast } from '@/lib/toast';
 
 export function ProjectsDashboardPage() {
   const navigate = useNavigate();
-  const { currentTeam, createTeam, isOwner } = useWorkspace();
+  const { currentTeam, createTeam, isOwner } = useTeam();
   const { projects, isLoading, deleteProject } = useProject();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | undefined>(undefined);
   const [showEditModal, setShowEditModal] = useState(false);
   const [isCreatingTeam, setIsCreatingTeam] = useState(false);
-  const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
+  
+  const deleteConfirmation = useDeleteConfirmation<Project>({
+    onConfirm: async (project) => {
+      await deleteProject(project.id);
+    },
+    itemName: 'project',
+  });
 
   const handleCreateFirstTeam = async () => {
-    setIsCreatingTeam(true);
-    try {
-      await createTeam({
-        name: 'My Team',
-        description: 'Default team',
-      });
-    } catch {
-      showErrorToast('Failed to create team. Please try again.');
-    } finally {
-      setIsCreatingTeam(false);
-    }
+    await handleAsyncOperation(
+      async () => {
+        await createTeam({
+          name: 'My Team',
+          description: 'Default team',
+        });
+      },
+      {
+        setLoading: setIsCreatingTeam,
+        successMessage: 'Team created successfully',
+      }
+    );
   };
 
   const handleSelectProject = (project: Project) => {
@@ -43,28 +49,6 @@ export function ProjectsDashboardPage() {
   const handleEditProject = (project: Project) => {
     setSelectedProject(project);
     setShowEditModal(true);
-  };
-
-  const handleDeleteProject = async (project: Project) => {
-    setProjectToDelete(project);
-  };
-
-  const confirmDeleteProject = async () => {
-    if (!projectToDelete) return;
-
-    setIsDeleting(true);
-    try {
-      await deleteProject(projectToDelete.id);
-    } catch {
-      showErrorToast('Failed to delete project. Please try again.');
-    } finally {
-      setIsDeleting(false);
-      setProjectToDelete(null);
-    }
-  };
-
-  const cancelDeleteProject = () => {
-    setProjectToDelete(null);
   };
 
   if (!currentTeam) {
@@ -132,7 +116,7 @@ export function ProjectsDashboardPage() {
                 project={project}
                 onSelect={() => handleSelectProject(project)}
                 onEdit={() => handleEditProject(project)}
-                onDelete={isOwner ? () => handleDeleteProject(project) : undefined}
+                onDelete={isOwner ? () => deleteConfirmation.open(project) : undefined}
               />
             ))}
           </div>
@@ -154,13 +138,9 @@ export function ProjectsDashboardPage() {
           mode="edit"
         />
 
-        <DeleteConfirmationDialog
-          open={!!projectToDelete}
-          onOpenChange={cancelDeleteProject}
-          onConfirm={confirmDeleteProject}
-          title={`Delete "${projectToDelete?.name}"?`}
+        <deleteConfirmation.DialogComponent
+          title={deleteConfirmation.itemToDelete ? `Delete "${deleteConfirmation.itemToDelete.name}"?` : 'Delete Project?'}
           description="This will permanently delete the project and all its data."
-          isLoading={isDeleting}
         />
       </div>
     </DashboardLayout>

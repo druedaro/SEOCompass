@@ -9,13 +9,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { LocationPicker } from '@/components/organisms/LocationPicker';
 import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
-import { useWorkspace } from '@/hooks/useWorkspace';
+import { useTeam } from '@/hooks/useTeam';
+import { useTeamMembers } from '@/hooks/useTeamMembers';
+import { handleAsyncOperation } from '@/lib/asyncHandler';
 import { updateTeamSchema } from '@/schemas/teamSchema';
 import type { UpdateTeamFormData } from '@/types/schemas';
-import { showErrorToast, showSuccessToast } from '@/lib/toast';
 
-export default function TeamSettingsPage() {
-  const { currentTeam, updateTeam, deleteTeam, leaveTeam, isOwner } = useWorkspace();
+export function TeamSettingsPage() {
+  const { currentTeam, updateTeam, deleteTeam, isOwner } = useTeam();
+  const { leaveTeam } = useTeamMembers();
   const [isLoading, setIsLoading] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showLeaveDialog, setShowLeaveDialog] = useState(false);
@@ -51,45 +53,47 @@ export default function TeamSettingsPage() {
   const onSubmit = async (data: UpdateTeamFormData) => {
     if (!currentTeam) return;
 
-    setIsLoading(true);
-    try {
-      await updateTeam(currentTeam.id, { ...data, location });
-      showSuccessToast('Team updated successfully');
-    } catch {
-      showErrorToast('Failed to update team');
-    } finally {
-      setIsLoading(false);
-    }
+    await handleAsyncOperation(
+      async () => {
+        await updateTeam(currentTeam.id, { ...data, location });
+      },
+      {
+        setLoading: setIsLoading,
+        successMessage: 'Team updated successfully',
+      }
+    );
   };
 
   const handleDelete = async () => {
     if (!currentTeam) return;
 
-    setIsLoading(true);
-    try {
-      await deleteTeam(currentTeam.id);
-      showSuccessToast('Team deleted successfully');
-    } catch {
-      showErrorToast('Failed to delete team. Please try again.');
-    } finally {
-      setIsLoading(false);
-      setShowDeleteDialog(false);
-    }
+    await handleAsyncOperation(
+      async () => {
+        await deleteTeam(currentTeam.id);
+      },
+      {
+        setLoading: setIsLoading,
+        successMessage: 'Team deleted successfully',
+        onError: () => setShowDeleteDialog(false),
+      }
+    );
+    setShowDeleteDialog(false);
   };
 
   const handleLeave = async () => {
     if (!currentTeam) return;
 
-    setIsLoading(true);
-    try {
-      await leaveTeam();
-      showSuccessToast('You have left the team');
-    } catch {
-      showErrorToast('Failed to leave team. Please try again.');
-    } finally {
-      setIsLoading(false);
-      setShowLeaveDialog(false);
-    }
+    await handleAsyncOperation(
+      async () => {
+        await leaveTeam();
+      },
+      {
+        setLoading: setIsLoading,
+        successMessage: 'You have left the team',
+        onError: () => setShowLeaveDialog(false),
+      }
+    );
+    setShowLeaveDialog(false);
   };
 
   const handleLocationChange = (value: string) => {

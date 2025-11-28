@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { format } from 'date-fns';
 import { MoreVertical, Pencil, Trash2, CheckCircle2, PlayCircle } from 'lucide-react';
 import {
@@ -19,43 +18,29 @@ import {
   DropdownMenuTrigger,
 } from '@/components/molecules/DropdownMenu';
 import { Button } from '@/components/atoms/Button';
-import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
+import { useDeleteConfirmation } from '@/hooks/useDeleteConfirmation';
 import { useTaskActions } from '@/hooks/useTaskActions';
 import type { Task } from '@/services/task/taskService';
-import { useWorkspace } from '@/hooks/useWorkspace';
+import { useTeamMembers } from '@/hooks/useTeamMembers';
 import { STATUS_CONFIG } from '@/constants/tasks';
 import type { TaskListProps } from '@/types/componentTypes';
 
 export function TaskList({ tasks, onTaskUpdate, onTaskEdit }: TaskListProps) {
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const { teamMembers } = useWorkspace();
+  const { teamMembers } = useTeamMembers();
   const { deleteTask: deleteTaskAction, startTask, completeTask } = useTaskActions();
+  
+  const deleteConfirmation = useDeleteConfirmation<Task>({
+    onConfirm: async (task) => {
+      await deleteTaskAction(task.id);
+      onTaskUpdate();
+    },
+    itemName: 'task',
+  });
 
   const getAssigneeName = (userId: string | null) => {
     if (!userId) return 'Unassigned';
     const member = teamMembers.find(m => m.user_id === userId);
     return member?.profile?.full_name || member?.profile?.email || 'Unknown';
-  };
-
-  const handleDeleteClick = (task: Task) => {
-    setTaskToDelete(task);
-    setDeleteDialogOpen(true);
-  };
-
-  const handleDeleteConfirm = async () => {
-    if (!taskToDelete) return;
-
-    setIsDeleting(true);
-    try {
-      await deleteTaskAction(taskToDelete.id);
-      onTaskUpdate();
-      setDeleteDialogOpen(false);
-      setTaskToDelete(null);
-    } finally {
-      setIsDeleting(false);
-    }
   };
 
   const handleStatusChange = async (task: Task, newStatus: 'in_progress' | 'completed') => {
@@ -171,7 +156,7 @@ export function TaskList({ tasks, onTaskUpdate, onTaskEdit }: TaskListProps) {
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
-                        onClick={() => handleDeleteClick(task)}
+                        onClick={() => deleteConfirmation.open(task)}
                         className="text-red-600"
                       >
                         <Trash2 className="mr-2 h-4 w-4" />
@@ -186,13 +171,9 @@ export function TaskList({ tasks, onTaskUpdate, onTaskEdit }: TaskListProps) {
         </Table>
       </div>
 
-      <DeleteConfirmationDialog
-        open={deleteDialogOpen}
-        onOpenChange={setDeleteDialogOpen}
-        onConfirm={handleDeleteConfirm}
+      <deleteConfirmation.DialogComponent
         title="Delete Task"
-        description={`Are you sure you want to delete "${taskToDelete?.title}"? This action cannot be undone.`}
-        isLoading={isDeleting}
+        description={deleteConfirmation.itemToDelete ? `Are you sure you want to delete "${deleteConfirmation.itemToDelete.title}"? This action cannot be undone.` : ''}
       />
     </>
   );

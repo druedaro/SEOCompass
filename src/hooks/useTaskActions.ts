@@ -8,7 +8,7 @@ import {
   type CreateTaskInput,
   type Task,
 } from '@/services/task/taskService';
-import { showErrorToast, showSuccessToast } from '@/lib/toast';
+import { handleAsyncOperation } from '@/lib/asyncHandler';
 
 export function useTaskActions() {
   const [isCreating, setIsCreating] = useState(false);
@@ -17,76 +17,69 @@ export function useTaskActions() {
   const [isStarting, setIsStarting] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
 
-  const handleCreateTask = async (input: CreateTaskInput): Promise<Task> => {
-    setIsCreating(true);
-    try {
-      const newTask = await createTask(input);
-      showSuccessToast('Task created successfully');
-      return newTask;
-    } catch (error) {
-      const err = error as Error;
-      showErrorToast(`Failed to create task: ${err.message}`);
-      throw error;
-    } finally {
-      setIsCreating(false);
-    }
+  const handleCreateTask = async (input: CreateTaskInput): Promise<Task | undefined> => {
+    let result: Task | undefined;
+    await handleAsyncOperation(
+      async () => {
+        result = await createTask(input);
+        return result;
+      },
+      {
+        setLoading: setIsCreating,
+        showSuccessToast: false,
+        errorMessage: 'Failed to create task',
+      }
+    );
+    return result;
   };
 
-  const handleUpdateTask = async (taskId: string, updates: Partial<CreateTaskInput>): Promise<Task> => {
-    setIsUpdating(true);
-    try {
-      const updatedTask = await updateTask(taskId, updates);
-      showSuccessToast('Task updated successfully');
-      return updatedTask;
-    } catch (error) {
-      const err = error as Error;
-      showErrorToast(`Failed to update task: ${err.message}`);
-      throw error;
-    } finally {
-      setIsUpdating(false);
-    }
+  const handleUpdateTask = async (taskId: string, updates: Partial<CreateTaskInput>): Promise<Task | undefined> => {
+    let result: Task | undefined;
+    await handleAsyncOperation(
+      async () => {
+        result = await updateTask(taskId, updates);
+        return result;
+      },
+      {
+        setLoading: setIsUpdating,
+        showSuccessToast: false,
+        errorMessage: 'Failed to update task',
+      }
+    );
+    return result;
   };
 
   const handleDeleteTask = async (taskId: string): Promise<void> => {
-    setIsDeleting(true);
-    try {
-      await deleteTask(taskId);
-      showSuccessToast('Task deleted successfully');
-    } catch (error) {
-      const err = error as Error;
-      showErrorToast(`Failed to delete task: ${err.message}`);
-      throw error;
-    } finally {
-      setIsDeleting(false);
-    }
+    await handleAsyncOperation(
+      () => deleteTask(taskId),
+      {
+        setLoading: setIsDeleting,
+        showSuccessToast: false,
+        errorMessage: 'Failed to delete task',
+      }
+    );
   };
 
   const handleStartTask = async (taskId: string): Promise<void> => {
-    setIsStarting(true);
-    try {
-      await startTask(taskId);
-      showSuccessToast('Task started');
-    } catch (error) {
-      const err = error as Error;
-      showErrorToast(`Failed to start task: ${err.message}`);
-      throw error;
-    } finally {
-      setIsStarting(false);
-    }
+    await handleAsyncOperation(
+      () => startTask(taskId),
+      {
+        setLoading: setIsStarting,
+        successMessage: 'Task started',
+        errorMessage: 'Failed to start task',
+      }
+    );
   };
 
   const handleCompleteTask = async (taskId: string): Promise<void> => {
-    setIsCompleting(true);
-    try {
-      await completeTask(taskId);
-      showSuccessToast('Task completed! 🎉');
-    } catch (error) {
-      const err = error as Error;
-      showErrorToast(`Failed to complete task: ${err.message}`);
-      throw error;
-    } finally {
-      setIsCompleting(false);
-    }
+    await handleAsyncOperation(
+      () => completeTask(taskId),
+      {
+        setLoading: setIsCompleting,
+        successMessage: 'Task completed! 🎉',
+        errorMessage: 'Failed to complete task',
+      }
+    );
   };
 
   return {

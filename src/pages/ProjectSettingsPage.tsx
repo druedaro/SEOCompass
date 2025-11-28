@@ -1,26 +1,27 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/atoms/Button';
+import { BackButton } from '@/components/atoms/BackButton';
 import { Input } from '@/components/atoms/Input';
 import { Textarea } from '@/components/atoms/Textarea';
 import { Label } from '@/components/atoms/Label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/molecules/Card';
 import { DeleteConfirmationDialog } from '@/components/molecules/DeleteConfirmationDialog';
 import { useProject } from '@/hooks/useProject';
-import { useWorkspace } from '@/hooks/useWorkspace';
+import { useTeam } from '@/hooks/useTeam';
 import { DashboardLayout } from '@/components/organisms/DashboardLayout';
+import { handleAsyncOperation } from '@/lib/asyncHandler';
 import { projectSchema } from '@/schemas/projectSchema';
 import type { ProjectFormData } from '@/types/schemas';
-import { showErrorToast } from '@/lib/toast';
 
 export function ProjectSettingsPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
   const { projects, currentProject, setCurrentProject, updateProject, deleteProject } = useProject();
-  const { isOwner } = useWorkspace();
+  const { isOwner } = useTeam();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -62,26 +63,31 @@ export function ProjectSettingsPage() {
   const onSubmit = async (data: ProjectFormData) => {
     if (!currentProject) return;
 
-    try {
-      setIsSubmitting(true);
-      await updateProject(currentProject.id, data);
-    } finally {
-      setIsSubmitting(false);
-    }
+    await handleAsyncOperation(
+      async () => {
+        await updateProject(currentProject.id, data);
+      },
+      {
+        setLoading: setIsSubmitting,
+        successMessage: 'Project updated successfully',
+      }
+    );
   };
 
   const handleDelete = async () => {
     if (!currentProject) return;
 
-    try {
-      setIsDeleting(true);
-      await deleteProject(currentProject.id);
-      navigate('/dashboard/projects');
-    } catch {
-      showErrorToast('Failed to delete project. Please try again.');
-      setIsDeleting(false);
-      setShowDeleteDialog(false);
-    }
+    await handleAsyncOperation(
+      async () => {
+        await deleteProject(currentProject.id);
+        navigate('/dashboard/projects');
+      },
+      {
+        setLoading: setIsDeleting,
+        errorMessage: 'Failed to delete project',
+        onError: () => setShowDeleteDialog(false),
+      }
+    );
   };
 
   if (!currentProject) {
@@ -106,15 +112,7 @@ export function ProjectSettingsPage() {
     <DashboardLayout>
       <div className="container mx-auto py-8 px-4 max-w-3xl">
         <div className="mb-8">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate(`/dashboard/projects/${projectId}`)}
-            className="mb-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Project
-          </Button>
+          <BackButton />
 
           <h1 className="text-4xl font-bold">Project Settings</h1>
           <p className="text-muted-foreground mt-2">

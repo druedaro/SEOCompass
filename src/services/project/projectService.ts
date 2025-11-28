@@ -1,29 +1,6 @@
 import { supabase } from '@/config/supabase';
 import type { Project } from '@/types/project';
-
-async function checkProjectOwnership(projectId: string): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Not authenticated');
-
-  const { data: project } = await supabase
-    .from('projects')
-    .select('team_id')
-    .eq('id', projectId)
-    .single();
-
-  if (!project) throw new Error('Project not found');
-
-  const { data: team } = await supabase
-    .from('teams')
-    .select('user_id')
-    .eq('id', project.team_id)
-    .single();
-
-  if (!team) throw new Error('Team not found');
-  if (team.user_id !== user.id) {
-    throw new Error('Only the team owner can perform this action');
-  }
-}
+import { authorizationService } from '@/services/auth/authorizationService';
 
 export async function getProjectsByTeam(teamId: string): Promise<Project[]> {
     const { data, error } = await supabase
@@ -84,7 +61,7 @@ export async function updateProject(
 }
 
 export async function deleteProject(projectId: string): Promise<void> {
-  await checkProjectOwnership(projectId);
+  await authorizationService.requireProjectAccess(projectId);
 
   const { error } = await supabase
     .from('projects')

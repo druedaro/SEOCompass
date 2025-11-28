@@ -1,109 +1,41 @@
 import { useState } from 'react';
-import { scrapeByProjectUrlId } from '@/services/contentScraping/contentScrapingService';
 import { saveAuditResults } from '@/services/contentAudit/contentAuditService';
-import { showErrorToast, showSuccessToast, showInfoToast } from '@/lib/toast';
-import { parseHTMLContent, extractH1Texts, countLinks } from '@/features/seo/htmlParser/htmlParser';
-import {
-  validateTitle,
-  validateDescription,
-  validateUrl,
-  validateH1,
-  validateHeadingHierarchy,
-  validateImages,
-  validateContentLength,
-  validateCanonical,
-  validateLinks,
-  validateHreflang,
-  validateRobotsMeta,
-  validateHttpStatus,
-} from '@/features/seo/validators/validators';
-import { calculateSEOScore } from '@/features/seo/scoreCalculator/scoreCalculator';
-import { generateRecommendations } from '@/features/seo/recommendationsEngine/recommendationsEngine';
-import type { ValidationResults } from '@/types/seoTypes';
+import { showSuccessToast, showInfoToast } from '@/lib/toast';
+import { handleAsyncOperation } from '@/lib/asyncHandler';
+import { AuditOrchestrator } from '@/features/seo/orchestrator/auditOrchestrator';
 
 export function useContentAnalyzer(projectId?: string) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [currentAuditingUrlId, setCurrentAuditingUrlId] = useState<string | null>(null);
 
   const analyzePageByUrlId = async (projectUrlId: string) => {
-    setIsAnalyzing(true);
     setCurrentAuditingUrlId(projectUrlId);
+    showInfoToast('Scraping page... Fetching content from the URL');
 
-    try {
-      showInfoToast('Scraping page... Fetching content from the URL');
+    await handleAsyncOperation(
+      async () => {
+        const orchestrator = new AuditOrchestrator();
+        const { scores, recommendations, url } = await orchestrator.runAudit(projectUrlId);
 
-      const scrapedContent = await scrapeByProjectUrlId(projectUrlId);
+        if (projectId) {
+          await saveAuditResults(
+            projectId,
+            projectUrlId,
+            url,
+            scores,
+            recommendations
+          );
+        }
 
-      const parsedContent = parseHTMLContent(scrapedContent.html, scrapedContent.finalUrl);
-
-      const h1s = extractH1Texts(parsedContent);
-      const errors = validateHttpStatus(scrapedContent);
-      const { internal: internalLinks, external: externalLinks } = countLinks(parsedContent);
-
-      const validations: ValidationResults = {
-        titleValidation: validateTitle(parsedContent.metadata.title),
-        descriptionValidation: validateDescription(parsedContent.metadata.description),
-        urlValidation: validateUrl(scrapedContent.finalUrl),
-        h1Validation: validateH1(h1s),
-        headingHierarchyValidation: validateHeadingHierarchy(parsedContent.headings),
-        imagesValidation: validateImages(parsedContent.images),
-        contentLengthValidation: validateContentLength(parsedContent.wordCount),
-        canonicalValidation: validateCanonical(
-          parsedContent.metadata.canonicalUrl,
-          scrapedContent.finalUrl
-        ),
-        linksValidation: validateLinks({ internal: internalLinks, external: externalLinks }),
-        hreflangValidation: validateHreflang(parsedContent.hreflangTags),
-        robotsValidation: validateRobotsMeta(parsedContent.metadata.robots),
-        internalLinks,
-        externalLinks,
-      };
-
-      const scores = calculateSEOScore({
-        ...validations,
-        hasStructuredData: parsedContent.hasStructuredData,
-      });
-
-      const recommendations = generateRecommendations({
-        titleValidation: validations.titleValidation,
-        title: parsedContent.metadata.title,
-        descriptionValidation: validations.descriptionValidation,
-        description: parsedContent.metadata.description,
-        urlValidation: validations.urlValidation,
-        h1Validation: validations.h1Validation,
-        h1s,
-        headingHierarchyValidation: validations.headingHierarchyValidation,
-        imagesValidation: validations.imagesValidation,
-        images: parsedContent.images,
-        contentLengthValidation: validations.contentLengthValidation,
-        wordCount: parsedContent.wordCount,
-        canonicalValidation: validations.canonicalValidation,
-        robotsValidation: validations.robotsValidation,
-        hasStructuredData: parsedContent.hasStructuredData,
-        internalLinks: validations.internalLinks,
-        externalLinks: validations.externalLinks,
-        has404Error: errors.has404,
-        hasServerError: errors.hasServer,
-      });
-
-      if (projectId) {
-        await saveAuditResults(
-          projectId,
-          projectUrlId,
-          scrapedContent.finalUrl,
-          scores,
-          recommendations
-        );
+        showSuccessToast(`Analysis complete! Overall SEO score: ${scores.overall}/100`);
+      },
+      {
+        setLoading: setIsAnalyzing,
+        showSuccessToast: false,
+        onError: () => setCurrentAuditingUrlId(null)
       }
-
-      showSuccessToast(`Analysis complete! Overall SEO score: ${scores.overall}/100`);
-    } catch (error) {
-      const err = error as Error;
-      showErrorToast(`Analysis failed: ${err.message}`);
-    } finally {
-      setIsAnalyzing(false);
-      setCurrentAuditingUrlId(null);
-    }
+    );
+    setCurrentAuditingUrlId(null);
   };
 
   return {

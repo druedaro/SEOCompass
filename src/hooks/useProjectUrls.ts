@@ -5,7 +5,8 @@ import {
   deleteProjectUrl,
   type ProjectUrl,
 } from '@/services/projectUrls/projectUrlsService';
-import { showErrorToast, showSuccessToast } from '@/lib/toast';
+import { handleAsyncOperation } from '@/lib/asyncHandler';
+import { showErrorToast } from '@/lib/toast';
 
 export function useProjectUrls(projectId?: string) {
   const [urls, setUrls] = useState<ProjectUrl[]>([]);
@@ -15,16 +16,17 @@ export function useProjectUrls(projectId?: string) {
   const loadUrls = async () => {
     if (!projectId) return;
 
-    setIsLoading(true);
-    try {
-      const data = await getProjectUrls(projectId);
-      setUrls(data);
-    } catch (error) {
-      const err = error as Error;
-      showErrorToast(`Error loading URLs: ${err.message}`);
-    } finally {
-      setIsLoading(false);
-    }
+    await handleAsyncOperation(
+      async () => {
+        const data = await getProjectUrls(projectId);
+        setUrls(data);
+      },
+      {
+        setLoading: setIsLoading,
+        errorMessage: 'Error loading URLs',
+        showSuccessToast: false,
+      }
+    );
   };
 
   useEffect(() => {
@@ -39,36 +41,34 @@ export function useProjectUrls(projectId?: string) {
       return;
     }
 
-    setIsAdding(true);
-    try {
-      await addProjectUrl({
-        project_id: projectId,
-        url: url.trim(),
-        label: label?.trim() || undefined,
-      });
+    const success = await handleAsyncOperation(
+      async () => {
+        await addProjectUrl({
+          project_id: projectId,
+          url: url.trim(),
+          label: label?.trim() || undefined,
+        });
+        await loadUrls();
+      },
+      {
+        setLoading: setIsAdding,
+        successMessage: 'URL Added Successfully! Ready to analyze',
+      }
+    );
 
-      showSuccessToast('URL Added Successfully! Ready to analyze');
-
-      await loadUrls();
-      return true;
-    } catch (error) {
-      const err = error as Error;
-      showErrorToast(`Failed to add URL: ${err.message}`);
-      return false;
-    } finally {
-      setIsAdding(false);
-    }
+    return success;
   };
 
   const handleDeleteUrl = async (urlId: string) => {
-    try {
-      await deleteProjectUrl(urlId);
-      showSuccessToast('URL deleted successfully');
-      await loadUrls();
-    } catch (error) {
-      const err = error as Error;
-      showErrorToast(`Failed to delete URL: ${err.message}`);
-    }
+    await handleAsyncOperation(
+      async () => {
+        await deleteProjectUrl(urlId);
+        await loadUrls();
+      },
+      {
+        successMessage: 'URL deleted successfully',
+      }
+    );
   };
 
   return {
