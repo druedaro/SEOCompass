@@ -1,8 +1,8 @@
 name: Keep Supabase Alive
 on:
   schedule:
-    # Se ejecuta a las 00:00 cada 3 días
-    - cron: '0 0 */3 * *'
+    # Se ejecuta a las 00:00 cada 2 días
+    - cron: '0 0 */2 * *'
   workflow_dispatch: # Permite ejecutarlo manualmente si quieres
 
 jobs:
@@ -11,6 +11,7 @@ jobs:
     steps:
       - name: Hacer petición a Supabase
         run: |
-          curl -X GET "https://usewvkylcfoivkthsetr.supabase.co/rest/v1/profiles?select=*&limit=1" \
+          curl -f -X GET "https://usewvkylcfoivkthsetr.supabase.co/rest/v1/profiles?select=*&limit=1&bust=${{ github.run_id }}" \
           -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
-          -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}"
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+          -H "Cache-Control: no-cache"
