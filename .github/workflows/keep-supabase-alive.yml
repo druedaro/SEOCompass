@@ -1,8 +1,8 @@
 name: Keep Supabase Alive
 on:
   schedule:
-    # Se ejecuta a las 00:00 cada 2 días
-    - cron: '0 0 */2 * *'
+    # Se ejecuta todos los días a las 08:00 UTC
+    - cron: '0 8 * * *'
   workflow_dispatch: # Permite ejecutarlo manualmente si quieres
 
 jobs:
@@ -11,7 +11,20 @@ jobs:
     steps:
       - name: Hacer petición a Supabase
         run: |
-          curl -f -X GET "https://usewvkylcfoivkthsetr.supabase.co/rest/v1/profiles?select=*&limit=1&bust=${{ github.run_id }}" \
-          -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
-          -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
-          -H "Cache-Control: no-cache"
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X GET "https://usewvkylcfoivkthsetr.supabase.co/rest/v1/profiles?select=id&limit=1" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Cache-Control: no-cache")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$ d')
+
+          echo "Código HTTP recibido: $HTTP_CODE"
+          echo "Respuesta: $BODY"
+
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            echo "Ping exitoso. Supabase se mantendrá despierto."
+          else
+            echo "Error: Supabase devolvió código de error $HTTP_CODE"
+            exit 1
+          fi
