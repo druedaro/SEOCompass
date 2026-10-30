@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  seo:
+  audit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,12 +18,10 @@ jobs:
 
       - name: Install & Build
         run: |
-          cd frontend
           npm install
           npm run build
 
       - name: Run SEO Lint
         uses: druedaro/seo-lint@main
         with:
-          dir: 'frontend/dist/client'
-          ignore: 'assets/*'
+          dir: 'dist'
